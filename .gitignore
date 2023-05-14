@@ -110,3 +110,6 @@ ENV/
 
 # update.bat
 update.bat
+
+# .pypirc
+.pypirc
