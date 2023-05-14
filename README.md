@@ -23,4 +23,4 @@ Skeleton project created by Cookiecutter PyPackage
 
 ## Credits
 
-This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [uynajgi/cookiecutter-pypackage](https://github.com/uynajgi/cookiecutter-pypackage) project template.
+This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [waynerv/cookiecutter-pypackage](https://github.com/waynerv/cookiecutter-pypackage) project template.
