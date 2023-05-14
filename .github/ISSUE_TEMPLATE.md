@@ -1,4 +1,4 @@
-* python-mc-stat-phys version:
+* mcmc_statphys version:
 * Python version:
 * Operating System:
 
