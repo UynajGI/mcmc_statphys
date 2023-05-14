@@ -37,6 +37,7 @@ class Ising(object):
         return self.L
 
     def __getitem__(self, index: Tuple[int, ...]):
+        
         return self.spin[index]
 
     def _init_spin(self, type='ising', *args, **kwargs):
