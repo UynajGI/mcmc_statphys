@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -10,9 +9,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = [
+    'Click>=7.0',
+]
 
-test_requirements = [ ]
+test_requirements = []
 
 setup(
     author="Uynaj GI",
@@ -27,6 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     description="A library project of Monte Carlo simulation algorithms for some statistical physics models (in particular, the Ising model and its variants).",
     entry_points={
