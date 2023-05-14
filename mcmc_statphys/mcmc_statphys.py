@@ -1,12 +1,4 @@
-# -*- encoding: utf-8 -*-
-'''
-@File    :   MCMC.py
-@Time    :   2023/05/13 21:07:49
-@Author  :   UynajGI
-@Version :   beta0.0.1
-@Contact :   betterWL@hotmail.com
-@License :   (CC-BY-4.0)Copyright 2023
-'''
+"""Main module."""
 
 import copy
 from collections import deque

@@ -1,17 +1,15 @@
 """Console script for mcmc_statphys."""
-import sys
 
 import click
 
 
 @click.command()
-def main(args=None):
-    """Console script for mcmc_statphys."""
-    click.echo("Replace this message by putting your code into "
-               "mcmc_statphys.cli.main")
-    click.echo("See click documentation at https://click.palletsprojects.com/")
-    return 0
+def main():
+    """Main entrypoint."""
+    click.echo("python-mc-stat-phys")
+    click.echo("=" * len("python-mc-stat-phys"))
+    click.echo("A library project of Monte Carlo simulation algorithms for some statistical physics models (in particular, the Ising model and its variants).")
 
 
 if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+    main()  # pragma: no cover
