@@ -6,7 +6,7 @@
 import unittest
 from click.testing import CliRunner
 
-from mcmc_statphys import mcmc_statphys
+from mcmc_statphys import method
 from mcmc_statphys import cli
 
 

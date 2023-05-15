@@ -1,5 +1,4 @@
 """Main module."""
-
 import copy
 from collections import deque
 from typing import List, Tuple
@@ -15,12 +14,29 @@ class Simulation():
 
     def sample_acceptance(self, delta_E: float,
                           sample_Temperture: float) -> bool:
+        """ Determine whether to accept a new state / cn: 判断是否接受新的状态
+
+        Args:
+            delta_E (float): Energy change / cn: 能量变化
+            sample_Temperture (float): Sample temperature / cn: 采样温度
+
+        Returns:
+            bool: accept or reject / cn: 接受或拒绝
+        """
         if delta_E <= 0:
             return True
         else:
             return np.random.rand() < np.exp(-delta_E / sample_Temperture)
 
     def iter_sample(self, sample_Temperture: float) -> object:
+        """single sample / cn: 单次采样
+
+        Args:
+            sample_Temperture (float): Sample temperature / cn: 采样温度
+
+        Returns:
+            object: model / cn: 模型
+        """
         site = tuple(
             np.random.randint(0, self.model.L, size=self.model.dimension))
         temp_model = copy.deepcopy(self.model)
@@ -29,8 +45,23 @@ class Simulation():
             self.model = temp_model
         return self.model
 
-    def iter_wolff_sample(self, T):
-        # wolff 算法
+    def iter_wolff_sample(self, T: float) -> object:
+        """single wolff sample / cn: 单次 wolff 采样 \n
+        The Wolff algorithm, named after Ulli Wolff, is an algorithm for Monte Carlo simulation\n
+        of the Ising model and Potts model.\n
+        Details please see: https://en.wikipedia.org/wiki/Wolff_algorithm \n
+        cn: Wolff 算法，以 Ulli Wolff 命名，是一种蒙特卡洛模拟算法，用于 Ising 模型和 Potts 模型。\n
+        详情请见：https://en.wikipedia.org/wiki/Wolff_algorithm
+
+        Args:
+            T (float): Sample temperature / cn: 采样温度
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+
+        Returns:
+            object: model / cn: 模型
+        """
         if self.model.tpye != 'ising':
             # wolff 算法只适用于 ising 模型
             raise ValueError('Invalid type of spin')
@@ -58,12 +89,36 @@ class Simulation():
                 self.model.spin[clip] *= -1
         return self.model
 
-    def is_Flat(self, arrry: np.ndarray, epsilon: float = 0.1) -> bool:
-        return np.std(arrry) / np.mean(arrry) < epsilon
+    def is_Flat(self, sequence: np.ndarray, epsilon: float = 0.1) -> bool:
+        """ Determine whether the sequence is flat / cn: 判断序列是否平坦
+
+        Args:
+            sequence (np.ndarray): sampling sequence / cn: 采样序列
+            epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
+
+        Returns:
+            bool: is flat / cn: 是否平坦
+        """
+        return np.std(sequence) / np.mean(sequence) < epsilon
 
     def metropolis_sample(
-            self, T: float,
-            max_iter: int) -> Tuple[List[int], List[float], List[float]]:
+        self, T: float, max_iter: int
+    ) -> Tuple[List[int], List[float], object]:
+        """ Metropolis sampling / cn: Metropolis 采样
+            In statistics and statistical physics, the Metropolis–Hastings algorithm\n
+            is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
+            random samples from a probability distribution from which direct sampling is difficult.\n
+            Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
+            cn: 在统计学和统计物理学中，Metropolis-Hastings 算法是一种马尔可夫链蒙特卡洛 (MCMC) 方法，\n
+            用于从难以直接采样的概率分布中获得一系列随机样本。\n
+        
+        Args:
+            T (float): sample temperature / cn: 采样温度
+            max_iter (int): max iteration / cn: 最大迭代次数
+
+        Returns:
+            Tuple[List[int], List[float], object]: return energys, magnetizations, model / cn: 返回能量，磁化，模型
+        """
         energys: List[float] = []
         magnetizations: List[float] = []
         for iter in range(max_iter):
@@ -72,8 +127,7 @@ class Simulation():
             energys.append(energy)
             magnetizations.append(magnetization)
             if iter % 1000 == 0:
-                pass  # TODO(log): add log
-            # 平衡判据，用变异系数
+                pass  # TODO[0.2.1](Added): 添加日志功能
             if self.is_Flat(energys) and iter > 5000:
                 break
         return (energys, magnetizations, self.model)
@@ -83,14 +137,28 @@ class Simulation():
             T_min: float,
             Tdceny: float = 0.9,
             T: float = 10,
-            max_iter: int = 5000
-    ) -> Tuple[List[int], List[float], List[float]]:
+            max_iter: int = 5000) -> Tuple[List[int], List[float], object]:
+        """ Simulated annealing sampling / cn: 模拟退火采样
+        Simulated annealing (SA) is a probabilistic technique for approximating\n
+        the global optimum of a given function. Specifically, it is a metaheuristic\n
+        to approximate global optimization in a large search space for an optimization problem. 
+        Details please see: https://en.wikipedia.org/wiki/Simulated_annealing \n
+        cn: 模拟退火 (SA) 是一种概率技术，用于近似给定函数的全局最优解。\n
+        具体来说，它是一种元启发式算法，用于近似优化问题的大搜索空间中的全局优化。\n
+
+        Args:
+            T_min (float): Minimum temperature / cn: 最小温度
+            Tdceny (float, optional): Temperature decay / cn: 温度衰减 (Defaults 0.9)
+            T (float, optional): Initial temperature / cn: 初始温度 (Defaults 10)
+            max_iter (int, optional):  Maximum iteration / cn: 最大迭代次数 (Defaults 5000)
+
+        Returns:
+            Tuple[List[int], List[float], object]: return energys, magnetizations, model / cn: 返回能量，磁化，模型
+        """
         energys_anneal: List[float] = []
         magnetizations_anneal: List[float] = []
-        # 温度不够高，升温
         while T < T_min:
             T *= 2
-        # 开始模拟退火
         while T > T_min:
             energys, magnetizations, _ = self.metropolis_sample(T, max_iter)
             energys_anneal.extend(energys)
@@ -99,13 +167,23 @@ class Simulation():
             print(T)
         return (energys_anneal, magnetizations_anneal, self.model)
 
-    def wolff_sample(self, T, max_iter):
+    def wolff_sample(self, T: float,
+                     max_iter: int) -> Tuple[List[float], List[float], object]:
+        """ Wolff sampling / cn: Wolff 采样
+
+        Args:
+            T (float): sample temperature / cn: 采样温度
+            max_iter (int): max iteration / cn: 最大迭代次数
+
+        Returns:
+            Tuple[List[float], List[float], object]: return energys, magnetizations, model / cn: 返回能量，磁化，模型
+        """
         energys_wolff: List[float] = []
         magnetizations_wolff: List[float] = []
         for iter in range(max_iter):
             self.iter_wolff_sample(T)
             if iter % 1000 == 0:
-                pass  # TODO(log): add log
+                pass  # TODO[0.2.1](Added): 添加日志功能
             _, energy, magnetization = self.model._get_per_info()
             energys_wolff.append(energy)
             magnetizations_wolff.append(magnetization)
@@ -121,6 +199,12 @@ class ParameterSample(Simulation):
         self._init_paramlst()
 
     def _init_parameter(self):
+        """ Initialize parameter / cn: 初始化参数
+
+        Raises:
+            ValueError: Invalid parameter / cn: 无效的参数
+            ValueError: Invalid algorithm / cn: 无效的算法
+        """
         if not hasattr(self, 'parameter'):
             self.parameter = input('Input parameter T/h: (default: T)') or 'T'
             if self.parameter != 'T' and self.parameter != 'h':
@@ -139,18 +223,27 @@ class ParameterSample(Simulation):
                 raise ValueError('Invalid algorithm')
 
     def _init_paramlst(self):
+        """ Initialize parameter list / cn: 初始化参数列表
+        """
         if self.parameter == 'T':
             # T_lst 不存在，input 初始化
             if not hasattr(self, 'Tlst'):
                 Tmin = input('Input T_min: ')
                 while Tmin == '':
-                    Tmin = input('Input T_min: ')
-                Tmax = input('Input T_max: ')
+                    Tmin = input('Input T_min(\'q\' exit): ')
+                    # 输入 q 退出程序
+                    if Tmin == 'q':
+                        exit()
+                Tmax = input('Input T_max(\'q\' exit): ')
                 while Tmax == '':
                     Tmax = input('Input T_max: ')
+                    if Tmax == 'q':
+                        exit()
                 num = input('Input sample num: ')
                 while num == '':
-                    num = input('Input sample num: ')
+                    num = input('Input sample num(\'q\' exit): ')
+                    if num == 'q':
+                        exit()
                 Tmin = float(Tmin)
                 Tmax = float(Tmax)
                 num = int(num)
@@ -189,15 +282,42 @@ class ParameterSample(Simulation):
             raise ValueError('Invalid parameter')
 
     def _init_Tlst(self, T_min: float, T_max: float, num: int):
+        """ Initialize temperature list / cn: 初始化温度列表
+
+        Args:
+            T_min (float): T_min / cn: 最小温度
+            T_max (float): T_max / cn: 最大温度
+            num (int): sample num / cn: 采样数量
+        """
         self.Tlst = np.linspace(T_min, T_max, num=num)
 
     def _init_hlst(self, h_min: float, h_max: float, num: int):
+        """ Initialize field list / cn: 初始化场强列表
+
+        Args:
+            h_min (float): h_min / cn: 最小场强
+            h_max (float): h_max / cn: 最大场强
+            num (int): sample num / cn: 采样数量
+        """
         self.hlst = np.linspace(h_min, h_max, num=num)
 
     def _init_model(self):
+        """ Initialize model / cn: 初始化模型
+        """
         self.model = copy.deepcopy(self.rowmodel)
 
-    def sample(self, max_iter: int = 10000):
+    def sample(
+            self,
+            max_iter: int = 10000
+    ) -> Tuple[List[float], List[float], List[float]]:
+        """ Sample / cn: 采样
+
+        Args:
+            max_iter (int, optional): Maximum iteration / cn: 最大迭代次数 (Defaults 10000)
+
+        Returns:
+            Tuple[List[float], List[float], List[float]]: return parameter list, energy list, magnetization list / cn: 返回参数列表，能量列表，磁化列表
+        """
         if self.parameter == 'T':
             h0 = input('Input h0: (default: 0)') or 0
             self.model.H = h0
@@ -262,3 +382,5 @@ class ParameterSample(Simulation):
         else:
             raise ValueError('Invalid algorithm')
         return (p_lst, energy_lst, magnetization_lst)
+
+    # TODO[0.2.1](Added): 添加本征态采样功能

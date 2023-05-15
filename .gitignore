@@ -104,3 +104,9 @@ ENV/
 # IDE settings
 .vscode/
 .idea/
+
+# .history
+.history/
+
+# view
+view

@@ -40,7 +40,14 @@ class Ising(object):
         return self.spin[index]
 
     def _init_spin(self, type='ising', *args, **kwargs):
-        '''Initialize the spin of the system'''
+        """ Initialize the spin of the system
+
+        Args:
+            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
         if type == 'ising':
             self.spin = np.random.choice([-1, 1],
                                          size=(self.L, ) * self.dimension)
@@ -61,8 +68,15 @@ class Ising(object):
             raise ValueError('Invalid type of spin')
         self.tpye = type
 
-    def _get_neighbor(self, index: Tuple[int, ...]):
-        '''Get the neighbor of the site'''
+    def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
+        """ Get the neighbor of the site / cn: 获取格点的邻居
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Returns:
+            Tuple[int, ...]: The neighbor of the site / cn: 格点的邻居
+        """
         neighbors = []
         for i in range(self.dimension):
             for j in [-1, 1]:
@@ -71,16 +85,33 @@ class Ising(object):
         neighbors = list(set(neighbors))  # 去重
         return neighbors
 
-    def _get_neighbor_spin(self, index: Tuple[int, ...]):
-        '''Get the spin of the neighbor of the site'''
+    def _get_neighbor_spin(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
+        """ Get the spin of the neighbor of the site / cn: 获取格点的邻居的自旋
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Returns:
+            Tuple[int, ...]: The spin of the neighbor of the site / cn: 格点的邻居的自旋
+        """
         neighbors = self._get_neighbor(index)
         neighbors_spin = []
         for neighbor in neighbors:
             neighbors_spin.append(self.spin[neighbor])
         return neighbors_spin
 
-    def _get_site_energy(self, index: Tuple[int, ...]):
-        '''Get the energy of the site'''
+    def _get_site_energy(self, index: Tuple[int, ...]) -> float:
+        """ Get the energy of the site / cn: 获取格点的能量
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+
+        Returns:
+            float: The energy of the site / cn: 格点的能量
+        """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
         if self.tpye == 'ising' or self.tpye == 'heisenberg' or self.tpye == 'XY':
@@ -96,31 +127,52 @@ class Ising(object):
             raise ValueError('Invalid type of spin')
         return energy
 
-    def _get_per_energy(self):
-        '''Get the per energy of the system'''
+    def _get_per_energy(self) -> float:
+        """ Get the per energy of the system / cn: 获取系统的单位能量
+
+        Returns:
+            float: The per energy of the system / cn: 系统的单位能量
+        """
         energy = 0
         for index in np.ndindex(self.spin.shape):
             energy += self._get_site_energy(index)
         return energy / self.N / 2
 
-    def _get_total_energy(self):
-        '''Get the total energy of the system'''
+    def _get_total_energy(self) -> float:
+        """ Get the total energy of the system / cn: 获取系统的总能量
+
+        Returns:
+            float: The total energy of the system / cn: 系统的总能量
+        """
         total_energy = self._get_per_energy() * self.N
         self.total_energy = total_energy
         return total_energy
 
-    def _get_per_magnetization(self):
-        '''Get the per magnetization of the system'''
+    def _get_per_magnetization(self) -> float:
+        """ Get the per magnetization of the system / cn:
+
+        Returns:
+            float: The per magnetization of the system / cn: 系统的单位磁矩
+        """
         return self._get_total_magnetization() / self.N
 
-    def _get_total_magnetization(self):
-        '''Get the magnetization of the system'''
+    def _get_total_magnetization(self) -> float:
+        """ Get the magnetization of the system / cn: 获取系统的总磁矩
+
+        Returns:
+            float: The magnetization of the system / cn: 系统的总磁矩
+        """
         self.total_magnetization = np.sum(self.spin,
                                           axis=tuple(range(self.dimension)))
         return self.total_magnetization
 
     # 获取类的属性
-    def _get_info(self):
+    def _get_info(self) -> Tuple[np.ndarray, float, float]:
+        """ Get the info of the system / cn: 获取系统的信息
+
+        Returns:
+            Tuple[np.ndarray, float, float]: The info of the system / cn: 系统的信息
+        """
         return self.spin, self._get_total_energy(
         ), self._get_total_magnetization()
 
@@ -128,7 +180,14 @@ class Ising(object):
         return self.spin, self._get_per_energy(), self._get_per_magnetization()
 
     def _change_site_spin(self, index: Tuple[int, ...]):
-        '''Change the spin of the site'''
+        """ Change the spin of the site / cn: 改变格点的自旋
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
         if self.tpye == 'ising':
             self.spin[index] *= -1
         elif self.tpye == 'heisenberg' or self.tpye == 'XY':

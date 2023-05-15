@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['Click>=7.0', ]
 
-test_requirements = [ ]
+test_requirements = []
 
 setup(
     author="Uynaj GI",
@@ -44,6 +44,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/uynajgi/mcmc_statphys',
-    version='0.1.1',
+    version='0.1.2',
     zip_safe=False,
 )

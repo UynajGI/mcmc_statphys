@@ -1,5 +1,5 @@
 Welcome to mcmc_statphys's documentation!
-======================================
+=========================================
 
 .. toctree::
    :maxdepth: 2
