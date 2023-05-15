@@ -2,11 +2,14 @@
 import copy
 from collections import deque
 from typing import List, Tuple
+from alive_progress import alive_bar
 
 # here put the import lib
 import numpy as np
 
 
+# TODO[1.0.0](Changed): 重构模型类
+# TODO[0.2.1](Added): 添加进度条功能 alive_progress
 class Simulation():
 
     def __init__(self, model: object):
@@ -102,8 +105,8 @@ class Simulation():
         return np.std(sequence) / np.mean(sequence) < epsilon
 
     def metropolis_sample(
-        self, T: float, max_iter: int
-    ) -> Tuple[List[int], List[float], object]:
+            self, T: float,
+            max_iter: int) -> Tuple[List[int], List[float], object]:
         """ Metropolis sampling / cn: Metropolis 采样
             In statistics and statistical physics, the Metropolis–Hastings algorithm\n
             is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
@@ -111,7 +114,7 @@ class Simulation():
             Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
             cn: 在统计学和统计物理学中，Metropolis-Hastings 算法是一种马尔可夫链蒙特卡洛 (MCMC) 方法，\n
             用于从难以直接采样的概率分布中获得一系列随机样本。\n
-        
+
         Args:
             T (float): sample temperature / cn: 采样温度
             max_iter (int): max iteration / cn: 最大迭代次数
@@ -121,15 +124,21 @@ class Simulation():
         """
         energys: List[float] = []
         magnetizations: List[float] = []
-        for iter in range(max_iter):
-            self.iter_sample(T)
-            _, energy, magnetization = self.model._get_per_info()
-            energys.append(energy)
-            magnetizations.append(magnetization)
-            if iter % 1000 == 0:
-                pass  # TODO[0.2.1](Added): 添加日志功能
-            if self.is_Flat(energys) and iter > 5000:
-                break
+        with alive_bar(max_iter,
+                       manual=True,
+                       title="Metropolis Sample",
+                       force_tty=True) as bar:
+            for iter in range(max_iter):
+                self.iter_sample(T)
+                _, energy, magnetization = self.model._get_per_info()
+                energys.append(energy)
+                magnetizations.append(magnetization)
+                bar(iter / max_iter)
+                if iter % 1000 == 0:
+                    pass  # TODO[0.2.1](Added): 添加日志功能
+                if self.is_Flat(energys) and iter > 5000:
+                    break
+            bar(1.0)
         return (energys, magnetizations, self.model)
 
     def simulate_anneal_sample(
@@ -141,7 +150,7 @@ class Simulation():
         """ Simulated annealing sampling / cn: 模拟退火采样
         Simulated annealing (SA) is a probabilistic technique for approximating\n
         the global optimum of a given function. Specifically, it is a metaheuristic\n
-        to approximate global optimization in a large search space for an optimization problem. 
+        to approximate global optimization in a large search space for an optimization problem.
         Details please see: https://en.wikipedia.org/wiki/Simulated_annealing \n
         cn: 模拟退火 (SA) 是一种概率技术，用于近似给定函数的全局最优解。\n
         具体来说，它是一种元启发式算法，用于近似优化问题的大搜索空间中的全局优化。\n
@@ -159,12 +168,17 @@ class Simulation():
         magnetizations_anneal: List[float] = []
         while T < T_min:
             T *= 2
-        while T > T_min:
-            energys, magnetizations, _ = self.metropolis_sample(T, max_iter)
-            energys_anneal.extend(energys)
-            magnetizations_anneal.extend(magnetizations)
-            T = max(Tdceny * T, T_min)
-            print(T)
+        with alive_bar(title="Simulate Anneal",
+                       unknown="stars",
+                       spinner="message_scrolling",
+                       force_tty=True) as bar:
+            while T > T_min:
+                energys, magnetizations, _ = self.metropolis_sample(
+                    T, max_iter)
+                energys_anneal.extend(energys)
+                magnetizations_anneal.extend(magnetizations)
+                T = max(Tdceny * T, T_min)
+                bar()
         return (energys_anneal, magnetizations_anneal, self.model)
 
     def wolff_sample(self, T: float,
@@ -180,13 +194,15 @@ class Simulation():
         """
         energys_wolff: List[float] = []
         magnetizations_wolff: List[float] = []
-        for iter in range(max_iter):
-            self.iter_wolff_sample(T)
-            if iter % 1000 == 0:
-                pass  # TODO[0.2.1](Added): 添加日志功能
-            _, energy, magnetization = self.model._get_per_info()
-            energys_wolff.append(energy)
-            magnetizations_wolff.append(magnetization)
+        with alive_bar(max_iter, force_tty=True) as bar:
+            for iter in range(max_iter):
+                self.iter_wolff_sample(T)
+                if iter % 1000 == 0:
+                    pass  # TODO[0.2.1](Added): 添加日志功能
+                _, energy, magnetization = self.model._get_per_info()
+                energys_wolff.append(energy)
+                magnetizations_wolff.append(magnetization)
+                bar()
         return (energys_wolff, magnetizations_wolff, self.model)
 
 

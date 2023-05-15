@@ -6,7 +6,8 @@
 import unittest
 from click.testing import CliRunner
 
-from mcmc_statphys import method
+from mcmc_statphys import algorithm
+from mcmc_statphys import model
 from mcmc_statphys import cli
 
 
@@ -15,7 +16,9 @@ class TestMcmc_statphys(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures, if any."""
-
+        self.model = model.Ising(10)
+        self.method = algorithm.Simulation(self.model)
+        
     def tearDown(self):
         """Tear down test fixtures, if any."""
 

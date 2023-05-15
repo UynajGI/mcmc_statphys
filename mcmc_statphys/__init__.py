@@ -2,4 +2,5 @@
 
 __author__ = """Uynaj GI"""
 __email__ = 'suquan12148@outlook.com'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
+__all__ = ['method', 'model']
