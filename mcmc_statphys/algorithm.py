@@ -2,10 +2,12 @@
 import copy
 from collections import deque
 from typing import List, Tuple, Dict
+
 # here put the import lib
 import numpy as np
 import pandas as pd
 import uuid
+from tqdm import tqdm
 
 # TODO[0.2.1](Changed): 重构模型类
 # TODO[0.2.1](Added): 添加进度条功能 tqmd
@@ -96,39 +98,48 @@ class Metropolis:
         if uid is None:
             uid = (uuid.uuid1()).hex
         else:
-            if uid not in self.iter_data.index.get_level_values('uid').values:
+            if uid not in self.iter_data.index.get_level_values("uid").values:
                 self._reset_model()
             else:
-                self.model.set_spin(self.iter_data.loc[uid].loc[
-                    self.iter_data.loc[uid].index.max()].spin)
+                self.model.set_spin(
+                    self.iter_data.loc[uid]
+                    .loc[self.iter_data.loc[uid].index.max()]
+                    .spin
+                )
         return uid
 
     def _init_data(self):
-        self.iter_data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "H",
-            "energy",
-            "magnetization",
-            "spin",
-        ])
+        self.iter_data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "H",
+                "energy",
+                "magnetization",
+                "spin",
+            ]
+        )
         self.iter_data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, T, uid):
-        if uid not in self.iter_data.index.get_level_values('uid').values:
+        if uid not in self.iter_data.index.get_level_values("uid").values:
             self.iter_data.loc[(uid, 1), :] = [
-                T, self.model.H,
+                T,
+                self.model.H,
                 self.model._get_total_energy(),
-                self.model._get_per_magnetization(), 0
+                self.model._get_per_magnetization(),
+                0,
             ]
             self.iter_data.at[(uid, 1), "spin"] = self.model.spin
         else:
             iterplus = self.iter_data.loc[uid].index.max() + 1
             self.iter_data.loc[(uid, iterplus), :] = [
-                T, self.model.H,
+                T,
+                self.model.H,
                 self.model._get_total_energy(),
-                self.model._get_total_magnetization(), 0
+                self.model._get_total_magnetization(),
+                0,
             ]
             self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
 
@@ -143,8 +154,7 @@ class Metropolis:
             object: model / cn: 模型
         """
         uid = self._setup_uid(uid)
-        site = tuple(
-            np.random.randint(0, self.model.L, size=self.model.dimension))
+        site = tuple(np.random.randint(0, self.model.L, size=self.model.dimension))
         temp_model = copy.deepcopy(self.model)
         delta_E = self.model._change_delta_energy(site)
         if not sample_acceptance(delta_E, T):
@@ -153,10 +163,7 @@ class Metropolis:
         return uid
 
     def equil_sample(
-            self,
-            T: float,
-            max_iter: int = 1000,
-            uid: str = None
+        self, T: float, max_iter: int = 1000, uid: str = None
     ) -> Tuple[List[float], List[float], List[np.ndarray]]:
         """Equilibrium sampling / cn: 平衡采样
 
@@ -167,7 +174,7 @@ class Metropolis:
         """
 
         uid = self._setup_uid(uid)
-        for iter in range(max_iter):
+        for iter in tqdm(range(max_iter)):
             self.iter_sample(T, uid)
         return uid
 
@@ -181,22 +188,24 @@ class Metropolis:
             _type_: _description_
         """
         self._init_parameter()
-        param_lst = self._init_paramlst()
+        param_lst = tqdm(self._init_paramlst())
         uid_lst = []
         for param in param_lst:
             uid = self._setup_uid(None)
             uid_lst.append(uid)
-            if self.parameter == 'T':
+            if self.parameter == "T":
                 if self.model.tpye == "ising" or self.model.tpye == "potts":
-                    self.model.H = self.h0
+                    self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
-            elif self.parameter == 'h':
+            elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-
+            param_lst.set_description(
+                "{parameter} = {param}".format(parameter=self.parameter, param=param)
+            )
         uid_param_dict: Dict = {
-            'uid': uid_lst,
-            '{param}'.format(param=self.parameter): param_lst
+            "uid": uid_lst,
+            "{param}".format(param=self.parameter): param_lst,
         }
         return uid_param_dict
 
@@ -206,8 +215,8 @@ class Metropolis:
         Raises:
             ValueError: Invalid parameter / cn: 无效的参数
         """
-        self.parameter = input("Input parameter T/h: (default: T)") or "T"
-        if self.parameter != "T" and self.parameter != "h":
+        self.parameter = input("Input parameter T/H: (default: T)") or "T"
+        if self.parameter != "T" and self.parameter != "H":
             raise ValueError("Invalid parameter")
 
     def _init_paramlst(self):
@@ -217,17 +226,19 @@ class Metropolis:
             Tmax = float(self._getnum(string="T", type="_max"))
             num = int(self._getnum(string="sample", type="_num"))
             if self.model.tpye == "ising" or self.model.tpye == "potts":
-                self.h0 = float(self._getnum(string="h", type="_0"))
+                self.H0 = float(self._getnum(string="H", type="_0"))
             _rasie_parameter(Tmin, Tmax, num)
             return np.linspace(Tmin, Tmax, num=num)
-        elif self.parameter == "h":
+        elif self.parameter == "H":
             if self.model.tpye != "ising" or self.model.tpye != "potts":
                 raise ValueError(
-                    "The model {tpye} without outfield effect, can't change field, please change model."
-                    .format(tpye=self.model.tpye))
+                    "The model {tpye} without outfield effect, can't change field, please change model.".format(
+                        tpye=self.model.tpye
+                    )
+                )
             else:
-                hmin = float(self._getnum(string="h", type="_min"))
-                hmax = float(self._getnum(string="h", type="_max"))
+                hmin = float(self._getnum(string="H", type="_min"))
+                hmax = float(self._getnum(string="H", type="_max"))
                 num = int(self._getnum(string="sample", type="_num"))
                 self.T0 = float(self._getnum(string="T", type="_0"))
                 _rasie_parameter(hmin, hmax, num)
@@ -235,12 +246,12 @@ class Metropolis:
 
 
 class Wolff(Metropolis):
-    ''' The Wolff algorithm, named after Ulli Wolff, is an algorithm for Monte Carlo simulation\n
-        of the Ising model and Potts model.\n
-        Details please see: https://en.wikipedia.org/wiki/Wolff_algorithm \n
-        cn: Wolff 算法，以 Ulli Wolff 命名，是一种蒙特卡洛模拟算法，用于 Ising 模型和 Potts 模型。\n
-        详情请见：https://en.wikipedia.org/wiki/Wolff_algorithm
-    '''
+    """The Wolff algorithm, named after Ulli Wolff, is an algorithm for Monte Carlo simulation\n
+    of the Ising model and Potts model.\n
+    Details please see: https://en.wikipedia.org/wiki/Wolff_algorithm \n
+    cn: Wolff 算法，以 Ulli Wolff 命名，是一种蒙特卡洛模拟算法，用于 Ising 模型和 Potts 模型。\n
+    详情请见：https://en.wikipedia.org/wiki/Wolff_algorithm
+    """
 
     def __init__(self, model: object):
         if model.tpye != "ising":
@@ -262,8 +273,7 @@ class Wolff(Metropolis):
         cluster = set()
         neighbors = deque()
         # 随机选取一个点
-        site = tuple(
-            np.random.randint(0, self.model.L, size=self.model.dimension))
+        site = tuple(np.random.randint(0, self.model.L, size=self.model.dimension))
         neighbors.append(site)
         cluster.add(site)
         while len(neighbors) > 0:
@@ -282,7 +292,7 @@ class Wolff(Metropolis):
 
     def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None):
         uid = self._setup_uid(uid)
-        for iter in range(max_iter):
+        for iter in tqdm(range(max_iter)):
             self.iter_sample(T, uid)
 
     def param_sample(self, max_iter: int = 1000):
@@ -295,28 +305,29 @@ class Wolff(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = super()._init_paramlst()
+        param_lst = tqdm(super()._init_paramlst())
         uid_lst = []
         for param in param_lst:
             uid = self._setup_uid(None)
             uid_lst.append(uid)
-            if self.parameter == 'T':
+            if self.parameter == "T":
                 if self.model.tpye == "ising" or self.model.tpye == "potts":
-                    self.model.H = self.h0
+                    self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
-            elif self.parameter == 'h':
+            elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-
+            param_lst.set_description(
+                "{parameter} = {param}".format(parameter=self.parameter, param=param)
+            )
         uid_param_dict: Dict = {
-            'uid': uid_lst,
-            '{param}'.format(param=self.parameter): param_lst
+            "uid": uid_lst,
+            "{param}".format(param=self.parameter): param_lst,
         }
         return uid_param_dict
 
 
 class Anneal(Metropolis):
-
     def __init__(self, model: object):
         super().__init__(model)
         self.name = "Anneal"
@@ -330,12 +341,14 @@ class Anneal(Metropolis):
         """
         super().iter_sample(T, uid)
 
-    def equil_sample(self,
-                     targetT: float,
-                     max_iter: int = 1000,
-                     highT=None,
-                     dencyT=0.9,
-                     uid: str = None):
+    def equil_sample(
+        self,
+        targetT: float,
+        max_iter: int = 1000,
+        highT=None,
+        dencyT=0.9,
+        uid: str = None,
+    ):
         """_summary_
 
         Args:
@@ -353,8 +366,10 @@ class Anneal(Metropolis):
             highT *= 2
             if highT > targetT:
                 print(
-                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time."
-                    .format(old=tempT, target=targetT, new=highT))
+                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time.".format(
+                        old=tempT, target=targetT, new=highT
+                    )
+                )
         T = copy.deepcopy(highT)
         while T > targetT:
             super().equil_sample(T, max_iter=max_iter, uid=uid)
@@ -370,27 +385,29 @@ class Anneal(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = super()._init_paramlst()
+        param_lst = tqdm(super()._init_paramlst())
         uid_lst = []
         for param in param_lst:
             uid = self._setup_uid(None)
             uid_lst.append(uid)
-            if self.parameter == 'T':
+            if self.parameter == "T":
                 if self.model.tpye == "ising" or self.model.tpye == "potts":
-                    self.model.H = self.h0
+                    self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
-            elif self.parameter == 'h':
+            elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-
+            param_lst.set_description(
+                "{parameter} = {param}".format(parameter=self.parameter, param=param)
+            )
         uid_param_dict: Dict = {
-            'uid': uid_lst,
-            '{param}'.format(param=self.parameter): param_lst
+            "uid": uid_lst,
+            "{param}".format(param=self.parameter): param_lst,
         }
         return uid_param_dict
 
 
-# TODO[1.0.0](Added): 添加本征态采样功能
+# TODO[0.2.1](Added): 添加本征态采样功能
 
 # class Simulation:
 
@@ -605,8 +622,8 @@ class Anneal(Metropolis):
 #             ValueError: Invalid algorithm / cn: 无效的算法
 #         """
 #         if not hasattr(self, "parameter"):
-#             self.parameter = input("Input parameter T/h: (default: T)") or "T"
-#             if self.parameter != "T" and self.parameter != "h":
+#             self.parameter = input("Input parameter T/H: (default: T)") or "T"
+#             if self.parameter != "T" and self.parameter != "H":
 #                 raise ValueError("Invalid parameter")
 #         if not hasattr(self, "algorithm"):
 #             algorithm = (input(
@@ -654,7 +671,7 @@ class Anneal(Metropolis):
 #                 if Tmin < 0:
 #                     raise ValueError("T_min should be greater than 0")
 #                 self._init_Tlst(Tmin, Tmax, num)
-#         elif self.parameter == "h":
+#         elif self.parameter == "H":
 #             if self.model.tpye != "ising" or self.model.tpye != "potts":
 #                 raise ValueError(
 #                     "The model {tpye} without outfield effect, can't change field, please change model."
@@ -716,10 +733,10 @@ class Anneal(Metropolis):
 #             Tuple[List[float], List[float], List[float]]: return parameter list, energy list, magnetization list / cn: 返回参数列表，能量列表，磁化列表
 #         """
 #         if self.parameter == "T":
-#             h0 = input("Input h0: (default: 0)") or 0
-#             self.model.H = h0
+#             H0 = input("Input H0: (default: 0)") or 0
+#             self.model.H = H0
 #             p_lst = self.Tlst
-#         elif self.parameter == "h":
+#         elif self.parameter == "H":
 #             T0 = input("Input T0: (default: 1)") or 1
 #             p_lst = self.hlst
 #         else:
@@ -736,10 +753,10 @@ class Anneal(Metropolis):
 #                         T=T, max_iter=max_iter)
 #                     energy_lst.append(energy)
 #                     magnetization_lst.append(magnetization)
-#             elif self.parameter == "h":
-#                 for h in self.hlst:
+#             elif self.parameter == "H":
+#                 for H in self.hlst:
 #                     self._init_model()
-#                     self.model.H = h
+#                     self.model.H = H
 #                     energy, magnetization, _ = self.metropolis_sample(
 #                         T=T0, max_iter=max_iter)
 #                     energy_lst.append(energy)
@@ -752,9 +769,9 @@ class Anneal(Metropolis):
 #                         T=T, max_iter=max_iter)
 #                     energy_lst.append(energy)
 #                     magnetization_lst.append(magnetization)
-#             elif self.parameter == "h":
-#                 for h in self.hlst:
-#                     self.model.H = h
+#             elif self.parameter == "H":
+#                 for H in self.hlst:
+#                     self.model.H = H
 #                     self._init_model()
 #                     energy, magnetization, _ = self.wolff_sample(
 #                         T=T0, max_iter=max_iter)
@@ -768,10 +785,10 @@ class Anneal(Metropolis):
 #                         T=T, max_iter=max_iter)
 #                     energy_lst.append(energy)
 #                     magnetization_lst.append(magnetization)
-#             elif self.parameter == "h":
-#                 for h in self.hlst:
+#             elif self.parameter == "H":
+#                 for H in self.hlst:
 #                     self._init_model()
-#                     self.model.H = h
+#                     self.model.H = H
 #                     energy, magnetization, _ = self.simulate_anneal_sample(
 #                         T=T0, max_iter=max_iter)
 #                     energy_lst.append(energy)
