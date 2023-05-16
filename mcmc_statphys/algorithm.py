@@ -128,7 +128,7 @@ class Metropolis:
             self.iter_data.loc[(uid, iterplus), :] = [
                 T, self.model.H,
                 self.model._get_total_energy(),
-                self.model._get_per_magnetization(), 0
+                self.model._get_total_magnetization(), 0
             ]
             self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
 
@@ -490,7 +490,7 @@ class Anneal(Metropolis):
 #             self, T: float,
 #             max_iter: int) -> Tuple[List[int], List[float], object]:
 #         """Metropolis sampling / cn: Metropolis 采样
-#             In statistics and statistical physics, the Metropolis–Hastings algorithm\n
+#             In statistics and statistical physics, the Metropolis-Hastings algorithm\n
 #             is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
 #             random samples from a probability distribution from which direct sampling is difficult.\n
 #             Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
