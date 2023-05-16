@@ -73,7 +73,7 @@ class Metropolis:
 
     def __init__(self, model: object):
         self.model = model
-        self.rowmodel = copy.deepcopy(model)
+        self._rowmodel = copy.deepcopy(model)
         self.name = "Metroplis"
         self._init_data()
 
@@ -90,7 +90,7 @@ class Metropolis:
         return num
 
     def _reset_model(self):
-        self.model = copy.deepcopy(self.rowmodel)
+        self.model = copy.deepcopy(self._rowmodel)
 
     def _setup_uid(self, uid):
         if uid is None:
@@ -592,7 +592,7 @@ class Anneal(Metropolis):
 
 #     def __init__(self, model: object, *args, **kwargs):
 #         super().__init__(model)
-#         self.rowmodel = copy.deepcopy(model)
+#         self._rowmodel = copy.deepcopy(model)
 #         self._init_parameter()
 #         self._init_paramlst()
 
@@ -700,7 +700,7 @@ class Anneal(Metropolis):
 
 #     def _init_model(self):
 #         """Initialize model / cn: 初始化模型"""
-#         self.model = copy.deepcopy(self.rowmodel)
+#         self.model = copy.deepcopy(self._rowmodel)
 
 #     def sample(
 #             self,
