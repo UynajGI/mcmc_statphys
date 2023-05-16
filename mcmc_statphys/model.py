@@ -205,6 +205,11 @@ class Ising(object):
         detle_energy = new_site_energy - old_site_energy
         return detle_energy
 
+    def set_spin(self, spin):
+        self.spin = spin
+        self._get_total_energy()
+        self._get_total_magnetization()
+
 
 class Heisenberg(Ising):
 
