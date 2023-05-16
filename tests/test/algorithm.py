@@ -73,7 +73,7 @@ class Metropolis:
 
     def __init__(self, model: object):
         self.model = model
-        self.rowmodel = copy.deepcopy(model)
+        self._rowmodel = copy.deepcopy(model)
         self.name = "Metroplis"
         self._init_data()
 
@@ -90,7 +90,7 @@ class Metropolis:
         return num
 
     def _reset_model(self):
-        self.model = copy.deepcopy(self.rowmodel)
+        self.model = copy.deepcopy(self._rowmodel)
 
     def _setup_uid(self, uid):
         if uid is None:
@@ -128,7 +128,7 @@ class Metropolis:
             self.iter_data.loc[(uid, iterplus), :] = [
                 T, self.model.H,
                 self.model._get_total_energy(),
-                self.model._get_per_magnetization(), 0
+                self.model._get_total_magnetization(), 0
             ]
             self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
 
@@ -150,7 +150,7 @@ class Metropolis:
         if not sample_acceptance(delta_E, T):
             self.model = temp_model
         self._save_date(T, uid)
-        return self.model
+        return uid
 
     def equil_sample(
             self,
@@ -169,6 +169,7 @@ class Metropolis:
         uid = self._setup_uid(uid)
         for iter in range(max_iter):
             self.iter_sample(T, uid)
+        return uid
 
     def param_sample(self, max_iter: int = 1000):
         """_summary_
@@ -489,7 +490,7 @@ class Anneal(Metropolis):
 #             self, T: float,
 #             max_iter: int) -> Tuple[List[int], List[float], object]:
 #         """Metropolis sampling / cn: Metropolis 采样
-#             In statistics and statistical physics, the Metropolis–Hastings algorithm\n
+#             In statistics and statistical physics, the Metropolis-Hastings algorithm\n
 #             is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
 #             random samples from a probability distribution from which direct sampling is difficult.\n
 #             Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
@@ -592,7 +593,7 @@ class Anneal(Metropolis):
 
 #     def __init__(self, model: object, *args, **kwargs):
 #         super().__init__(model)
-#         self.rowmodel = copy.deepcopy(model)
+#         self._rowmodel = copy.deepcopy(model)
 #         self._init_parameter()
 #         self._init_paramlst()
 
@@ -700,7 +701,7 @@ class Anneal(Metropolis):
 
 #     def _init_model(self):
 #         """Initialize model / cn: 初始化模型"""
-#         self.model = copy.deepcopy(self.rowmodel)
+#         self.model = copy.deepcopy(self._rowmodel)
 
 #     def sample(
 #             self,
