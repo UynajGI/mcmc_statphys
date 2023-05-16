@@ -150,7 +150,7 @@ class Metropolis:
         if not sample_acceptance(delta_E, T):
             self.model = temp_model
         self._save_date(T, uid)
-        return self.model
+        return uid
 
     def equil_sample(
             self,
@@ -169,6 +169,7 @@ class Metropolis:
         uid = self._setup_uid(uid)
         for iter in range(max_iter):
             self.iter_sample(T, uid)
+        return uid
 
     def param_sample(self, max_iter: int = 1000):
         """_summary_
