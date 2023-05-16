@@ -121,3 +121,4 @@ package.json
 .cz-config.js
 changelog.config.js
 commitlint.config.js
+tests/test.ipynb
