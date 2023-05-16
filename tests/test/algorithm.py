@@ -172,7 +172,14 @@ class Metropolis:
             self.iter_sample(T, uid)
 
     def param_sample(self, max_iter: int = 1000):
+        """_summary_
 
+        Args:
+            max_iter (int, optional): _description_. Defaults to 1000.
+
+        Returns:
+            _type_: _description_
+        """
         self._init_parameter()
         param_lst = self._init_paramlst()
         uid_lst = []
@@ -182,10 +189,10 @@ class Metropolis:
             if self.parameter == 'T':
                 if self.model.tpye == "ising" or self.model.tpye == "potts":
                     self.model.H = self.h0
-                self.equil_sample(param, max_iter, uid)
+                self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == 'h':
                 self.model.H = param
-                self.equil_sample(self.T0, max_iter, uid)
+                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
 
         uid_param_dict: Dict = {
             'uid': uid_lst,
@@ -242,7 +249,15 @@ class Wolff(Metropolis):
         self.name = "Wolff"
 
     def iter_sample(self, T: float, uid: str = None) -> object:
+        """_summary_
 
+        Args:
+            T (float): _description_
+            uid (str, optional): _description_. Defaults to None.
+
+        Returns:
+            object: _description_
+        """
         uid = self._setup_uid(uid)
         cluster = set()
         neighbors = deque()
@@ -271,6 +286,14 @@ class Wolff(Metropolis):
             self.iter_sample(T, uid)
 
     def param_sample(self, max_iter: int = 1000):
+        """_summary_
+
+        Args:
+            max_iter (int, optional): _description_. Defaults to 1000.
+
+        Returns:
+            _type_: _description_
+        """
         super()._init_parameter()
         param_lst = super()._init_paramlst()
         uid_lst = []
@@ -280,10 +303,85 @@ class Wolff(Metropolis):
             if self.parameter == 'T':
                 if self.model.tpye == "ising" or self.model.tpye == "potts":
                     self.model.H = self.h0
-                self.equil_sample(param, max_iter, uid)
+                self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == 'h':
                 self.model.H = param
-                self.equil_sample(self.T0, max_iter, uid)
+                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
+
+        uid_param_dict: Dict = {
+            'uid': uid_lst,
+            '{param}'.format(param=self.parameter): param_lst
+        }
+        return uid_param_dict
+
+
+class Anneal(Metropolis):
+
+    def __init__(self, model: object):
+        super().__init__(model)
+        self.name = "Anneal"
+
+    def iter_sample(self, T: float, uid: str = None) -> object:
+        """_summary_
+
+        Args:
+            T (float): _description_
+            uid (str, optional): _description_. Defaults to None.
+        """
+        super().iter_sample(T, uid)
+
+    def equil_sample(self,
+                     targetT: float,
+                     max_iter: int = 1000,
+                     highT=None,
+                     dencyT=0.9,
+                     uid: str = None):
+        """_summary_
+
+        Args:
+            targetT (float): _description_
+            max_iter (int, optional): _description_. Defaults to 1000.
+            highT (int, optional): _description_. Defaults to 10.
+            dencyT (float, optional): _description_. Defaults to 0.9.
+            uid (str, optional): _description_. Defaults to None.
+        """
+        uid = self._setup_uid(uid)
+        if highT is None:
+            highT = targetT / (0.9**10)
+        tempT = copy.deepcopy(highT)
+        while highT < targetT:
+            highT *= 2
+            if highT > targetT:
+                print(
+                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time."
+                    .format(old=tempT, target=targetT, new=highT))
+        T = copy.deepcopy(highT)
+        while T > targetT:
+            super().equil_sample(T, max_iter=max_iter, uid=uid)
+            T = max(T * dencyT, targetT)
+
+    def param_sample(self, max_iter: int = 1000):
+        """_summary_
+
+        Args:
+            max_iter (int, optional): _description_. Defaults to 1000.
+
+        Returns:
+            _type_: _description_
+        """
+        super()._init_parameter()
+        param_lst = super()._init_paramlst()
+        uid_lst = []
+        for param in param_lst:
+            uid = self._setup_uid(None)
+            uid_lst.append(uid)
+            if self.parameter == 'T':
+                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                    self.model.H = self.h0
+                self.equil_sample(param, max_iter=max_iter, uid=uid)
+            elif self.parameter == 'h':
+                self.model.H = param
+                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
 
         uid_param_dict: Dict = {
             'uid': uid_lst,
