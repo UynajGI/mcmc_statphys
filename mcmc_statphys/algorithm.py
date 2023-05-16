@@ -156,7 +156,7 @@ class Metropolis:
     def equil_sample(
             self,
             T: float,
-            max_iter: int,
+            max_iter: int = 1000,
             uid: str = None
     ) -> Tuple[List[float], List[float], List[np.ndarray]]:
         """Equilibrium sampling / cn: 平衡采样
@@ -171,7 +171,7 @@ class Metropolis:
         for iter in range(max_iter):
             self.iter_sample(T, uid)
 
-    def param_sample(self, max_iter: int = 10000):
+    def param_sample(self, max_iter: int = 1000):
 
         self._init_parameter()
         param_lst = self._init_paramlst()
@@ -225,6 +225,71 @@ class Metropolis:
                 self.T0 = float(self._getnum(string="T", type="_0"))
                 _rasie_parameter(hmin, hmax, num)
                 return np.linspace(hmin, hmax, num=num)
+
+
+class Wolff(Metropolis):
+    ''' The Wolff algorithm, named after Ulli Wolff, is an algorithm for Monte Carlo simulation\n
+        of the Ising model and Potts model.\n
+        Details please see: https://en.wikipedia.org/wiki/Wolff_algorithm \n
+        cn: Wolff 算法，以 Ulli Wolff 命名，是一种蒙特卡洛模拟算法，用于 Ising 模型和 Potts 模型。\n
+        详情请见：https://en.wikipedia.org/wiki/Wolff_algorithm
+    '''
+
+    def __init__(self, model: object):
+        if model.tpye != "ising":
+            raise ValueError("The model must be Ising")
+        super().__init__(model)
+        self.name = "Wolff"
+
+    def iter_sample(self, T: float, uid: str = None) -> object:
+
+        uid = self._setup_uid(uid)
+        cluster = set()
+        neighbors = deque()
+        # 随机选取一个点
+        site = tuple(
+            np.random.randint(0, self.model.L, size=self.model.dimension))
+        neighbors.append(site)
+        cluster.add(site)
+        while len(neighbors) > 0:
+            neighbor = neighbors.pop()
+            total_neighbors = self.model._get_neighbor(neighbor)
+            for same_neighbor in total_neighbors:
+                b1 = self.model.spin[same_neighbor] == self.model.spin[site]
+                b2 = np.random.rand() < (1 - np.exp(-2 * self.model.Jij / T))
+                b3 = same_neighbor not in cluster
+                if b1 and b2 and b3:
+                    cluster.add(same_neighbor)
+                    neighbors.append(same_neighbor)
+        for clip in cluster:
+            self.model.spin[clip] *= -1
+        self._save_date(T, uid)
+
+    def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None):
+        uid = self._setup_uid(uid)
+        for iter in range(max_iter):
+            self.iter_sample(T, uid)
+
+    def param_sample(self, max_iter: int = 1000):
+        super()._init_parameter()
+        param_lst = super()._init_paramlst()
+        uid_lst = []
+        for param in param_lst:
+            uid = self._setup_uid(None)
+            uid_lst.append(uid)
+            if self.parameter == 'T':
+                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                    self.model.H = self.h0
+                self.equil_sample(param, max_iter, uid)
+            elif self.parameter == 'h':
+                self.model.H = param
+                self.equil_sample(self.T0, max_iter, uid)
+
+        uid_param_dict: Dict = {
+            'uid': uid_lst,
+            '{param}'.format(param=self.parameter): param_lst
+        }
+        return uid_param_dict
 
 
 class Simulation:
