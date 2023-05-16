@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 """Tests for `mcmc_statphys` package."""
-
 
 import unittest
 from click.testing import CliRunner
@@ -18,7 +16,7 @@ class TestMcmc_statphys(unittest.TestCase):
         """Set up test fixtures, if any."""
         self.model = model.Ising(10)
         self.method = algorithm.Simulation(self.model)
-        
+
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
