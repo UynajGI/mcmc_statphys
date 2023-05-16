@@ -1,7 +1,7 @@
 """Main module."""
 import copy
 from collections import deque
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from alive_progress import alive_bar
 # here put the import lib
 import numpy as np
@@ -82,9 +82,10 @@ class Metropolis:
         return self.name
 
     def _getnum(self, string: str, type: str):
-        num = input("Input {s}{t}: ").format(s=string, t=type)
+        num = input("Input {s}{t}: ".format(s=string, t=type))
         while num == "":
             num = input("Input h_min('q' exit): ")
+            num = eval(num)
             if num == "q":
                 exit()
         return num
@@ -99,9 +100,8 @@ class Metropolis:
             if uid not in self.iter_data.index.get_level_values('uid').values:
                 self._reset_model()
             else:
-                self.model.spin = self.iter_data.loc[uid].loc[
-                    self.iter_data.loc[uid].index.max()].spin
-                self.model.set_spin()
+                self.model.set_spin(self.iter_data.loc[uid].loc[
+                    self.iter_data.loc[uid].index.max()].spin)
         return uid
 
     def _init_data(self):
@@ -168,56 +168,97 @@ class Metropolis:
         """
 
         uid = self._setup_uid(uid)
-        for i in range(max_iter):
+        for iter in range(max_iter):
             self.iter_sample(T, uid)
 
-    def param_sample(self, **kwargs):
+    def param_sample(self, max_iter: int = 10000):
 
         self._init_parameter()
-        self._init_paramlst()
+        param_lst = self._init_paramlst()
+        uid_lst = []
+        for param in param_lst:
+            uid = self._setup_uid(None)
+            uid_lst.append(uid)
+            if self.parameter == 'T':
+                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                    self.model.H = self.h0
+                self.equil_sample(param, max_iter, uid)
+            elif self.parameter == 'h':
+                self.model.H = param
+                self.equil_sample(self.T0, max_iter, uid)
+
+        uid_param_dict: Dict = {
+            'uid': uid_lst,
+            '{param}'.format(param=self.parameter): param_lst
+        }
+        return uid_param_dict
 
     def _init_parameter(self):
         """Initialize parameter / cn: 初始化参数
 
         Raises:
             ValueError: Invalid parameter / cn: 无效的参数
-            ValueError: Invalid algorithm / cn: 无效的算法
         """
-        if not hasattr(self, "parameter"):
-            self.parameter = input("Input parameter T/h: (default: T)") or "T"
-            if self.parameter != "T" and self.parameter != "h":
-                raise ValueError("Invalid parameter")
+        self.parameter = input("Input parameter T/h: (default: T)") or "T"
+        if self.parameter != "T" and self.parameter != "h":
+            raise ValueError("Invalid parameter")
 
     def _init_paramlst(self):
         """Initialize parameter list / cn: 初始化参数列表"""
         if self.parameter == "T":
-            # T_lst 不存在，input 初始化
-            if not hasattr(self, "Tlst"):
-                Tmin = self._getnum(string="T", type="_min")
-                Tmax = self._getnum(string="T", type="_max")
-                num = self._getnum(string="sample", type="_num")
-                _rasie_parameter(Tmin, Tmax, num)
-                self._init_Tlst(Tmin, Tmax, num)
+            Tmin = float(self._getnum(string="T", type="_min"))
+            Tmax = float(self._getnum(string="T", type="_max"))
+            num = int(self._getnum(string="sample", type="_num"))
+            if self.model.tpye == "ising" or self.model.tpye == "potts":
+                self.h0 = float(self._getnum(string="h", type="_0"))
+            _rasie_parameter(Tmin, Tmax, num)
+            return np.linspace(Tmin, Tmax, num=num)
         elif self.parameter == "h":
             if self.model.tpye != "ising" or self.model.tpye != "potts":
                 raise ValueError(
                     "The model {tpye} without outfield effect, can't change field, please change model."
                     .format(tpye=self.model.tpye))
             else:
-                if not hasattr(self, "hlst"):
-                    hmin = self._getnum(string="h", type="_min")
-                    hmax = self._getnum(string="h", type="_max")
-                    num = self._getnum(string="sample", type="_num")
-                    _rasie_parameter(hmin, hmax, num)
-                    self._init_hlst(hmin, hmax, num)
-                else:
-                    raise ValueError("Invalid parameter")
+                hmin = float(self._getnum(string="h", type="_min"))
+                hmax = float(self._getnum(string="h", type="_max"))
+                num = int(self._getnum(string="sample", type="_num"))
+                self.T0 = float(self._getnum(string="T", type="_0"))
+                _rasie_parameter(hmin, hmax, num)
+                return np.linspace(hmin, hmax, num=num)
 
 
 class Simulation:
 
     def __init__(self, model: object):
         self.model = model
+
+    def sample_acceptance(self, delta_E: float,
+                          sample_Temperture: float) -> bool:
+        """Determine whether to accept a new state / cn: 判断是否接受新的状态
+
+        Args:
+            delta_E (float): Energy change / cn: 能量变化
+            sample_Temperture (float): Sample temperature / cn: 采样温度
+
+        Returns:
+            bool: accept or reject / cn: 接受或拒绝
+        """
+        if delta_E <= 0:
+            return True
+        else:
+            return np.random.rand() < np.exp(-delta_E / sample_Temperture)
+
+    def is_Flat(self, sequence: np.ndarray, epsilon: float = 0.1) -> bool:
+        """Determine whether the sequence is flat / cn: 判断序列是否平坦
+
+        Args:
+            sequence (np.ndarray): sampling sequence / cn: 采样序列
+            epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
+
+        Returns:
+            bool: is flat / cn: 是否平坦
+        """
+        return np.std(sequence) / np.mean(sequence) < epsilon
 
     def iter_sample(self, sample_Temperture: float) -> object:
         """single sample / cn: 单次采样

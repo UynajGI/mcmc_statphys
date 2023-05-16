@@ -1,23 +1,240 @@
 """Main module."""
 import copy
 from collections import deque
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from alive_progress import alive_bar
-
 # here put the import lib
 import numpy as np
+import pandas as pd
+import uuid
+
+# TODO[0.2.1](Changed): 重构模型类
+# TODO[0.2.1](Added): 添加进度条功能 tqmd
 
 
-# TODO[1.0.0](Changed): 重构模型类
-# TODO[0.2.1](Added): 添加进度条功能 alive_progress
-class Simulation():
+def is_Flat(sequence: np.ndarray, epsilon: float = 0.1) -> bool:
+    """Determine whether the sequence is flat / cn: 判断序列是否平坦
+
+    Args:
+        sequence (np.ndarray): sampling sequence / cn: 采样序列
+        epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
+
+    Returns:
+        bool: is flat / cn: 是否平坦
+    """
+    return np.std(sequence) / np.mean(sequence) < epsilon
+
+
+def sample_acceptance(delta_E: float, sample_Temperture: float) -> bool:
+    """Determine whether to accept a new state / cn: 判断是否接受新的状态
+
+    Args:
+        delta_E (float): Energy change / cn: 能量变化
+        sample_Temperture (float): Sample temperature / cn: 采样温度
+
+    Returns:
+        bool: accept or reject / cn: 接受或拒绝
+    """
+    if delta_E <= 0:
+        return True
+    else:
+        return np.random.rand() < np.exp(-delta_E / sample_Temperture)
+
+
+def _rasie_parameter(minparam: float, maxparam: float, num: int):
+    """Raise parameter / cn: 抛出参数
+
+    Args:
+        minparam (float): minparam / cn: 最小参数
+        maxparam (float): maxparam / cn: 最大参数
+        num (int): num / cn: 采样数量
+
+    Raises:
+        ValueError: min should be less than max
+        ValueError: num should be greater than 0
+        ValueError: min should be greater than 0
+    """
+    if minparam > maxparam:
+        raise ValueError("min should be less than max")
+    if num < 1:
+        raise ValueError("num should be greater than 0")
+    if minparam < 0:
+        raise ValueError("min should be greater than 0")
+
+
+class Metropolis:
+    """
+    \tIn statistics and statistical physics, the Metropolis–Hastings algorithm\n
+    is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
+    random samples from a probability distribution from which direct sampling is difficult.\n
+    Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
+    \tcn: 在统计学和统计物理学中，Metropolis-Hastings 算法是一种马尔可夫链蒙特卡洛 (MCMC) 方法，\n
+    用于从难以直接采样的概率分布中获得一系列随机样本。\n
+    """
+
+    def __init__(self, model: object):
+        self.model = model
+        self.rowmodel = copy.deepcopy(model)
+        self.name = "Metroplis"
+        self._init_data()
+
+    def __str__(self):
+        return self.name
+
+    def _getnum(self, string: str, type: str):
+        num = input("Input {s}{t}: ".format(s=string, t=type))
+        while num == "":
+            num = input("Input h_min('q' exit): ")
+            num = eval(num)
+            if num == "q":
+                exit()
+        return num
+
+    def _reset_model(self):
+        self.model = copy.deepcopy(self.rowmodel)
+
+    def _setup_uid(self, uid):
+        if uid is None:
+            uid = (uuid.uuid1()).hex
+        else:
+            if uid not in self.iter_data.index.get_level_values('uid').values:
+                self._reset_model()
+            else:
+                self.model.set_spin(self.iter_data.loc[uid].loc[
+                    self.iter_data.loc[uid].index.max()].spin)
+        return uid
+
+    def _init_data(self):
+        self.iter_data: pd.DataFrame = pd.DataFrame(columns=[
+            "uid",
+            "iter",
+            "T",
+            "H",
+            "energy",
+            "magnetization",
+            "spin",
+        ])
+        self.iter_data.set_index(["uid", "iter"], inplace=True)
+
+    def _save_date(self, T, uid):
+        if uid not in self.iter_data.index.get_level_values('uid').values:
+            self.iter_data.loc[(uid, 1), :] = [
+                T, self.model.H,
+                self.model._get_total_energy(),
+                self.model._get_per_magnetization(), 0
+            ]
+            self.iter_data.at[(uid, 1), "spin"] = self.model.spin
+        else:
+            iterplus = self.iter_data.loc[uid].index.max() + 1
+            self.iter_data.loc[(uid, iterplus), :] = [
+                T, self.model.H,
+                self.model._get_total_energy(),
+                self.model._get_per_magnetization(), 0
+            ]
+            self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
+
+    def iter_sample(self, T: float, uid: str = None) -> object:
+        """Single sample / cn: 单次采样
+
+        Args:
+            T (float): Sample temperature / cn: 采样温度
+            uid (str, optional): uid / cn: 唯一标识符 (Defaults None)
+
+        Returns:
+            object: model / cn: 模型
+        """
+        uid = self._setup_uid(uid)
+        site = tuple(
+            np.random.randint(0, self.model.L, size=self.model.dimension))
+        temp_model = copy.deepcopy(self.model)
+        delta_E = self.model._change_delta_energy(site)
+        if not sample_acceptance(delta_E, T):
+            self.model = temp_model
+        self._save_date(T, uid)
+        return self.model
+
+    def equil_sample(
+            self,
+            T: float,
+            max_iter: int,
+            uid: str = None
+    ) -> Tuple[List[float], List[float], List[np.ndarray]]:
+        """Equilibrium sampling / cn: 平衡采样
+
+        Args:
+            T (float): Sample temperature / cn: 采样温度
+            max_iter (int): Maximum iteration / cn: 最大迭代次数
+            uid (str, optional): uid / cn: 唯一标识符 (Defaults None)
+        """
+
+        uid = self._setup_uid(uid)
+        for iter in range(max_iter):
+            self.iter_sample(T, uid)
+
+    def param_sample(self, max_iter: int = 10000):
+
+        self._init_parameter()
+        param_lst = self._init_paramlst()
+        uid_lst = []
+        for param in param_lst:
+            uid = self._setup_uid(None)
+            uid_lst.append(uid)
+            if self.parameter == 'T':
+                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                    self.model.H = self.h0
+                self.equil_sample(param, max_iter, uid)
+            elif self.parameter == 'h':
+                self.model.H = param
+                self.equil_sample(self.T0, max_iter, uid)
+
+        uid_param_dict: Dict = {
+            'uid': uid_lst,
+            '{param}'.format(param=self.parameter): param_lst
+        }
+        return uid_param_dict
+
+    def _init_parameter(self):
+        """Initialize parameter / cn: 初始化参数
+
+        Raises:
+            ValueError: Invalid parameter / cn: 无效的参数
+        """
+        self.parameter = input("Input parameter T/h: (default: T)") or "T"
+        if self.parameter != "T" and self.parameter != "h":
+            raise ValueError("Invalid parameter")
+
+    def _init_paramlst(self):
+        """Initialize parameter list / cn: 初始化参数列表"""
+        if self.parameter == "T":
+            Tmin = float(self._getnum(string="T", type="_min"))
+            Tmax = float(self._getnum(string="T", type="_max"))
+            num = int(self._getnum(string="sample", type="_num"))
+            if self.model.tpye == "ising" or self.model.tpye == "potts":
+                self.h0 = float(self._getnum(string="h", type="_0"))
+            _rasie_parameter(Tmin, Tmax, num)
+            return np.linspace(Tmin, Tmax, num=num)
+        elif self.parameter == "h":
+            if self.model.tpye != "ising" or self.model.tpye != "potts":
+                raise ValueError(
+                    "The model {tpye} without outfield effect, can't change field, please change model."
+                    .format(tpye=self.model.tpye))
+            else:
+                hmin = float(self._getnum(string="h", type="_min"))
+                hmax = float(self._getnum(string="h", type="_max"))
+                num = int(self._getnum(string="sample", type="_num"))
+                self.T0 = float(self._getnum(string="T", type="_0"))
+                _rasie_parameter(hmin, hmax, num)
+                return np.linspace(hmin, hmax, num=num)
+
+
+class Simulation:
 
     def __init__(self, model: object):
         self.model = model
 
     def sample_acceptance(self, delta_E: float,
                           sample_Temperture: float) -> bool:
-        """ Determine whether to accept a new state / cn: 判断是否接受新的状态
+        """Determine whether to accept a new state / cn: 判断是否接受新的状态
 
         Args:
             delta_E (float): Energy change / cn: 能量变化
@@ -30,6 +247,18 @@ class Simulation():
             return True
         else:
             return np.random.rand() < np.exp(-delta_E / sample_Temperture)
+
+    def is_Flat(self, sequence: np.ndarray, epsilon: float = 0.1) -> bool:
+        """Determine whether the sequence is flat / cn: 判断序列是否平坦
+
+        Args:
+            sequence (np.ndarray): sampling sequence / cn: 采样序列
+            epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
+
+        Returns:
+            bool: is flat / cn: 是否平坦
+        """
+        return np.std(sequence) / np.mean(sequence) < epsilon
 
     def iter_sample(self, sample_Temperture: float) -> object:
         """single sample / cn: 单次采样
@@ -65,9 +294,9 @@ class Simulation():
         Returns:
             object: model / cn: 模型
         """
-        if self.model.tpye != 'ising':
+        if self.model.tpye != "ising":
             # wolff 算法只适用于 ising 模型
-            raise ValueError('Invalid type of spin')
+            raise ValueError("Invalid type of spin")
         else:
             cluster = set()
             neighbors = deque()
@@ -92,22 +321,10 @@ class Simulation():
                 self.model.spin[clip] *= -1
         return self.model
 
-    def is_Flat(self, sequence: np.ndarray, epsilon: float = 0.1) -> bool:
-        """ Determine whether the sequence is flat / cn: 判断序列是否平坦
-
-        Args:
-            sequence (np.ndarray): sampling sequence / cn: 采样序列
-            epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
-
-        Returns:
-            bool: is flat / cn: 是否平坦
-        """
-        return np.std(sequence) / np.mean(sequence) < epsilon
-
     def metropolis_sample(
             self, T: float,
             max_iter: int) -> Tuple[List[int], List[float], object]:
-        """ Metropolis sampling / cn: Metropolis 采样
+        """Metropolis sampling / cn: Metropolis 采样
             In statistics and statistical physics, the Metropolis–Hastings algorithm\n
             is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
             random samples from a probability distribution from which direct sampling is difficult.\n
@@ -147,7 +364,7 @@ class Simulation():
             Tdceny: float = 0.9,
             T: float = 10,
             max_iter: int = 5000) -> Tuple[List[int], List[float], object]:
-        """ Simulated annealing sampling / cn: 模拟退火采样
+        """Simulated annealing sampling / cn: 模拟退火采样
         Simulated annealing (SA) is a probabilistic technique for approximating\n
         the global optimum of a given function. Specifically, it is a metaheuristic\n
         to approximate global optimization in a large search space for an optimization problem.
@@ -168,10 +385,12 @@ class Simulation():
         magnetizations_anneal: List[float] = []
         while T < T_min:
             T *= 2
-        with alive_bar(title="Simulate Anneal",
-                       unknown="stars",
-                       spinner="message_scrolling",
-                       force_tty=True) as bar:
+        with alive_bar(
+                title="Simulate Anneal",
+                unknown="stars",
+                spinner="message_scrolling",
+                force_tty=True,
+        ) as bar:
             while T > T_min:
                 energys, magnetizations, _ = self.metropolis_sample(
                     T, max_iter)
@@ -183,7 +402,7 @@ class Simulation():
 
     def wolff_sample(self, T: float,
                      max_iter: int) -> Tuple[List[float], List[float], object]:
-        """ Wolff sampling / cn: Wolff 采样
+        """Wolff sampling / cn: Wolff 采样
 
         Args:
             T (float): sample temperature / cn: 采样温度
@@ -215,90 +434,89 @@ class ParameterSample(Simulation):
         self._init_paramlst()
 
     def _init_parameter(self):
-        """ Initialize parameter / cn: 初始化参数
+        """Initialize parameter / cn: 初始化参数
 
         Raises:
             ValueError: Invalid parameter / cn: 无效的参数
             ValueError: Invalid algorithm / cn: 无效的算法
         """
-        if not hasattr(self, 'parameter'):
-            self.parameter = input('Input parameter T/h: (default: T)') or 'T'
-            if self.parameter != 'T' and self.parameter != 'h':
-                raise ValueError('Invalid parameter')
-        if not hasattr(self, 'algorithm'):
-            algorithm = input(
-                'Input algorithm:\n\t[1] metropolis\n\t[2] wolff\n\t[3] anneal: (default: [1] metropolis)'
-            ) or 'metropolis'
-            if algorithm == '1' or algorithm == 'metropolis':
-                self.algorithm = 'metropolis'
-            elif algorithm == '2' or algorithm == 'wolff':
-                self.algorithm = 'wolff'
-            elif algorithm == '3' or algorithm == 'anneal':
-                self.algorithm = 'anneal'
+        if not hasattr(self, "parameter"):
+            self.parameter = input("Input parameter T/h: (default: T)") or "T"
+            if self.parameter != "T" and self.parameter != "h":
+                raise ValueError("Invalid parameter")
+        if not hasattr(self, "algorithm"):
+            algorithm = (input(
+                "Input algorithm:\n\t[1] metropolis\n\t[2] wolff\n\t[3] anneal: (default: [1] metropolis)"
+            ) or "metropolis")
+            if algorithm == "1" or algorithm == "metropolis":
+                self.algorithm = "metropolis"
+            elif algorithm == "2" or algorithm == "wolff":
+                self.algorithm = "wolff"
+            elif algorithm == "3" or algorithm == "anneal":
+                self.algorithm = "anneal"
             else:
-                raise ValueError('Invalid algorithm')
+                raise ValueError("Invalid algorithm")
 
     def _init_paramlst(self):
-        """ Initialize parameter list / cn: 初始化参数列表
-        """
-        if self.parameter == 'T':
+        """Initialize parameter list / cn: 初始化参数列表"""
+        if self.parameter == "T":
             # T_lst 不存在，input 初始化
-            if not hasattr(self, 'Tlst'):
-                Tmin = input('Input T_min: ')
-                while Tmin == '':
-                    Tmin = input('Input T_min(\'q\' exit): ')
+            if not hasattr(self, "Tlst"):
+                Tmin = input("Input T_min: ")
+                while Tmin == "":
+                    Tmin = input("Input T_min('q' exit): ")
                     # 输入 q 退出程序
-                    if Tmin == 'q':
+                    if Tmin == "q":
                         exit()
-                Tmax = input('Input T_max(\'q\' exit): ')
-                while Tmax == '':
-                    Tmax = input('Input T_max: ')
-                    if Tmax == 'q':
+                Tmax = input("Input T_max('q' exit): ")
+                while Tmax == "":
+                    Tmax = input("Input T_max: ")
+                    if Tmax == "q":
                         exit()
-                num = input('Input sample num: ')
-                while num == '':
-                    num = input('Input sample num(\'q\' exit): ')
-                    if num == 'q':
+                num = input("Input sample num: ")
+                while num == "":
+                    num = input("Input sample num('q' exit): ")
+                    if num == "q":
                         exit()
                 Tmin = float(Tmin)
                 Tmax = float(Tmax)
                 num = int(num)
                 # 判断输入是否合法
                 if Tmin > Tmax:
-                    raise ValueError('T_min should be less than T_max')
+                    raise ValueError("T_min should be less than T_max")
                 if num < 1:
-                    raise ValueError('num should be greater than 0')
+                    raise ValueError("num should be greater than 0")
                 # 判断 Tmin 是否合法
                 if Tmin < 0:
-                    raise ValueError('T_min should be greater than 0')
+                    raise ValueError("T_min should be greater than 0")
                 self._init_Tlst(Tmin, Tmax, num)
-        elif self.parameter == 'h':
-            if self.model.tpye != 'ising' or self.model.tpye != 'potts':
+        elif self.parameter == "h":
+            if self.model.tpye != "ising" or self.model.tpye != "potts":
                 raise ValueError(
-                    'The model {tpye} without outfield effect, can\'t change field, please change model.'
+                    "The model {tpye} without outfield effect, can't change field, please change model."
                     .format(tpye=self.model.tpye))
             else:
-                if not hasattr(self, 'hlst'):
-                    hmin = input('Input h_min: ')
-                    hmax = input('Input h_max: ')
-                    num = input('Input sample num: ')
+                if not hasattr(self, "hlst"):
+                    hmin = input("Input h_min: ")
+                    hmax = input("Input h_max: ")
+                    num = input("Input sample num: ")
                     self._init_hlst(hmin, hmax, num)
                     if hmin > hmax:
-                        raise ValueError('h_min should be less than h_max')
+                        raise ValueError("h_min should be less than h_max")
                     if num < 1:
-                        raise ValueError('num should be greater than 0')
+                        raise ValueError("num should be greater than 0")
                     if hmin < 0:
-                        raise ValueError('h_min should be greater than 0')
+                        raise ValueError("h_min should be greater than 0")
                     if num != int(num):
                         num = int(num)
-                        print('num should be a positive integer, now num = ',
+                        print("num should be a positive integer, now num = ",
                               num)
                     self._init_hlst(hmin, hmax, num)
         else:
-            raise ValueError('Invalid parameter')
+            raise ValueError("Invalid parameter")
 
     def _init_Tlst(self, T_min: float, T_max: float, num: int):
-        """ Initialize temperature list / cn: 初始化温度列表
+        """Initialize temperature list / cn: 初始化温度列表
 
         Args:
             T_min (float): T_min / cn: 最小温度
@@ -308,7 +526,7 @@ class ParameterSample(Simulation):
         self.Tlst = np.linspace(T_min, T_max, num=num)
 
     def _init_hlst(self, h_min: float, h_max: float, num: int):
-        """ Initialize field list / cn: 初始化场强列表
+        """Initialize field list / cn: 初始化场强列表
 
         Args:
             h_min (float): h_min / cn: 最小场强
@@ -318,15 +536,14 @@ class ParameterSample(Simulation):
         self.hlst = np.linspace(h_min, h_max, num=num)
 
     def _init_model(self):
-        """ Initialize model / cn: 初始化模型
-        """
+        """Initialize model / cn: 初始化模型"""
         self.model = copy.deepcopy(self.rowmodel)
 
     def sample(
             self,
             max_iter: int = 10000
     ) -> Tuple[List[float], List[float], List[float]]:
-        """ Sample / cn: 采样
+        """Sample / cn: 采样
 
         Args:
             max_iter (int, optional): Maximum iteration / cn: 最大迭代次数 (Defaults 10000)
@@ -334,28 +551,28 @@ class ParameterSample(Simulation):
         Returns:
             Tuple[List[float], List[float], List[float]]: return parameter list, energy list, magnetization list / cn: 返回参数列表，能量列表，磁化列表
         """
-        if self.parameter == 'T':
-            h0 = input('Input h0: (default: 0)') or 0
+        if self.parameter == "T":
+            h0 = input("Input h0: (default: 0)") or 0
             self.model.H = h0
             p_lst = self.Tlst
-        elif self.parameter == 'h':
-            T0 = input('Input T0: (default: 1)') or 1
+        elif self.parameter == "h":
+            T0 = input("Input T0: (default: 1)") or 1
             p_lst = self.hlst
         else:
-            raise ValueError('Invalid parameter')
+            raise ValueError("Invalid parameter")
 
         energy_lst = []
         magnetization_lst = []
 
-        if self.algorithm == 'metropolis':
-            if self.parameter == 'T':
+        if self.algorithm == "metropolis":
+            if self.parameter == "T":
                 for T in self.Tlst:
                     self._init_model()
                     energy, magnetization, _ = self.metropolis_sample(
                         T=T, max_iter=max_iter)
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
-            elif self.parameter == 'h':
+            elif self.parameter == "h":
                 for h in self.hlst:
                     self._init_model()
                     self.model.H = h
@@ -363,15 +580,15 @@ class ParameterSample(Simulation):
                         T=T0, max_iter=max_iter)
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
-        elif self.algorithm == 'wolff':
-            if self.parameter == 'T':
+        elif self.algorithm == "wolff":
+            if self.parameter == "T":
                 for T in self.Tlst:
                     self._init_model()
                     energy, magnetization, _ = self.wolff_sample(
                         T=T, max_iter=max_iter)
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
-            elif self.parameter == 'h':
+            elif self.parameter == "h":
                 for h in self.hlst:
                     self.model.H = h
                     self._init_model()
@@ -379,15 +596,15 @@ class ParameterSample(Simulation):
                         T=T0, max_iter=max_iter)
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
-        elif self.algorithm == 'anneal':
-            if self.parameter == 'T':
+        elif self.algorithm == "anneal":
+            if self.parameter == "T":
                 for T in self.Tlst:
                     self._init_model()
                     energy, magnetization, _ = self.simulate_anneal_sample(
                         T=T, max_iter=max_iter)
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
-            elif self.parameter == 'h':
+            elif self.parameter == "h":
                 for h in self.hlst:
                     self._init_model()
                     self.model.H = h
@@ -396,7 +613,7 @@ class ParameterSample(Simulation):
                     energy_lst.append(energy)
                     magnetization_lst.append(magnetization)
         else:
-            raise ValueError('Invalid algorithm')
+            raise ValueError("Invalid algorithm")
         return (p_lst, energy_lst, magnetization_lst)
 
     # TODO[0.2.1](Added): 添加本征态采样功能
