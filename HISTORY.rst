@@ -10,6 +10,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]
 ------------
 
+[0.2.1]
+-------
+
+Fixed
+>>>>>
+
+* Fix the bug of saving `_get_per_magnetization` in `_save_data` in `algorithm`
+
+Added
+>>>>>
+
+* Add moudle `analysis` to analyze the data
+* Add moudle `draw` to draw the figures
+* Add method `setspin` in `model`
+* Add tqmd to show the progress bar
+
+Changed
+>>>>>>>
+
+* Change the methods in the `analysis` module: removed the `Sample` and `ParameterSample` classes, added `Metropolis`, `Wolff`, `Anneal` classes and several methods
+
 [0.1.2] - 2023-05-15
 --------------------
 
