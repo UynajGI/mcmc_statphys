@@ -3,6 +3,6 @@
 __author__ = """Uynaj GI"""
 __email__ = 'suquan12148@outlook.com'
 __version__ = '0.1.2'
-__all__ = ['algorithm', 'model']
+__all__ = ['algorithm', 'model', 'analysis', 'draw']
 
-from . import algorithm, model, analysis
+from . import algorithm, model, analysis, draw
