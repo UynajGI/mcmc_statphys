@@ -5,4 +5,4 @@ __email__ = 'suquan12148@outlook.com'
 __version__ = '0.1.2'
 # __all__ = ['algorithm', 'model']
 
-from . import algorithm, model, analysis
+from . import algorithm, model, analysis, draw

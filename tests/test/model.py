@@ -206,7 +206,7 @@ class Ising(object):
         return detle_energy
 
     def set_spin(self, spin):
-        # TODO: 增加 spin 格式审查
+        # TODO[0.3.0]: 增加 spin 格式审查
         self.spin = spin
         self._get_total_energy()
         self._get_total_magnetization()
