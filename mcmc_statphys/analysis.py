@@ -20,37 +20,41 @@ def _rename(column):
     return column
 
 
-def mean(data, uid, column):
+def mean(algorithm, uid, column):
     '''
     Calculate the mean value of a column of data.
     '''
+    data = algorithm.iter_data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.mean(array)
 
 
-def std(data, uid, column):
+def std(algorithm, uid, column):
     '''
     Calculate the standard deviation of a column of data.
     '''
+    data = algorithm.iter_data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.std(array)
 
 
-def diff(data, uid, column, n=1):
+def diff(algorithm, uid, column, n=1):
     '''
     Calculate the difference of a column of data.
     '''
+    data = algorithm.iter_data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.diff(array, n)
 
 
-def getcolumn(data, uid, column):
+def getcolumn(algorithm, uid, column):
     '''
     Get a column of data.
     '''
+    data = algorithm.iter_data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return array
