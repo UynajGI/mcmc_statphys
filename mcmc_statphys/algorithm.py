@@ -154,7 +154,7 @@ class Metropolis:
             object: model / cn: 模型
         """
         uid = self._setup_uid(uid)
-        site = tuple(np.random.randint(0, self.model.L, size=self.model.dimension))
+        site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         temp_model = copy.deepcopy(self.model)
         delta_E = self.model._change_delta_energy(site)
         if not sample_acceptance(delta_E, T):
@@ -273,7 +273,7 @@ class Wolff(Metropolis):
         cluster = set()
         neighbors = deque()
         # 随机选取一个点
-        site = tuple(np.random.randint(0, self.model.L, size=self.model.dimension))
+        site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         neighbors.append(site)
         cluster.add(site)
         while len(neighbors) > 0:
@@ -452,7 +452,7 @@ class Anneal(Metropolis):
 #             object: model / cn: 模型
 #         """
 #         site = tuple(
-#             np.random.randint(0, self.model.L, size=self.model.dimension))
+#             np.random.randint(0, self.model.L, size=self.model.dim))
 #         temp_model = copy.deepcopy(self.model)
 #         delta_E = self.model._change_delta_energy(site)
 #         if not self.sample_acceptance(delta_E, sample_Temperture):
@@ -484,7 +484,7 @@ class Anneal(Metropolis):
 #             neighbors = deque()
 #             # 随机选取一个点
 #             site = tuple(
-#                 np.random.randint(0, self.model.L, size=self.model.dimension))
+#                 np.random.randint(0, self.model.L, size=self.model.dim))
 #             neighbors.append(site)
 #             cluster.add(site)
 #             while len(neighbors) > 0:

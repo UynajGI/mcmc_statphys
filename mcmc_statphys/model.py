@@ -20,13 +20,13 @@ class Ising(object):
                  L: int,
                  Jij: float = 1,
                  H: float = 0,
-                 dimension: int = 2,
+                 dim: int = 2,
                  *args: Any,
                  **kwargs: Any):
         L = int(L)
         self.L = L
-        self.dimension = dimension
-        self.N = L**dimension
+        self.dim = dim
+        self.N = L**dim
         self.Jij = Jij
         self.H = H
         self._init_spin(type='ising')
@@ -50,19 +50,19 @@ class Ising(object):
         """
         if type == 'ising':
             self.spin = np.random.choice([-1, 1],
-                                         size=(self.L, ) * self.dimension)
+                                         size=(self.L, ) * self.dim)
             self.spin = self.spin.astype(np.int8)
         elif type == 'heisenberg':
             self.spin = 2 * np.random.rand(self.L, self.L, self.L,
-                                           self.dimension) - 1
+                                           self.dim) - 1
             self.spin = self.spin.astype(np.float32)
         elif type == 'XY':
-            self.spin = 2 * np.random.rand(self.L, self.L, self.dimension) - 1
+            self.spin = 2 * np.random.rand(self.L, self.L, self.dim) - 1
             self.spin = self.spin.astype(np.float32)
         elif type == 'potts':
             p = kwargs.pop('p', 2)
             self.spin = np.random.choice(range(p),
-                                         size=(self.L, ) * self.dimension)
+                                         size=(self.L, ) * self.dim)
             self.spin = self.spin.astype(np.int8)
         else:
             raise ValueError('Invalid type of spin')
@@ -78,7 +78,7 @@ class Ising(object):
             Tuple[int, ...]: The neighbor of the site / cn: 格点的邻居
         """
         neighbors = []
-        for i in range(self.dimension):
+        for i in range(self.dim):
             for j in [-1, 1]:
                 neighbors.append(index[:i] + ((index[i] + j) % self.L, ) +
                                  index[i + 1:])
@@ -163,7 +163,7 @@ class Ising(object):
             float: The magnetization of the system / cn: 系统的总磁矩
         """
         self.total_magnetization = np.sum(self.spin,
-                                          axis=tuple(range(self.dimension)))
+                                          axis=tuple(range(self.dim)))
         return self.total_magnetization
 
     # 获取类的属性
@@ -191,7 +191,7 @@ class Ising(object):
         if self.tpye == 'ising':
             self.spin[index] *= -1
         elif self.tpye == 'heisenberg' or self.tpye == 'XY':
-            self.spin[index] = 2 * np.random.rand(self.dimension) - 1
+            self.spin[index] = 2 * np.random.rand(self.dim) - 1
         elif self.tpye == 'potts':
             self.spin[index] = np.random.choice(range(self.p))
         else:
@@ -215,21 +215,21 @@ class Ising(object):
 class Heisenberg(Ising):
 
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dimension=3, *args, **kwargs)
+        super().__init__(L, Jij, H, dim=3, *args, **kwargs)
         self._init_spin(type='heisenberg')
 
 
 class XY(Ising):
 
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dimension=2, *args, **kwargs)
+        super().__init__(L, Jij, H, dim=2, *args, **kwargs)
         self._init_spin(type='XY')
 
 
 class Potts(Ising):
 
-    def __init__(self, L, Jij=1, H=0, dimension=2, p=3, *args, **kwargs):
+    def __init__(self, L, Jij=1, H=0, dim=2, p=3, *args, **kwargs):
         # p is the number of states of the system
         self.p = p
-        super().__init__(L, Jij, H, dimension, *args, **kwargs)
+        super().__init__(L, Jij, H, dim, *args, **kwargs)
         self._init_spin(type='potts', p=p)
