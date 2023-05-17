@@ -128,7 +128,7 @@ class Metropolis:
                 T,
                 self.model.H,
                 self.model._get_total_energy(),
-                self.model._get_per_magnetization(),
+                self.model._get_total_magnetization(),
                 0,
             ]
             self.iter_data.at[(uid, 1), "spin"] = self.model.spin
