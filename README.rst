@@ -31,13 +31,16 @@ A simple Ising model simulation.
 .. code-block:: python
 
     >>> import mcmc_statphys as mcsp
-    >>> import matplotlib.pyplot as plt # We have not yet produced a built-in plotting module. Stay tuned.
-    >>> model = mcsp.model.Ising(16)
-    >>> simulator = mcsp.method.Simulation(model)
-    >>> energy, magnetization, _ = simulator.metropolis_sample(T=1, max_iter=10000)
-    >>> plt.plot(energy)
+    >>> model = mcsp.model.Ising(12) # 12x12 Ising model
+    >>> algorithm = mcsp.method.Metropolis(model) # Metropolis algorithm
+    >>> uid = algorithm.equil_sample(T=1, max_iter=1000) # sample until equilibrium
+    >>> fig = mcsp.draw.Plot(algorithm) 
+    >>> fig.curve(uid=uid, comlumn='energy') # plot the energy curve
 
-Install the latest version of mcmc_statphys: 
+Install
+-------
+
+the latest version of mcmc_statphys: 
 
 .. code-block:: console
 
@@ -46,7 +49,7 @@ Install the latest version of mcmc_statphys:
 Bugs
 ----
 
-Please report any bugs that you find `here`_. Or, even better, fork the repository on `GitHub` and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to git (just ask on the issue and/or see `CONTRIBUTING`).
+Please report any bugs that you find `here`_. Or, even better, fork the repository on `GitHub`_ and create a pull request (PR). We welcome all changes, big or small, and we will help you make the PR if you are new to git (just ask on the issue and/or see `CONTRIBUTING`_).
 
 .. _here: https://github.com/uynajgi/mcmc_statphys/issues
 .. _GitHub: https://github.com/uynajgi/mcmc_statphys/
