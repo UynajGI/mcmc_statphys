@@ -144,9 +144,9 @@ class Ising(object):
         Returns:
             float: The total energy of the system / cn: 系统的总能量
         """
-        total_energy = self._get_per_energy() * self.N
-        self.total_energy = total_energy
-        return total_energy
+        energy = self._get_per_energy() * self.N
+        self.energy = energy
+        return energy
 
     def _get_per_magnetization(self) -> float:
         """ Get the per magnetization of the system / cn:
@@ -162,9 +162,9 @@ class Ising(object):
         Returns:
             float: The magnetization of the system / cn: 系统的总磁矩
         """
-        self.total_magnetization = np.sum(self.spin,
+        self.magnetization = np.sum(self.spin,
                                           axis=tuple(range(self.dim)))
-        return self.total_magnetization
+        return self.magnetization
 
     # 获取类的属性
     def _get_info(self) -> Tuple[np.ndarray, float, float]:
