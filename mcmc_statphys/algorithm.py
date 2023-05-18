@@ -188,9 +188,9 @@ class Metropolis:
             _type_: _description_
         """
         self._init_parameter()
-        param_lst = tqdm(self._init_paramlst())
+        param_lst = self._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
@@ -305,9 +305,9 @@ class Wolff(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = tqdm(super()._init_paramlst())
+        param_lst = super()._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
@@ -385,9 +385,9 @@ class Anneal(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = tqdm(super()._init_paramlst())
+        param_lst = super()._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
