@@ -10,6 +10,7 @@
 
 # here put the import lib
 import numpy as np
+from typing import List, Dict
 
 
 def _rename(column):
@@ -72,3 +73,28 @@ def getcolumn(algorithm, uid, column):
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return array
+
+
+def spin2svd(algorithm, uid) -> float:
+    data = algorithm.iter_data
+    column: str = 'spin'
+    spin_lst = data.loc[uid][column]
+    spin_matrix = []
+    for spin in spin_lst:
+        spin = spin.reshape(-1)
+        spin_matrix.append(spin)
+    spin_matrix = np.matrix(spin_matrix)
+    _, s, _ = np.linalg.svd(spin_matrix, full_matrices=True)
+    s_norm = s / np.linalg.norm(s)
+    return max(s_norm)
+
+
+def uid2svd(algorithm: object, uid_lst: List[int] or Dict) -> List[float]:
+    if not isinstance(uid_lst, list):
+        if isinstance(uid_lst, dict):
+            if 'uid' in uid_lst.keys():
+                uid_lst = uid_lst['uid']
+    svd_lst = []
+    for uid in uid_lst:
+        svd_lst.append(spin2svd(algorithm, uid))
+    return svd_lst
