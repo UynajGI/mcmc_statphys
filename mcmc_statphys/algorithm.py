@@ -1,7 +1,7 @@
 """Main module."""
 import copy
 from collections import deque
-from typing import List, Tuple, Dict
+from typing import Dict
 
 # here put the import lib
 import numpy as np
@@ -101,25 +101,20 @@ class Metropolis:
             if uid not in self.iter_data.index.get_level_values("uid").values:
                 self._reset_model()
             else:
-                self.model.set_spin(
-                    self.iter_data.loc[uid]
-                    .loc[self.iter_data.loc[uid].index.max()]
-                    .spin
-                )
+                self.model.set_spin(self.iter_data.loc[uid].loc[
+                    self.iter_data.loc[uid].index.max()].spin)
         return uid
 
     def _init_data(self):
-        self.iter_data: pd.DataFrame = pd.DataFrame(
-            columns=[
-                "uid",
-                "iter",
-                "T",
-                "H",
-                "energy",
-                "magnetization",
-                "spin",
-            ]
-        )
+        self.iter_data: pd.DataFrame = pd.DataFrame(columns=[
+            "uid",
+            "iter",
+            "T",
+            "H",
+            "energy",
+            "magnetization",
+            "spin",
+        ])
         self.iter_data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, T, uid):
@@ -143,7 +138,7 @@ class Metropolis:
             ]
             self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
 
-    def iter_sample(self, T: float, uid: str = None) -> object:
+    def iter_sample(self, T: float, uid: str = None) -> str:
         """Single sample / cn: 单次采样
 
         Args:
@@ -162,9 +157,10 @@ class Metropolis:
         self._save_date(T, uid)
         return uid
 
-    def equil_sample(
-        self, T: float, max_iter: int = 1000, uid: str = None
-    ) -> Tuple[List[float], List[float], List[np.ndarray]]:
+    def equil_sample(self,
+                     T: float,
+                     max_iter: int = 1000,
+                     uid: str = None) -> str:
         """Equilibrium sampling / cn: 平衡采样
 
         Args:
@@ -178,7 +174,7 @@ class Metropolis:
             self.iter_sample(T, uid)
         return uid
 
-    def param_sample(self, max_iter: int = 1000):
+    def param_sample(self, max_iter: int = 1000) -> Dict:
         """_summary_
 
         Args:
@@ -188,9 +184,9 @@ class Metropolis:
             _type_: _description_
         """
         self._init_parameter()
-        param_lst = tqdm(self._init_paramlst())
+        param_lst = self._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
@@ -200,9 +196,8 @@ class Metropolis:
             elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-            param_lst.set_description(
-                "{parameter} = {param}".format(parameter=self.parameter, param=param)
-            )
+            param_lst.set_description("{parameter} = {param}".format(
+                parameter=self.parameter, param=param))
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
@@ -232,10 +227,8 @@ class Metropolis:
         elif self.parameter == "H":
             if self.model.tpye != "ising" or self.model.tpye != "potts":
                 raise ValueError(
-                    "The model {tpye} without outfield effect, can't change field, please change model.".format(
-                        tpye=self.model.tpye
-                    )
-                )
+                    "The model {tpye} without outfield effect, can't change field, please change model."
+                    .format(tpye=self.model.tpye))
             else:
                 hmin = float(self._getnum(string="H", type="_min"))
                 hmax = float(self._getnum(string="H", type="_max"))
@@ -305,9 +298,9 @@ class Wolff(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = tqdm(super()._init_paramlst())
+        param_lst = super()._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
@@ -317,9 +310,8 @@ class Wolff(Metropolis):
             elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-            param_lst.set_description(
-                "{parameter} = {param}".format(parameter=self.parameter, param=param)
-            )
+            param_lst.set_description("{parameter} = {param}".format(
+                parameter=self.parameter, param=param))
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
@@ -328,6 +320,7 @@ class Wolff(Metropolis):
 
 
 class Anneal(Metropolis):
+
     def __init__(self, model: object):
         super().__init__(model)
         self.name = "Anneal"
@@ -366,10 +359,8 @@ class Anneal(Metropolis):
             highT *= 2
             if highT > targetT:
                 print(
-                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time.".format(
-                        old=tempT, target=targetT, new=highT
-                    )
-                )
+                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time."
+                    .format(old=tempT, target=targetT, new=highT))
         T = copy.deepcopy(highT)
         while T > targetT:
             super().equil_sample(T, max_iter=max_iter, uid=uid)
@@ -385,9 +376,9 @@ class Anneal(Metropolis):
             _type_: _description_
         """
         super()._init_parameter()
-        param_lst = tqdm(super()._init_paramlst())
+        param_lst = super()._init_paramlst()
         uid_lst = []
-        for param in param_lst:
+        for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
@@ -397,9 +388,8 @@ class Anneal(Metropolis):
             elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-            param_lst.set_description(
-                "{parameter} = {param}".format(parameter=self.parameter, param=param)
-            )
+            param_lst.set_description("{parameter} = {param}".format(
+                parameter=self.parameter, param=param))
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
