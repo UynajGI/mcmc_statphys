@@ -46,6 +46,12 @@ the latest version of mcmc_statphys:
 
     $ pip install mcmc_statphys
 
+upgrade to the latest version:
+
+.. code-block:: console
+
+    $ pip install --upgrade mcmc_statphys
+
 Bugs
 ----
 
