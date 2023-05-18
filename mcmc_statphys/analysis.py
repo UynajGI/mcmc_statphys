@@ -40,6 +40,20 @@ def std(algorithm, uid, column):
     return np.std(array)
 
 
+def cv(algorithm, uid, column):
+    """
+    Calculate the specific heat of a column of data.
+    """
+    data = algorithm.iter_data
+    column = _rename(column)
+    array: np.array = data.loc[uid][column]
+
+    try:
+        return np.std(array) / np.mean(array)
+    except ZeroDivisionError:
+        raise ValueError("The mean value of the data is zero.")
+
+
 def diff(algorithm, uid, column, n=1):
     """
     Calculate the difference of a column of data.
