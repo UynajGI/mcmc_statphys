@@ -107,4 +107,4 @@ class Animation(Plot):
     def __init__(self, algorithm):
         super().__init__(algorithm)
 
-    # TODO[0.3.0]: Add animation function.
+    # TODO[0.4.0]: Add animation function.
