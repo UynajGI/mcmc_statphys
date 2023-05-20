@@ -279,11 +279,13 @@ class Wolff(Metropolis):
         for clip in cluster:
             self.model.spin[clip] *= -1
         self._save_date(T, uid)
+        return uid
 
     def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None):
         uid = self._setup_uid(uid)
         for iter in tqdm(range(max_iter)):
             self.iter_sample(T, uid)
+        return uid
 
     def param_sample(self, max_iter: int = 1000):
         """_summary_
@@ -329,7 +331,9 @@ class Anneal(Metropolis):
             T (float): _description_
             uid (str, optional): _description_. Defaults to None.
         """
+        uid = self._setup_uid(uid)
         super().iter_sample(T, uid)
+        return uid
 
     def equil_sample(
         self,
@@ -362,6 +366,7 @@ class Anneal(Metropolis):
         while T > targetT:
             super().equil_sample(T, max_iter=max_iter, uid=uid)
             T = max(T * dencyT, targetT)
+        return uid
 
     def param_sample(self, max_iter: int = 1000):
         """_summary_
