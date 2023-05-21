@@ -1,6 +1,6 @@
 {
   "name": "changelog-standard",
-  "version": "0.4.2",
+  "version": "2.0.0-20230517",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "@commitlint/config-conventional": "^15.0.0",
     "git-cz": "^4.9.0",
     "husky": "^7.0.4",
-    "standard-version": "^9.5.0"   
+    "standard-version": "^9.5.0"
   },
   "config": {
     "commitizen": {
