@@ -116,8 +116,6 @@ commit规范.md
 
 # node_modules
 node_modules
-package-lock.json
-package.json
 .cz-config.js
 changelog.config.js
 commitlint.config.js
