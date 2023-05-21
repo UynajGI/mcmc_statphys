@@ -187,7 +187,7 @@ class Metropolis:
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
-                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == "H":
@@ -217,15 +217,15 @@ class Metropolis:
             Tmin = float(self._getnum(string="T", type="_min"))
             Tmax = float(self._getnum(string="T", type="_max"))
             num = int(self._getnum(string="sample", type="_num"))
-            if self.model.tpye == "ising" or self.model.tpye == "potts":
+            if self.model.type == "ising" or self.model.type == "potts":
                 self.H0 = float(self._getnum(string="H", type="_0"))
             _rasie_parameter(Tmin, Tmax, num)
             return np.linspace(Tmin, Tmax, num=num)
         elif self.parameter == "H":
-            if self.model.tpye != "ising" or self.model.tpye != "potts":
+            if self.model.type != "ising" or self.model.type != "potts":
                 raise ValueError(
-                    "The model {tpye} without outfield effect, can't change field, please change model."
-                    .format(tpye=self.model.tpye))
+                    "The model {type} without outfield effect, can't change field, please change model."
+                    .format(type=self.model.type))
             else:
                 hmin = float(self._getnum(string="H", type="_min"))
                 hmax = float(self._getnum(string="H", type="_max"))
@@ -244,7 +244,7 @@ class Wolff(Metropolis):
     """
 
     def __init__(self, model: object):
-        if model.tpye != "ising":
+        if model.type != "ising":
             raise ValueError("The model must be Ising")
         super().__init__(model)
         self.name = "Wolff"
@@ -303,7 +303,7 @@ class Wolff(Metropolis):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
-                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == "H":
@@ -384,7 +384,7 @@ class Anneal(Metropolis):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
-                if self.model.tpye == "ising" or self.model.tpye == "potts":
+                if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = self.H0
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == "H":
