@@ -64,7 +64,7 @@ class Ising(object):
             self.spin = self.spin.astype(np.int8)
         else:
             raise ValueError("Invalid type of spin")
-        self.tpye = type
+        self.type = type
 
     def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
         """Get the neighbor of the site / cn: 获取格点的邻居
@@ -112,12 +112,12 @@ class Ising(object):
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
-        if self.tpye == "ising" or self.tpye == "heisenberg" or self.tpye == "XY":
+        if self.type == "ising" or self.type == "heisenberg" or self.type == "XY":
             for neighbor_spin in neighbors_spin:
                 energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            if self.tpye == "ising":
+            if self.type == "ising":
                 energy -= self.H * self.spin[index]
-        elif self.tpye == "potts":
+        elif self.type == "potts":
             for neighbor_spin in neighbors_spin:
                 if self.spin[index] == neighbor_spin:
                     energy -= self.Jij
@@ -170,8 +170,7 @@ class Ising(object):
         Returns:
             Tuple[np.ndarray, float, float]: The info of the system / cn: 系统的信息
         """
-        return self.spin, self._get_total_energy(
-        ), self._get_total_magnetization()
+        return self.spin, self.energy, self.magnetization
 
     def _get_per_info(self):
         return self.spin, self._get_per_energy(), self._get_per_magnetization()
@@ -185,25 +184,29 @@ class Ising(object):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if self.tpye == "ising":
+        if self.type == "ising":
             self.spin[index] *= -1
-        elif self.tpye == "heisenberg" or self.tpye == "XY":
+        elif self.type == "heisenberg" or self.type == "XY":
             self.spin[index] = 2 * np.random.rand(self.dim) - 1
-        elif self.tpye == "potts":
+        elif self.type == "potts":
             self.spin[index] = np.random.choice(range(self.p))
         else:
             raise ValueError("Invalid type of spin")
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
         """Get the delta energy of the site"""
+        old_site = self.spin[index]
         old_site_energy = self._get_site_energy(index)
         self._change_site_spin(index)
+        new_site = self.spin[index]
         new_site_energy = self._get_site_energy(index)
         detle_energy = new_site_energy - old_site_energy
+        self.energy += detle_energy
+        self.magnetization += (new_site - old_site)
         return detle_energy
 
     def set_spin(self, spin):
-        # TODO[0.3.0]: 增加 spin 格式审查
+        # TODO[0.4.0]: 增加 spin 格式审查
         self.spin = spin
         self._get_total_energy()
         self._get_total_magnetization()
@@ -214,7 +217,7 @@ class Ising(object):
         Returns:
             float: The total energy of the system / cn: 系统的总能量
         """
-        return self._get_total_energy()
+        return self.energy
 
     def get_magnetization(self) -> float:
         """Get the magnetization of the system / cn: 获取系统的总磁矩
@@ -222,7 +225,7 @@ class Ising(object):
         Returns:
             float: The per magnetization of the system / cn: 系统的单位磁矩
         """
-        return self._get_total_magnetization()
+        return self.magntization
 
 
 class Heisenberg(Ising):
