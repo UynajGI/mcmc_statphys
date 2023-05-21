@@ -64,7 +64,7 @@ class Ising(object):
             self.spin = self.spin.astype(np.int8)
         else:
             raise ValueError("Invalid type of spin")
-        self.tpye = type
+        self.type = type
 
     def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
         """Get the neighbor of the site / cn: 获取格点的邻居
@@ -112,12 +112,12 @@ class Ising(object):
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
-        if self.tpye == "ising" or self.tpye == "heisenberg" or self.tpye == "XY":
+        if self.type == "ising" or self.type == "heisenberg" or self.type == "XY":
             for neighbor_spin in neighbors_spin:
                 energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            if self.tpye == "ising":
+            if self.type == "ising":
                 energy -= self.H * self.spin[index]
-        elif self.tpye == "potts":
+        elif self.type == "potts":
             for neighbor_spin in neighbors_spin:
                 if self.spin[index] == neighbor_spin:
                     energy -= self.Jij
@@ -184,11 +184,11 @@ class Ising(object):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if self.tpye == "ising":
+        if self.type == "ising":
             self.spin[index] *= -1
-        elif self.tpye == "heisenberg" or self.tpye == "XY":
+        elif self.type == "heisenberg" or self.type == "XY":
             self.spin[index] = 2 * np.random.rand(self.dim) - 1
-        elif self.tpye == "potts":
+        elif self.type == "potts":
             self.spin[index] = np.random.choice(range(self.p))
         else:
             raise ValueError("Invalid type of spin")

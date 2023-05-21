@@ -10,8 +10,9 @@
 
 # here put the import lib
 import matplotlib.pyplot as plt
-
-# from matplotlib import animation
+from matplotlib import animation
+from matplotlib.animation import HTMLWriter
+import os
 from . import analysis
 
 
@@ -123,22 +124,22 @@ class Plot:
         """
         spin = self.algorithm.iter_data.loc[(uid, iter), "spin"]
         pic = plt.imshow(spin,
-                          cmap=cmap,
-                          norm=norm,
-                          aspect=aspect,
-                          interpolation=interpolation,
-                          alpha=alpha,
-                          vmin=vmin,
-                          vmax=vmax,
-                          origin=origin,
-                          extent=extent,
-                          interpolation_stage=interpolation_stage,
-                          filternorm=filternorm,
-                          filterrad=filterrad,
-                          resample=resample,
-                          url=url,
-                          data=data,
-                          **kwargs)
+                         cmap=cmap,
+                         norm=norm,
+                         aspect=aspect,
+                         interpolation=interpolation,
+                         alpha=alpha,
+                         vmin=vmin,
+                         vmax=vmax,
+                         origin=origin,
+                         extent=extent,
+                         interpolation_stage=interpolation_stage,
+                         filternorm=filternorm,
+                         filterrad=filterrad,
+                         resample=resample,
+                         url=url,
+                         data=data,
+                         **kwargs)
         plt.axis('off')
         plt.axis('equal')
         return pic
@@ -147,10 +148,38 @@ class Plot:
 class Animation(Plot):
 
     def __init__(self, algorithm):
+        super().__init__(algorithm)
         if self.algorithm.model.type != "ising":
             raise ValueError("Only Ising model can be animated.")
-        if self.algorithm.model.dimension != 2:
+        if self.algorithm.model.dim != 2:
             raise ValueError("Only 2D Ising model can be animated.")
-        super().__init__(algorithm)
 
-    # TODO[0.4.0]: Add animation function.
+    def animate(self, uid):
+        """
+        Animate the spin.
+        """
+        fig, ax = plt.subplots(figsize=(5, 5))
+        spin_lst = self.algorithm.iter_data.loc[uid, 'spin'].tolist()
+
+        def init():
+            ax.imshow(spin_lst[0], cmap='gray')
+            ax.axis('off')
+            return ax
+
+        def update(iter):
+            ax.clear()
+            ax.imshow(spin_lst[iter], cmap='gray')
+            ax.set_title('iter: {}'.format(iter))
+            ax.axis('off')
+            return ax
+
+        # interval = int(5000/len(spin_lst))
+        ani = animation.FuncAnimation(fig=fig,
+                                      func=update,
+                                      init_func=init,
+                                      frames=range(len(spin_lst)))
+        mywriter = HTMLWriter(fps=60)
+        if not os.path.exists(uid):
+            os.mkdir(uid)
+        ani.save(os.path.join(uid, 'myAnimation.html'), writer=mywriter)
+        plt.close()
