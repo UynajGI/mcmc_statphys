@@ -32,7 +32,7 @@ The detial of the Ising model can be found in
    -  energy: ``float``, the energy of the spin configuration
    -  magnetization: ``float``, the magnetization of the spin
       configuration
-   -  tpye: ``str``, the type of the model
+   -  type: ``str``, the type of the model
 
 -  method
 
