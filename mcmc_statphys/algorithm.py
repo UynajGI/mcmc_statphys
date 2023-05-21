@@ -119,21 +119,21 @@ class Metropolis:
             self.iter_data.loc[(uid, 1), :] = [
                 T,
                 self.model.H,
-                self.model._get_total_energy(),
-                self.model._get_total_magnetization(),
+                self.model.energy,
+                self.model.magnetization,
                 0,
             ]
-            self.iter_data.at[(uid, 1), "spin"] = self.model.spin
+            self.iter_data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
         else:
             iterplus = self.iter_data.loc[uid].index.max() + 1
             self.iter_data.loc[(uid, iterplus), :] = [
                 T,
                 self.model.H,
-                self.model._get_total_energy(),
-                self.model._get_total_magnetization(),
+                self.model.energy,
+                self.model.magnetization,
                 0,
             ]
-            self.iter_data.at[(uid, iterplus), "spin"] = self.model.spin
+            self.iter_data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.model.spin)
 
     def iter_sample(self, T: float, uid: str = None) -> str:
         """Single sample / cn: 单次采样
@@ -277,7 +277,16 @@ class Wolff(Metropolis):
                     cluster.add(same_neighbor)
                     neighbors.append(same_neighbor)
         for clip in cluster:
+            old_site = self.model.spin[clip]
+            old_site_energy = self.model._get_site_energy(clip)
+
             self.model.spin[clip] *= -1
+
+            new_site = self.model.spin[clip]
+            new_site_energy = self.model._get_site_energy(clip)
+            self.model.energy += (new_site_energy - old_site_energy)
+            self.model.magnetization += (new_site - old_site)
+
         self._save_date(T, uid)
         return uid
 
