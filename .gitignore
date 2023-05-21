@@ -120,3 +120,4 @@ node_modules
 changelog.config.js
 commitlint.config.js
 tests/test.ipynb
+commit.md
