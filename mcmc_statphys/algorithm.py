@@ -2,6 +2,7 @@
 import copy
 from collections import deque
 from typing import Dict
+import os
 
 # here put the import lib
 import numpy as np
@@ -85,7 +86,7 @@ class Metropolis:
             num = input("Input h_min('q' exit): ")
             num = eval(num)
             if num == "q":
-                exit()
+                os._exit()
         return num
 
     def _reset_model(self):
