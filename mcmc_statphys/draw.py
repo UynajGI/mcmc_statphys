@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import HTMLWriter
 import os
-from . import analysis
 
 
 class Plot:
@@ -27,7 +26,7 @@ class Plot:
         Draw a curve.
         """
         data = self.algorithm.data
-        column = analysis._rename(column)
+        column = self.algorithm._rename(column)
         array = data.loc[uid][column]
         index = data.loc[uid].index
         plt.plot(index, array)
@@ -51,7 +50,7 @@ class Plot:
                 **kwargs):
 
         data = self.algorithm.data
-        column = analysis._rename(column)
+        column = self.algorithm._rename(column)
         array = data.loc[uid][column]
         index = data.loc[uid].index
         plt.scatter(index,
@@ -74,30 +73,30 @@ class Plot:
         """
         Draw a parametric plot.
         """
-        column = analysis._rename(column)
+        column = self.algorithm._rename(column)
         x = []
         y = []
         param_name = list(uid_dict.keys())[1]
         for uid in uid_dict:
             if uid not in self.data.index.get_level_values("uid").values:
                 raise ValueError("Invalid uid.")
-            x.append(analysis.mean(self.algorithm, uid, param_name))
-            y.append(analysis.mean(self.algorithm, uid, column))
+            x.append(self.algorithm.mean(self.algorithm, uid, param_name))
+            y.append(self.algorithm.mean(self.algorithm, uid, column))
         plt.plot(x, y)
 
     def param_scatter(self, uid_dict, column):
         """
         Draw a parametric scatter.
         """
-        column = analysis._rename(column)
+        column = self.algorithm._rename(column)
         x = []
         y = []
         param_name = list(uid_dict.keys())[1]
         for uid in uid_dict:
             if uid not in self.data.index.get_level_values("uid").values:
                 raise ValueError("Invalid uid.")
-            x.append(analysis.mean(self.algorithm, uid, param_name))
-            y.append(analysis.mean(self.algorithm, uid, column))
+            x.append(self.algorithm.mean(self.algorithm, uid, param_name))
+            y.append(self.algorithm.mean(self.algorithm, uid, column))
         plt.scatter(x, y)
 
     def imshow(self,

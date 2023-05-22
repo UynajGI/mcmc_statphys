@@ -1,7 +1,7 @@
 """Main module."""
 import copy
 from collections import deque
-from typing import Dict
+from typing import Dict, List
 import os
 
 # here put the import lib
@@ -59,6 +59,14 @@ def _rasie_parameter(minparam: float, maxparam: float, num: int):
         raise ValueError("num should be greater than 0")
     if minparam < 0:
         raise ValueError("min should be greater than 0")
+
+
+def _rename(column):
+    if column == "E" or column == "e":
+        column = "energy"
+    elif column == "M" or column == "m":
+        column = "magnetization"
+    return column
 
 
 class Metropolis:
@@ -134,7 +142,8 @@ class Metropolis:
                 self.model.magnetization,
                 0,
             ]
-            self.data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.model.spin)
+            self.data.at[(uid, iterplus),
+                         "spin"] = copy.deepcopy(self.model.spin)
 
     def iter_sample(self, T: float, uid: str = None) -> str:
         """Single sample / cn: 单次采样
@@ -201,6 +210,67 @@ class Metropolis:
             "{param}".format(param=self.parameter): param_lst,
         }
         return uid_param_dict
+
+    def svd(self,
+            uid: str or Dict or List[str],
+            norm: bool = True) -> np.array:
+
+        if isinstance(uid, str):
+            data = self.data
+            column: str = 'spin'
+            spin_lst = data.loc[uid][column]
+            spin_matrix = []
+            for spin in spin_lst:
+                spin = spin.reshape(-1)
+                spin_matrix.append(spin)
+            spin_matrix = np.matrix(spin_matrix)
+            _, s, _ = np.linalg.svd(spin_matrix, full_matrices=True)
+            if norm:
+                return s / np.linalg.norm(s)
+            else:
+                return s
+        elif isinstance(uid, dict):
+            if 'uid' in uid.keys():
+                uid_lst = uid['uid']
+            else:
+                raise ValueError("The key of the dict is not 'uid'.")
+            svd_lst = []
+            for uid_item in uid_lst:
+                svd_lst.append(self.svd(uid=uid_item, norm=norm))
+            return svd_lst
+        elif isinstance(uid, list):
+            svd_lst = []
+            for uid_item in uid:
+                svd_lst.append(self.svd(uid=uid_item, norm=norm))
+            return svd_lst
+
+    def mean(self, uid: str, column: str) -> float:
+        column = _rename(column)
+        return np.mean(self.data.loc[uid][column])
+
+    def std(self, uid: str, column: str) -> float:
+        column = _rename(column)
+        return np.std(self.data.loc[uid][column])
+
+    def var(self, uid: str, column: str) -> float:
+        column = _rename(column)
+        return np.var(self.data.loc[uid][column])
+
+    def norm(self, uid: str, column: str, ord: int = 2) -> float:
+        column = _rename(column)
+        return np.linalg.norm(self.data.loc[uid][column], ord=ord)
+
+    def diff(self, uid: str, column: str, n: int = 1) -> np.array:
+        column = _rename(column)
+        return np.diff(self.data.loc[uid][column], n)
+
+    def cv(self, uid: str, column: str) -> float:
+        column = _rename(column)
+        return self.std(uid, column) / self.mean(uid, column)
+
+    def getcolumn(self, uid: str, column: str) -> np.array:
+        column = _rename(column)
+        return self.data.loc[uid][column]
 
     def _init_parameter(self):
         """Initialize parameter / cn: 初始化参数
