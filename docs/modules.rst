@@ -81,7 +81,7 @@ The detial of the Metropolis algorithm can be found in `Wikipedia <https://en.wi
 
    -  model: ``mcmc_statphys.model``, the model to simulate
    -  name: ``str``, the name of the algorithm
-   -  iter_data: ``dict``, the data of the iteration(with the unique
+   -  data: ``dict``, the data of the iteration(with the unique
       ``uid`` for each iteration)
    -  parameter: ``str``, the name of the parameter
 

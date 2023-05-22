@@ -95,15 +95,15 @@ class Metropolis:
         if uid is None:
             uid = (uuid.uuid1()).hex
         else:
-            if uid not in self.iter_data.index.get_level_values("uid").values:
+            if uid not in self.data.index.get_level_values("uid").values:
                 self._reset_model()
             else:
-                self.model.set_spin(self.iter_data.loc[uid].loc[
-                    self.iter_data.loc[uid].index.max()].spin)
+                self.model.set_spin(self.data.loc[uid].loc[
+                    self.data.loc[uid].index.max()].spin)
         return uid
 
     def _init_data(self):
-        self.iter_data: pd.DataFrame = pd.DataFrame(columns=[
+        self.data: pd.DataFrame = pd.DataFrame(columns=[
             "uid",
             "iter",
             "T",
@@ -112,28 +112,28 @@ class Metropolis:
             "magnetization",
             "spin",
         ])
-        self.iter_data.set_index(["uid", "iter"], inplace=True)
+        self.data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, T, uid):
-        if uid not in self.iter_data.index.get_level_values("uid").values:
-            self.iter_data.loc[(uid, 1), :] = [
+        if uid not in self.data.index.get_level_values("uid").values:
+            self.data.loc[(uid, 1), :] = [
                 T,
                 self.model.H,
                 self.model.energy,
                 self.model.magnetization,
                 0,
             ]
-            self.iter_data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
+            self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
         else:
-            iterplus = self.iter_data.loc[uid].index.max() + 1
-            self.iter_data.loc[(uid, iterplus), :] = [
+            iterplus = self.data.loc[uid].index.max() + 1
+            self.data.loc[(uid, iterplus), :] = [
                 T,
                 self.model.H,
                 self.model.energy,
                 self.model.magnetization,
                 0,
             ]
-            self.iter_data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.model.spin)
+            self.data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.model.spin)
 
     def iter_sample(self, T: float, uid: str = None) -> str:
         """Single sample / cn: 单次采样

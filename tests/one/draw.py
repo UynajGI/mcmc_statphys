@@ -26,7 +26,7 @@ class Plot:
         """
         Draw a curve.
         """
-        data = self.algorithm.iter_data
+        data = self.algorithm.data
         column = analysis._rename(column)
         array = data.loc[uid][column]
         index = data.loc[uid].index
@@ -50,7 +50,7 @@ class Plot:
                 data=None,
                 **kwargs):
 
-        data = self.algorithm.iter_data
+        data = self.algorithm.data
         column = analysis._rename(column)
         array = data.loc[uid][column]
         index = data.loc[uid].index
@@ -79,7 +79,7 @@ class Plot:
         y = []
         param_name = list(uid_dict.keys())[1]
         for uid in uid_dict:
-            if uid not in self.iter_data.index.get_level_values("uid").values:
+            if uid not in self.data.index.get_level_values("uid").values:
                 raise ValueError("Invalid uid.")
             x.append(analysis.mean(self.algorithm, uid, param_name))
             y.append(analysis.mean(self.algorithm, uid, column))
@@ -94,7 +94,7 @@ class Plot:
         y = []
         param_name = list(uid_dict.keys())[1]
         for uid in uid_dict:
-            if uid not in self.iter_data.index.get_level_values("uid").values:
+            if uid not in self.data.index.get_level_values("uid").values:
                 raise ValueError("Invalid uid.")
             x.append(analysis.mean(self.algorithm, uid, param_name))
             y.append(analysis.mean(self.algorithm, uid, column))
@@ -122,7 +122,7 @@ class Plot:
         """
         Draw a inshow.
         """
-        spin = self.algorithm.iter_data.loc[(uid, iter), "spin"]
+        spin = self.algorithm.data.loc[(uid, iter), "spin"]
         pic = plt.imshow(spin,
                          cmap=cmap,
                          norm=norm,
@@ -159,7 +159,7 @@ class Animation(Plot):
         Animate the spin.
         """
         fig, ax = plt.subplots(figsize=(5, 5))
-        spin_lst = self.algorithm.iter_data.loc[uid, 'spin'].tolist()
+        spin_lst = self.algorithm.data.loc[uid, 'spin'].tolist()
 
         def init():
             ax.imshow(spin_lst[0], cmap='gray')

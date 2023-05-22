@@ -25,7 +25,7 @@ def mean(algorithm, uid, column):
     """
     Calculate the mean value of a column of data.
     """
-    data = algorithm.iter_data
+    data = algorithm.data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.mean(array)
@@ -35,7 +35,7 @@ def std(algorithm, uid, column):
     """
     Calculate the standard deviation of a column of data.
     """
-    data = algorithm.iter_data
+    data = algorithm.data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.std(array)
@@ -45,7 +45,7 @@ def cv(algorithm, uid, column):
     """
     Calculate the specific heat of a column of data.
     """
-    data = algorithm.iter_data
+    data = algorithm.data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
 
@@ -59,7 +59,7 @@ def diff(algorithm, uid, column, n=1):
     """
     Calculate the difference of a column of data.
     """
-    data = algorithm.iter_data
+    data = algorithm.data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return np.diff(array, n)
@@ -69,14 +69,14 @@ def getcolumn(algorithm, uid, column):
     """
     Get a column of data.
     """
-    data = algorithm.iter_data
+    data = algorithm.data
     column = _rename(column)
     array: np.array = data.loc[uid][column]
     return array
 
 
 def spin2svd(algorithm, uid) -> float:
-    data = algorithm.iter_data
+    data = algorithm.data
     column: str = 'spin'
     spin_lst = data.loc[uid][column]
     spin_matrix = []
