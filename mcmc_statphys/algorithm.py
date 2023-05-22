@@ -203,8 +203,6 @@ class Metropolis:
             elif self.parameter == "H":
                 self.model.H = param
                 self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
-            param_lst.set_description("{parameter} = {param}".format(
-                parameter=self.parameter, param=param))
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
