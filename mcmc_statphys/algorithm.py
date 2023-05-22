@@ -24,7 +24,9 @@ def is_Flat(sequence: np.ndarray, epsilon: float = 0.1) -> bool:
     return np.std(sequence) / np.mean(sequence) < epsilon
 
 
-def sample_acceptance(delta_E: float, sample_Temperture: float) -> bool:
+def _sample_acceptance(delta_E: float,
+                       sample_Temperture: float,
+                       form: str = 'class') -> bool:
     """Determine whether to accept a new state / cn: 判断是否接受新的状态
 
     Args:
@@ -34,10 +36,10 @@ def sample_acceptance(delta_E: float, sample_Temperture: float) -> bool:
     Returns:
         bool: accept or reject / cn: 接受或拒绝
     """
-    if delta_E <= 0:
-        return True
-    else:
+    if form == 'class':
         return np.random.rand() < np.exp(-delta_E / sample_Temperture)
+    elif form == 'bath':
+        return np.random.rand() < 1 / (1 + np.exp(delta_E / sample_Temperture))
 
 
 def _rasie_parameter(minparam: float, maxparam: float, num: int):
@@ -145,7 +147,7 @@ class Metropolis:
             self.data.at[(uid, iterplus),
                          "spin"] = copy.deepcopy(self.model.spin)
 
-    def iter_sample(self, T: float, uid: str = None) -> str:
+    def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
         """Single sample / cn: 单次采样
 
         Args:
@@ -159,7 +161,7 @@ class Metropolis:
         site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         temp_model = copy.deepcopy(self.model)
         delta_E = self.model._change_delta_energy(site)
-        if not sample_acceptance(delta_E, T):
+        if not _sample_acceptance(delta_E, T, form=ac_from):
             self.model = temp_model
         self._save_date(T, uid)
         return uid
@@ -167,7 +169,8 @@ class Metropolis:
     def equil_sample(self,
                      T: float,
                      max_iter: int = 1000,
-                     uid: str = None) -> str:
+                     uid: str = None,
+                     ac_from='class') -> str:
         """Equilibrium sampling / cn: 平衡采样
 
         Args:
@@ -178,10 +181,12 @@ class Metropolis:
 
         uid = self._setup_uid(uid)
         for iter in tqdm(range(max_iter)):
-            self.iter_sample(T, uid)
+            self.iter_sample(T, uid, ac_from=ac_from)
         return uid
 
-    def param_sample(self, max_iter: int = 1000) -> Dict:
+    def param_sample(self,
+                     max_iter: int = 1000,
+                     ac_from: str = 'class') -> Dict:
         """_summary_
 
         Args:
@@ -199,10 +204,16 @@ class Metropolis:
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = self.H0
-                self.equil_sample(param, max_iter=max_iter, uid=uid)
+                self.equil_sample(param,
+                                  max_iter=max_iter,
+                                  uid=uid,
+                                  ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
+                self.equil_sample(self.T0,
+                                  max_iter=max_iter,
+                                  uid=uid,
+                                  ac_from=ac_from)
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
@@ -418,6 +429,7 @@ class Anneal(Metropolis):
         highT=None,
         dencyT=0.9,
         uid: str = None,
+        ac_from='class',
     ):
         """_summary_
 
@@ -440,11 +452,14 @@ class Anneal(Metropolis):
                     .format(old=tempT, target=targetT, new=highT))
         T = copy.deepcopy(highT)
         while T > targetT:
-            super().equil_sample(T, max_iter=max_iter, uid=uid)
+            super().equil_sample(T,
+                                 max_iter=max_iter,
+                                 uid=uid,
+                                 ac_from=ac_from)
             T = max(T * dencyT, targetT)
         return uid
 
-    def param_sample(self, max_iter: int = 1000):
+    def param_sample(self, max_iter: int = 1000, ac_from='class'):
         """_summary_
 
         Args:
@@ -462,10 +477,16 @@ class Anneal(Metropolis):
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = self.H0
-                self.equil_sample(param, max_iter=max_iter, uid=uid)
+                self.equil_sample(param,
+                                  max_iter=max_iter,
+                                  uid=uid,
+                                  ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
+                self.equil_sample(self.T0,
+                                  max_iter=max_iter,
+                                  uid=uid,
+                                  ac_from=ac_from)
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
