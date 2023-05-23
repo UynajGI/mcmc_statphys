@@ -147,6 +147,39 @@ class Metropolis:
             self.data.at[(uid, iterplus),
                          "spin"] = copy.deepcopy(self.model.spin)
 
+    def _init_parameter(self):
+        """Initialize parameter / cn: 初始化参数
+
+        Raises:
+            ValueError: Invalid parameter / cn: 无效的参数
+        """
+        self.parameter = input("Input parameter T/H: (default: T)") or "T"
+        if self.parameter != "T" and self.parameter != "H":
+            raise ValueError("Invalid parameter")
+
+    def _init_paramlst(self):
+        """Initialize parameter list / cn: 初始化参数列表"""
+        if self.parameter == "T":
+            Tmin = float(self._getnum(string="T", type="_min"))
+            Tmax = float(self._getnum(string="T", type="_max"))
+            num = int(self._getnum(string="sample", type="_num"))
+            if self.model.type == "ising" or self.model.type == "potts":
+                self.H0 = float(self._getnum(string="H", type="_0"))
+            _rasie_parameter(Tmin, Tmax, num)
+            return np.linspace(Tmin, Tmax, num=num)
+        elif self.parameter == "H":
+            if self.model.type != "ising" or self.model.type != "potts":
+                raise ValueError(
+                    "The model {type} without outfield effect, can't change field, please change model."
+                    .format(type=self.model.type))
+            else:
+                hmin = float(self._getnum(string="H", type="_min"))
+                hmax = float(self._getnum(string="H", type="_max"))
+                num = int(self._getnum(string="sample", type="_num"))
+                self.T0 = float(self._getnum(string="T", type="_0"))
+                _rasie_parameter(hmin, hmax, num)
+                return np.linspace(hmin, hmax, num=num)
+
     def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
         """Single sample / cn: 单次采样
 
@@ -280,39 +313,6 @@ class Metropolis:
     def getcolumn(self, uid: str, column: str) -> np.array:
         column = _rename(column)
         return self.data.loc[uid][column]
-
-    def _init_parameter(self):
-        """Initialize parameter / cn: 初始化参数
-
-        Raises:
-            ValueError: Invalid parameter / cn: 无效的参数
-        """
-        self.parameter = input("Input parameter T/H: (default: T)") or "T"
-        if self.parameter != "T" and self.parameter != "H":
-            raise ValueError("Invalid parameter")
-
-    def _init_paramlst(self):
-        """Initialize parameter list / cn: 初始化参数列表"""
-        if self.parameter == "T":
-            Tmin = float(self._getnum(string="T", type="_min"))
-            Tmax = float(self._getnum(string="T", type="_max"))
-            num = int(self._getnum(string="sample", type="_num"))
-            if self.model.type == "ising" or self.model.type == "potts":
-                self.H0 = float(self._getnum(string="H", type="_0"))
-            _rasie_parameter(Tmin, Tmax, num)
-            return np.linspace(Tmin, Tmax, num=num)
-        elif self.parameter == "H":
-            if self.model.type != "ising" or self.model.type != "potts":
-                raise ValueError(
-                    "The model {type} without outfield effect, can't change field, please change model."
-                    .format(type=self.model.type))
-            else:
-                hmin = float(self._getnum(string="H", type="_min"))
-                hmax = float(self._getnum(string="H", type="_max"))
-                num = int(self._getnum(string="sample", type="_num"))
-                self.T0 = float(self._getnum(string="T", type="_0"))
-                _rasie_parameter(hmin, hmax, num)
-                return np.linspace(hmin, hmax, num=num)
 
 
 class Wolff(Metropolis):
