@@ -693,14 +693,13 @@ class Parallel(Metropolis):
         return uid
 
     def param_sample(self,
-                     Tmin,
-                     Tmax,
-                     Tlen,
+                     T: tuple,
                      H0: float = 0.0,
                      max_iter: int = 1000,
                      eq_iter: int = 1000,
                      ac_from: str = 'class') -> Dict:
         self.model.H = H0
+        Tmax, Tmin, Tlen = T
         T_lst = np.linspace(Tmax, Tmin, Tlen)
         algo_lst = [Metropolis(copy.deepcopy(self.model)) for T in T_lst]
         uid_lst = [uuid.uuid1().hex for T in T_lst]
