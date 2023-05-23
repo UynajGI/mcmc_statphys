@@ -12,6 +12,7 @@ from typing import Any, Tuple
 
 # here put the import lib
 import numpy as np
+import copy
 
 
 class Ising(object):
@@ -32,6 +33,7 @@ class Ising(object):
         self._init_spin(type="ising")
         self._get_total_energy()
         self._get_total_magnetization()
+        self._max_energy()
 
     def __len__(self):
         return self.L
@@ -44,26 +46,9 @@ class Ising(object):
 
         Args:
             type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
-
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if type == "ising":
-            self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        elif type == "heisenberg":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.L,
-                                           self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "XY":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "potts":
-            p = kwargs.pop("p", 2)
-            self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
+        self.spin = self.spin.astype(np.int8)
         self.type = type
 
     def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
@@ -112,17 +97,9 @@ class Ising(object):
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
-        if self.type == "ising" or self.type == "heisenberg" or self.type == "XY":
-            for neighbor_spin in neighbors_spin:
-                energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            if self.type == "ising":
-                energy -= self.H * self.spin[index]
-        elif self.type == "potts":
-            for neighbor_spin in neighbors_spin:
-                if self.spin[index] == neighbor_spin:
-                    energy -= self.Jij
-        else:
-            raise ValueError("Invalid type of spin")
+        for neighbor_spin in neighbors_spin:
+            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+        energy -= self.H * self.spin[index]
         return energy
 
     def _get_per_energy(self) -> float:
@@ -184,14 +161,7 @@ class Ising(object):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if self.type == "ising":
-            self.spin[index] *= -1
-        elif self.type == "heisenberg" or self.type == "XY":
-            self.spin[index] = 2 * np.random.rand(self.dim) - 1
-        elif self.type == "potts":
-            self.spin[index] = np.random.choice(range(self.p))
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin[index] *= -1
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
         """Get the delta energy of the site"""
@@ -231,8 +201,47 @@ class Ising(object):
 class Heisenberg(Ising):
 
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dim=3, *args, **kwargs)
+        super().__init__(L, Jij, H=0, dim=3, *args, **kwargs)
         self._init_spin(type="heisenberg")
+
+    def _init_spin(self, type="heisenberg", *args, **kwargs):
+        """Initialize the spin of the system
+
+        Args:
+            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
+        self.spin = 2 * np.random.rand(self.L, self.L, self.L, self.dim) - 1
+        self.spin = self.spin.astype(np.float32)
+        self.type = type
+
+    def _change_site_spin(self, index: Tuple[int, ...]):
+        """Change the spin of the site / cn: 改变格点的自旋
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+        """
+        self.spin[index] = 2 * np.random.rand(self.dim) - 1
+
+    def _get_site_energy(self, index: Tuple[int, ...]) -> float:
+        """Get the energy of the site / cn: 获取格点的能量
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+
+        Returns:
+            float: The energy of the site / cn: 格点的能量
+        """
+        neighbors_spin = super()._get_neighbor_spin(index)
+        energy = 0
+        for neighbor_spin in neighbors_spin:
+            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+        return energy
 
 
 class XY(Ising):
@@ -240,6 +249,45 @@ class XY(Ising):
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
         super().__init__(L, Jij, H, dim=2, *args, **kwargs)
         self._init_spin(type="XY")
+
+    def _init_spin(self, type="XY", *args, **kwargs):
+        """Initialize the spin of the system
+
+        Args:
+            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+        """
+        self.spin = 2 * np.random.rand(self.L, self.L, self.dim) - 1
+        self.spin = self.spin.astype(np.float32)
+        self.type = type
+
+    def _change_site_spin(self, index: Tuple[int, ...]):
+        """Change the spin of the site / cn: 改变格点的自旋
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
+        self.spin[index] = 2 * np.random.rand(self.dim) - 1
+
+    def _get_site_energy(self, index: Tuple[int, ...]) -> float:
+        """Get the energy of the site / cn: 获取格点的能量
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+
+        Returns:
+            float: The energy of the site / cn: 格点的能量
+        """
+        neighbors_spin = super()._get_neighbor_spin(index)
+        energy = 0
+        for neighbor_spin in neighbors_spin:
+            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+        return energy
 
 
 class Potts(Ising):
@@ -249,3 +297,47 @@ class Potts(Ising):
         self.p = p
         super().__init__(L, Jij, H, dim, *args, **kwargs)
         self._init_spin(type="potts", p=p)
+
+    def _init_spin(self, type="potts", *args, **kwargs):
+        """Initialize the spin of the system
+
+        Args:
+            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
+        p = kwargs.pop("p", 2)
+        self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
+        self.spin = self.spin.astype(np.int8)
+        self.type = type
+
+    def _change_site_spin(self, index: Tuple[int, ...]):
+        """Change the spin of the site / cn: 改变格点的自旋
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        """
+        self.spin[index] = np.random.choice(range(self.p))
+
+    def _get_site_energy(self, index: Tuple[int, ...]) -> float:
+        """Get the energy of the site / cn: 获取格点的能量
+
+        Args:
+            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+
+        Raises:
+            ValueError: Invalid type of spin / cn: 无效的自旋类型
+
+        Returns:
+            float: The energy of the site / cn: 格点的能量
+        """
+        neighbors_spin = super()._get_neighbor_spin(index)
+        energy = 0
+        for neighbor_spin in neighbors_spin:
+            if self.spin[index] == neighbor_spin:
+                energy -= self.Jij
+        return energy
