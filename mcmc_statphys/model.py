@@ -175,6 +175,12 @@ class Ising(object):
         self.magnetization += (new_site - old_site)
         return detle_energy
 
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        self.set_spin(np.ones_like(self.spin))
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
+
     def set_spin(self, spin):
         # TODO[0.4.0]: 增加 spin 格式审查
         self.spin = spin
@@ -203,15 +209,13 @@ class Heisenberg(Ising):
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
         super().__init__(L, Jij, H=0, dim=3, *args, **kwargs)
         self._init_spin(type="heisenberg")
+        self._max_energy()
 
     def _init_spin(self, type="heisenberg", *args, **kwargs):
         """Initialize the spin of the system
 
         Args:
             type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
-
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
         self.spin = 2 * np.random.rand(self.L, self.L, self.L, self.dim) - 1
         self.spin = self.spin.astype(np.float32)
@@ -243,12 +247,23 @@ class Heisenberg(Ising):
             energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
         return energy
 
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        max_spin = np.zeros_like(self.spin)
+        max_spin[:, :, :, 0] = 1
+        max_spin[:, :, :, 1] = 0
+        max_spin[:, :, :, 2] = 0
+        self.set_spin(max_spin)
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
+
 
 class XY(Ising):
 
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
         super().__init__(L, Jij, H, dim=2, *args, **kwargs)
         self._init_spin(type="XY")
+        self._max_energy()
 
     def _init_spin(self, type="XY", *args, **kwargs):
         """Initialize the spin of the system
@@ -289,6 +304,15 @@ class XY(Ising):
             energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
         return energy
 
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        max_spin = np.zeros_like(self.spin)
+        max_spin[:, :, 0] = 1
+        max_spin[:, :, 1] = 0
+        self.set_spin(max_spin)
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
+
 
 class Potts(Ising):
 
@@ -297,8 +321,9 @@ class Potts(Ising):
         self.p = p
         super().__init__(L, Jij, H, dim, *args, **kwargs)
         self._init_spin(type="potts", p=p)
+        self._max_energy()
 
-    def _init_spin(self, type="potts", *args, **kwargs):
+    def _init_spin(self, type="potts", p=3, *args, **kwargs):
         """Initialize the spin of the system
 
         Args:
@@ -307,7 +332,6 @@ class Potts(Ising):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        p = kwargs.pop("p", 2)
         self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
         self.spin = self.spin.astype(np.int8)
         self.type = type
@@ -341,3 +365,11 @@ class Potts(Ising):
             if self.spin[index] == neighbor_spin:
                 energy -= self.Jij
         return energy
+
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        max_spin = np.zeros_like(self.spin)
+        max_spin[:, :] = self.p - 1
+        self.set_spin(max_spin)
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
