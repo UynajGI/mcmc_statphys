@@ -67,10 +67,19 @@ def _rasie_parameter(minparam: float, maxparam: float, num: int):
 
 
 def _rename(column):
-    if column == "E" or column == "e":
+    if column == "E" or column == "e" or column == "Energy" or column == "energy":
         column = "energy"
-    elif column == "M" or column == "m":
+    elif column == "M" or column == "m" or column == "Magnetization" or column == "magnetization" or column == "Mag" or column == "mag" or column == "Magnet" or column == "magnet":
         column = "magnetization"
+    elif column == "S" or column == "s" or column == "Spin" or column == "spin" or column == "SpinMatrix" or column == "spinmatrix" or column == "Spinmatrix" or column == "spinMatrix":
+        column = "spin"
+    else:
+        if column == 't' or column == 'T' or column == 'temperature' or column == 'Temperature':
+            column = 'T'
+        elif column == 'h' or column == 'H' or column == 'field' or column == 'Field':
+            column = 'H'
+        else:
+            raise ValueError('Invalid parameter name.')
     return column
 
 
@@ -89,18 +98,10 @@ class Metropolis:
         self._rowmodel = copy.deepcopy(model)
         self.name = "Metroplis"
         self._init_data()
+        self.param_list = []
 
     def __str__(self):
         return self.name
-
-    def _getnum(self, string: str, type: str):
-        num = input("Input {s}{t}: ".format(s=string, t=type))
-        while num == "":
-            num = input("Input h_min('q' exit): ")
-            num = eval(num)
-            if num == "q":
-                os._exit()
-        return num
 
     def _reset_model(self):
         self.model = copy.deepcopy(self._rowmodel)
@@ -150,38 +151,10 @@ class Metropolis:
             self.data.at[(uid, iterplus),
                          "spin"] = copy.deepcopy(self.model.spin)
 
-    def _init_parameter(self):
-        """Initialize parameter / cn: 初始化参数
-
-        Raises:
-            ValueError: Invalid parameter / cn: 无效的参数
-        """
-        self.parameter = input("Input parameter T/H: (default: T)") or "T"
-        if self.parameter != "T" and self.parameter != "H":
-            raise ValueError("Invalid parameter")
-
-    def _init_paramlst(self):
+    def _init_paramlst(self, param):
         """Initialize parameter list / cn: 初始化参数列表"""
-        if self.parameter == "T":
-            Tmin = float(self._getnum(string="T", type="_min"))
-            Tmax = float(self._getnum(string="T", type="_max"))
-            num = int(self._getnum(string="sample", type="_num"))
-            if self.model.type == "ising" or self.model.type == "potts":
-                self.H0 = float(self._getnum(string="H", type="_0"))
-            _rasie_parameter(Tmin, Tmax, num)
-            return np.linspace(Tmin, Tmax, num=num)
-        elif self.parameter == "H":
-            if self.model.type != "ising" or self.model.type != "potts":
-                raise ValueError(
-                    "The model {type} without outfield effect, can't change field, please change model."
-                    .format(type=self.model.type))
-            else:
-                hmin = float(self._getnum(string="H", type="_min"))
-                hmax = float(self._getnum(string="H", type="_max"))
-                num = int(self._getnum(string="sample", type="_num"))
-                self.T0 = float(self._getnum(string="T", type="_0"))
-                _rasie_parameter(hmin, hmax, num)
-                return np.linspace(hmin, hmax, num=num)
+        param_max, param_min, param_num = param
+        return np.linspace(param_max, param_min, param_num)
 
     def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
         """Single sample / cn: 单次采样
@@ -221,6 +194,9 @@ class Metropolis:
         return uid
 
     def param_sample(self,
+                     param: tuple,
+                     param_name: str or int = 'T',
+                     stable: float = 0.0,
                      max_iter: int = 1000,
                      ac_from: str = 'class') -> Dict:
         """_summary_
@@ -231,22 +207,23 @@ class Metropolis:
         Returns:
             _type_: _description_
         """
-        self._init_parameter()
-        param_lst = self._init_paramlst()
+
+        self.parameter = _rename(param_name)
+        param_lst = self._init_paramlst(param)
         uid_lst = []
         for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
-                    self.model.H = self.H0
+                    self.model.H = stable
                 self.equil_sample(param,
                                   max_iter=max_iter,
                                   uid=uid,
                                   ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(self.T0,
+                self.equil_sample(stable,
                                   max_iter=max_iter,
                                   uid=uid,
                                   ac_from=ac_from)
@@ -254,6 +231,7 @@ class Metropolis:
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
         }
+        self.param_list.append(uid_param_dict)
         return uid_param_dict
 
     def svd(self,
@@ -365,36 +343,57 @@ class Metropolis:
                     data=data,
                     **kwargs)
 
-    def param_plot(self, uid_dict: Dict[str, np.array], column: str) -> None:
+    def param_plot(self,
+                   uid_dict: Dict[str, np.array],
+                   column: str,
+                   per: bool = True) -> None:
         """
         Draw a parametric plot.
         """
         column = _rename(column)
         x = []
         y = []
-        param_name = list(uid_dict.keys())[1]
-        for uid in uid_dict:
-            if uid not in self.data.index.get_level_values("uid").values:
-                raise ValueError("Invalid uid.")
-            x.append(self.mean(uid, param_name))
-            y.append(self.mean(uid, column))
-        plt.plot(x, y)
+        if isinstance(uid_dict, dict):
+            param_name = list(uid_dict.keys())[1]
+            for i in range(len(list(uid_dict.values())[0])):
+                uid = list(uid_dict.values())[0][i]
+                param = list(uid_dict.values())[1][i]
+                if uid not in self.data.index.get_level_values("uid").values:
+                    raise ValueError("Invalid uid.")
+                x.append(param)
+                y.append(self.mean(uid, column))
+        else:
+            raise ValueError("Invalid uid_dict.")
+        if per:
+            plt.plot(x, y / self.model.N, label=param_name)
+        else:
+            plt.plot(x, y, label=param_name)
 
-    def param_scatter(self, uid_dict: Dict[str, np.array],
-                      column: str) -> None:
+    def param_scatter(self,
+                      uid_dict: Dict[str, np.array],
+                      column: str,
+                      per: bool = True) -> None:
         """
         Draw a parametric scatter.
         """
         column = _rename(column)
         x = []
         y = []
-        param_name = list(uid_dict.keys())[1]
-        for uid in uid_dict:
-            if uid not in self.data.index.get_level_values("uid").values:
-                raise ValueError("Invalid uid.")
-            x.append(self.mean(uid, param_name))
-            y.append(self.mean(uid, column))
-        plt.scatter(x, y)
+        if isinstance(uid_dict, dict):
+            param_name = list(uid_dict.keys())[1]
+            for i in range(len(list(uid_dict.values())[0])):
+                uid = list(uid_dict.values())[0][i]
+                param = list(uid_dict.values())[1][i]
+                if uid not in self.data.index.get_level_values("uid").values:
+                    raise ValueError("Invalid uid.")
+                x.append(param)
+                y.append(self.mean(uid, column))
+        else:
+            raise ValueError("Invalid uid_dict.")
+        if per:
+            plt.scatter(x, y / self.model.N, label=param_name)
+        else:
+            plt.scatter(x, y, label=param_name)
 
     def imshow(self,
                uid: str,
@@ -540,7 +539,11 @@ class Wolff(Metropolis):
             self.iter_sample(T, uid)
         return uid
 
-    def param_sample(self, max_iter: int = 1000):
+    def param_sample(self,
+                     param: tuple,
+                     param_name: str or int = 'T',
+                     stable: float = 0.0,
+                     max_iter: int = 1000):
         """_summary_
 
         Args:
@@ -549,23 +552,24 @@ class Wolff(Metropolis):
         Returns:
             _type_: _description_
         """
-        super()._init_parameter()
-        param_lst = super()._init_paramlst()
+        self.parameter = _rename(param_name)
+        param_lst = super()._init_paramlst(param)
         uid_lst = []
         for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
-                    self.model.H = self.H0
+                    self.model.H = stable
                 self.equil_sample(param, max_iter=max_iter, uid=uid)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(self.T0, max_iter=max_iter, uid=uid)
+                self.equil_sample(stable, max_iter=max_iter, uid=uid)
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
         }
+        self.param_list.append(uid_param_dict)
         return uid_param_dict
 
 
@@ -626,7 +630,12 @@ class Anneal(Metropolis):
             T = max(T * dencyT, targetT)
         return uid
 
-    def param_sample(self, max_iter: int = 1000, ac_from='class'):
+    def param_sample(self,
+                     param: tuple,
+                     param_name: str or int = 'T',
+                     stable: float = 0.0,
+                     max_iter: int = 1000,
+                     ac_from: str = 'class'):
         """_summary_
 
         Args:
@@ -635,22 +644,22 @@ class Anneal(Metropolis):
         Returns:
             _type_: _description_
         """
-        super()._init_parameter()
-        param_lst = super()._init_paramlst()
+        self.parameter = _rename(param_name)
+        param_lst = super()._init_paramlst(param)
         uid_lst = []
         for param in tqdm(param_lst):
             uid = self._setup_uid(None)
             uid_lst.append(uid)
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
-                    self.model.H = self.H0
+                    self.model.H = stable
                 self.equil_sample(param,
                                   max_iter=max_iter,
                                   uid=uid,
                                   ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(self.T0,
+                self.equil_sample(stable,
                                   max_iter=max_iter,
                                   uid=uid,
                                   ac_from=ac_from)
@@ -658,6 +667,7 @@ class Anneal(Metropolis):
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
         }
+        self.param_list.append(uid_param_dict)
         return uid_param_dict
 
 
@@ -686,9 +696,11 @@ class Parallel(Metropolis):
                      Tmin,
                      Tmax,
                      Tlen,
+                     H0: float = 0.0,
                      max_iter: int = 1000,
                      eq_iter: int = 1000,
                      ac_from: str = 'class') -> Dict:
+        self.model.H = H0
         T_lst = np.linspace(Tmax, Tmin, Tlen)
         algo_lst = [Metropolis(copy.deepcopy(self.model)) for T in T_lst]
         uid_lst = [uuid.uuid1().hex for T in T_lst]
@@ -711,4 +723,5 @@ class Parallel(Metropolis):
                                                           1], algo_lst[i_T]
         self.data = pd.concat([algo.data for algo in algo_lst])
         uid_param_dict: Dict = {'uid': uid_lst, 'T': T_lst}
+        self.param_list.append(uid_param_dict)
         return uid_param_dict
