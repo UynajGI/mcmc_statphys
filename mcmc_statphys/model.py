@@ -14,6 +14,8 @@ from typing import Any, Tuple
 import numpy as np
 import copy
 
+__all__ = ["Ising", "Heisenberg", "XY", "Potts", "SKmodel"]
+
 
 class Ising(object):
 

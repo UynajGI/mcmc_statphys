@@ -6,3 +6,5 @@ __version__ = '0.4.3'
 __all__ = ['algorithm', 'model']
 
 from . import algorithm, model
+from .algorithm import * # NOQA
+from .model import * # NOQA
