@@ -16,10 +16,12 @@ import matplotlib.animation as animation
 from matplotlib.animation import HTMLWriter
 from .algorithm import _rename
 from typing import Dict
+import pickle
 
 __all__ = [
     'mean', 'std', 'var', 'norm', 'diff', 'cv', 'u4', 'getcolumn', 'curve',
-    'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate'
+    'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate', 'to_msdt',
+    'read_msdt'
 ]
 
 
@@ -248,3 +250,37 @@ def animate(algo, uid: str, save: bool = False, savePath: str = None) -> None:
         ani.save('myAnimation.html', writer=mywriter)
         plt.close()
         os.chdir('..')
+
+
+def to_msdt(algo, path: str = '.msdt'):
+    """
+    Convert the data to msdt.
+    """
+    # 检查 path 最后是否有'.msdt'后缀
+    if path[-5:] != '.msdt':
+        path += '.msdt'
+    # 检查是否存在文件
+    if os.path.exists(path):
+        # 存在覆盖
+        os.remove(path)
+    model = algo._rowmodel
+    data = algo.data
+    param_list = algo.param_list
+    name = algo.name
+    savedata = {
+        'model': model,
+        'data': data,
+        'param_list': param_list,
+        'name': name
+    }
+    open(path, 'wb').write(pickle.dumps(savedata))
+
+
+def read_msdt(path: str = None):
+    """
+    Read the data from msdt.
+    """
+    # 检查是否存在文件
+    if not os.path.exists(path):
+        raise FileNotFoundError("File not found.")
+    return pickle.loads(open(path, 'rb').read())
