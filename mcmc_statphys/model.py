@@ -247,6 +247,7 @@ class Heisenberg(Ising):
         energy = 0
         for neighbor_spin in neighbors_spin:
             energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+            energy -= self.H * np.dot(self.spin[index], self.spin[index])
         return energy
 
     def _max_energy(self):
@@ -304,6 +305,7 @@ class XY(Ising):
         energy = 0
         for neighbor_spin in neighbors_spin:
             energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+            energy -= self.H * np.dot(self.spin[index], self.spin[index])
         return energy
 
     def _max_energy(self):
@@ -397,8 +399,8 @@ class SKmodel():
         self.type = type
 
     def _init_Jij(self):
-        self.Jij = np.random.normal(self.Jmean / self.N, self.Jsigma**2 / self.N,
-                                    (self.N, self.N))
+        self.Jij = np.random.normal(self.Jmean / self.N,
+                                    self.Jsigma**2 / self.N, (self.N, self.N))
         self.Jij = (self.Jij + self.Jij.T) / 2
         np.fill_diagonal(self.Jij, 0)
         self.Jij = self.Jij.astype(np.float32)
