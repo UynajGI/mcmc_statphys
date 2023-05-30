@@ -16,52 +16,57 @@ from matplotlib.animation import HTMLWriter
 __all__ = [
     'Metropolis', 'Wolff', 'Anneal', 'Parallel', 'WangLandau', 'mean', 'std',
     'var', 'norm', 'diff', 'cv', 'getcolumn', 'curve', 'scatter', 'param_plot',
-    'param_scatter', 'imshow', 'animate'
+    'param_scatter', 'imshow', 'animate', 'u4'
 ]
 
 
-def mean(algo, uid: str, column: str) -> float:
+def mean(algo, uid: str, column: str, t0: int = 0) -> float:
     column = _rename(column)
-    return np.mean(algo.data.loc[uid][column])
+    return np.mean(algo.data.loc[uid][column][t0:])
 
 
-def std(algo, uid: str, column: str) -> float:
+def std(algo, uid: str, column: str, t0: int = 0) -> float:
     column = _rename(column)
-    return np.std(algo.data.loc[uid][column])
+    return np.std(algo.data.loc[uid][column][t0:])
 
 
-def var(algo, uid: str, column: str) -> float:
+def var(algo, uid: str, column: str, t0: int = 0) -> float:
     column = _rename(column)
-    return np.var(algo.data.loc[uid][column])
+    return np.var(algo.data.loc[uid][column][t0:])
 
 
-def norm(algo, uid: str, column: str, ord: int = 2) -> float:
+def norm(algo, uid: str, column: str, t0: int = 0, ord: int = 2) -> float:
     column = _rename(column)
-    return np.linalg.norm(algo.data.loc[uid][column], ord=ord)
+    return np.linalg.norm(algo.data.loc[uid][column][t0:], ord=ord)
 
 
-def diff(algo, uid: str, column: str, n: int = 1) -> np.array:
+def diff(algo, uid: str, column: str, t0: int = 0, n: int = 1) -> np.array:
     column = _rename(column)
-    return np.diff(algo.data.loc[uid][column], n)
+    return np.diff(algo.data.loc[uid][column][t0:], n)
 
 
-def cv(algo, uid: str, column: str) -> float:
+def cv(algo, uid: str, column: str, t0: int = 0) -> float:
     column = _rename(column)
-    return algo.std(uid, column) / algo.mean(uid, column)
+    return algo.std(uid, column, t0) / algo.mean(uid, column, t0)
 
 
-def getcolumn(algo, uid: str, column: str) -> np.array:
+def u4(algo, uid: str, t0: int = 0) -> float:
+    return 1 - algo.mean(uid, "magnetization", t0=t0)**4 / (
+        3 * algo.mean(uid, "magnetization", t0=t0)**2)**2
+
+
+def getcolumn(algo, uid: str, column: str, t0: int = 0) -> np.array:
     column = _rename(column)
-    return algo.data.loc[uid][column]
+    return algo.data.loc[uid][column][t0:]
 
 
-def curve(algo, uid, column) -> None:
+def curve(algo, uid, column, t0: int = 0) -> None:
     """
     Draw a curve.
     """
     data = algo.data
     column = _rename(column)
-    array = data.loc[uid][column]
+    array = data.loc[uid][column][t0:]
     index = data.loc[uid].index
     plt.plot(index, array)
 
@@ -71,6 +76,7 @@ def scatter(algo,
             column,
             s=None,
             c=None,
+            t0: int = 0,
             marker=None,
             cmap=None,
             norm=None,
@@ -86,7 +92,7 @@ def scatter(algo,
 
     data = algo.data
     column = _rename(column)
-    array = data.loc[uid][column]
+    array = data.loc[uid][column][t0:]
     index = data.loc[uid].index
     plt.scatter(index,
                 array,
@@ -462,12 +468,13 @@ class Metropolis:
 
     def svd(self,
             uid: str or Dict or List[str],
-            norm: bool = True) -> np.array:
+            norm: bool = True,
+            t0: int = 0) -> np.array:
 
         if isinstance(uid, str):
             data = self.data
             column: str = 'spin'
-            spin_lst = data.loc[uid][column]
+            spin_lst = data.loc[uid][column][t0:]
             spin_matrix = []
             for spin in spin_lst:
                 spin = spin.reshape(-1)
@@ -493,47 +500,52 @@ class Metropolis:
                 svd_lst.append(self.svd(uid=uid_item, norm=norm))
             return svd_lst
 
-    def mean(self, uid: str, column: str) -> float:
+    def mean(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
-        return np.mean(self.data.loc[uid][column])
+        return np.mean(self.data.loc[uid][column][t0:])
 
-    def std(self, uid: str, column: str) -> float:
+    def std(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
-        return np.std(self.data.loc[uid][column])
+        return np.std(self.data.loc[uid][column][t0:])
 
-    def var(self, uid: str, column: str) -> float:
+    def var(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
-        return np.var(self.data.loc[uid][column])
+        return np.var(self.data.loc[uid][column][t0:])
 
-    def norm(self, uid: str, column: str, ord: int = 2) -> float:
+    def norm(self, uid: str, column: str, t0: int = 0, ord: int = 2) -> float:
         column = _rename(column)
-        return np.linalg.norm(self.data.loc[uid][column], ord=ord)
+        return np.linalg.norm(self.data.loc[uid][column][t0:], ord=ord)
 
-    def diff(self, uid: str, column: str, n: int = 1) -> np.array:
+    def diff(self, uid: str, column: str, t0: int = 0, n: int = 1) -> np.array:
         column = _rename(column)
-        return np.diff(self.data.loc[uid][column], n)
+        return np.diff(self.data.loc[uid][column][t0:], n)
 
-    def cv(self, uid: str, column: str) -> float:
+    def cv(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
-        return self.std(uid, column) / self.mean(uid, column)
+        return self.std(uid, column, t0) / self.mean(uid, column, t0)
 
-    def getcolumn(self, uid: str, column: str) -> np.array:
+    def u4(self, uid: str, t0: int = 0) -> float:
+        return 1 - self.mean(uid, "magnetization", t0)**4 / (
+            3 * self.mean(uid, "magnetization", t0)**2)**2
+
+    def getcolumn(self, uid: str, column: str, t0: int = 0) -> np.array:
         column = _rename(column)
-        return self.data.loc[uid][column]
+        return self.data.loc[uid][column][t0:]
 
-    def curve(self, uid, column) -> None:
+    def curve(self, uid, column, t0: int = 0) -> None:
         """
         Draw a curve.
         """
         data = self.data
         column = _rename(column)
-        array = data.loc[uid][column]
+        array = data.loc[uid][column][t0:]
         index = data.loc[uid].index
         plt.plot(index, array)
 
     def scatter(self,
                 uid,
                 column,
+                t0: int = 0,
                 s=None,
                 c=None,
                 marker=None,
@@ -551,7 +563,7 @@ class Metropolis:
 
         data = self.data
         column = _rename(column)
-        array = data.loc[uid][column]
+        array = data.loc[uid][column][t0:]
         index = data.loc[uid].index
         plt.scatter(index,
                     array,
