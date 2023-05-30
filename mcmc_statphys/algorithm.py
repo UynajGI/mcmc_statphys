@@ -20,9 +20,9 @@ __all__ = [
 ]
 
 
-def mean(algo, uid: str, column: str, t0: int = 0) -> float:
+def mean(algo, uid: str, column: str, t0: int = 0, n: int = 1) -> float:
     column = _rename(column)
-    return np.mean(algo.data.loc[uid][column][t0:])
+    return np.mean(algo.data.loc[uid][column][t0:]**n)
 
 
 def std(algo, uid: str, column: str, t0: int = 0) -> float:
@@ -51,8 +51,8 @@ def cv(algo, uid: str, column: str, t0: int = 0) -> float:
 
 
 def u4(algo, uid: str, t0: int = 0) -> float:
-    return 1 - algo.mean(uid, "magnetization", t0=t0)**4 / (
-        3 * algo.mean(uid, "magnetization", t0=t0)**2)**2
+    return 1 - algo.mean(uid, "magnetization", t0=t0, n=4) / (
+        3 * algo.mean(uid, "magnetization", t0=t0, n=2)**2)
 
 
 def getcolumn(algo, uid: str, column: str, t0: int = 0) -> np.array:
@@ -500,9 +500,9 @@ class Metropolis:
                 svd_lst.append(self.svd(uid=uid_item, norm=norm))
             return svd_lst
 
-    def mean(self, uid: str, column: str, t0: int = 0) -> float:
+    def mean(self, uid: str, column: str, t0: int = 0, n: int = 1) -> float:
         column = _rename(column)
-        return np.mean(self.data.loc[uid][column][t0:])
+        return np.mean(self.data.loc[uid][column][t0:]**n)
 
     def std(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
@@ -525,8 +525,8 @@ class Metropolis:
         return self.std(uid, column, t0) / self.mean(uid, column, t0)
 
     def u4(self, uid: str, t0: int = 0) -> float:
-        return 1 - self.mean(uid, "magnetization", t0)**4 / (
-            3 * self.mean(uid, "magnetization", t0)**2)**2
+        return 1 - self.mean(uid, "magnetization", t0, n=4) / (
+            3 * self.mean(uid, "magnetization", t0, n=2)**2)
 
     def getcolumn(self, uid: str, column: str, t0: int = 0) -> np.array:
         column = _rename(column)
