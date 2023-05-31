@@ -275,9 +275,8 @@ If you want to analyze the data, you can use the ``analyze`` module. For example
 
 .. code:: python
 
-   from mcmc_statphys import analysis
    uid3 = algo.equil_sample(T=1.0, max_iter=1000)
-   energy_mean = analysis.mean(algo,uid=uid3,column='energy') # Attention: put algo not algo.data
+   energy_mean = algo.mean(uid=uid3,column='energy') 
    energy_mean
    # -124.172
    # e.t.c.
