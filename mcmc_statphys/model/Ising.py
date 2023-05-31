@@ -1,17 +1,18 @@
 # -*- encoding: utf-8 -*-
-"""
-@File    :   IsingObj.py
-@Time    :   2023/05/13 10:49:12
+'''
+@File    :   Ising.py
+@Time    :   2023/05/31 11:47:09
 @Author  :   UynajGI
-@Version :   beta0.0.1
-@Contact :   betterWL@hotmail.com
-@License :   (CC-BY-4.0)Copyright 2023
-"""
-
-from typing import Any, Tuple
+@Contact :   suquan12148@outlook.com
+@License :   (MIT)Copyright 2023
+'''
 
 # here put the import lib
+from typing import Any, Tuple
 import numpy as np
+import copy
+
+__all__ = ["Ising"]
 
 
 class Ising(object):
@@ -32,6 +33,7 @@ class Ising(object):
         self._init_spin(type="ising")
         self._get_total_energy()
         self._get_total_magnetization()
+        self._max_energy()
 
     def __len__(self):
         return self.L
@@ -44,26 +46,9 @@ class Ising(object):
 
         Args:
             type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
-
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if type == "ising":
-            self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        elif type == "heisenberg":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.L,
-                                           self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "XY":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "potts":
-            p = kwargs.pop("p", 2)
-            self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
+        self.spin = self.spin.astype(np.int8)
         self.type = type
 
     def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
@@ -112,17 +97,9 @@ class Ising(object):
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
-        if self.type == "ising" or self.type == "heisenberg" or self.type == "XY":
-            for neighbor_spin in neighbors_spin:
-                energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            if self.type == "ising":
-                energy -= self.H * self.spin[index]
-        elif self.type == "potts":
-            for neighbor_spin in neighbors_spin:
-                if self.spin[index] == neighbor_spin:
-                    energy -= self.Jij
-        else:
-            raise ValueError("Invalid type of spin")
+        for neighbor_spin in neighbors_spin:
+            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+        energy -= self.H * self.spin[index]
         return energy
 
     def _get_per_energy(self) -> float:
@@ -184,14 +161,7 @@ class Ising(object):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if self.type == "ising":
-            self.spin[index] *= -1
-        elif self.type == "heisenberg" or self.type == "XY":
-            self.spin[index] = 2 * np.random.rand(self.dim) - 1
-        elif self.type == "potts":
-            self.spin[index] = np.random.choice(range(self.p))
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin[index] *= -1
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
         """Get the delta energy of the site"""
@@ -204,6 +174,12 @@ class Ising(object):
         self.energy += detle_energy
         self.magnetization += (new_site - old_site)
         return detle_energy
+
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        self.set_spin(np.ones_like(self.spin))
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
 
     def set_spin(self, spin):
         # TODO[0.4.0]: 增加 spin 格式审查
@@ -226,26 +202,3 @@ class Ising(object):
             float: The per magnetization of the system / cn: 系统的单位磁矩
         """
         return self.magntization
-
-
-class Heisenberg(Ising):
-
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dim=3, *args, **kwargs)
-        self._init_spin(type="heisenberg")
-
-
-class XY(Ising):
-
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dim=2, *args, **kwargs)
-        self._init_spin(type="XY")
-
-
-class Potts(Ising):
-
-    def __init__(self, L, Jij=1, H=0, dim=2, p=3, *args, **kwargs):
-        # p is the number of states of the system
-        self.p = p
-        super().__init__(L, Jij, H, dim, *args, **kwargs)
-        self._init_spin(type="potts", p=p)

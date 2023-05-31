@@ -65,11 +65,11 @@ Now you can choose a sample method and get the result, e.g. ``equil_sample``:
    uid
    '607ecc20f46d11ed948300e04c6807cc' # your uid must be different, because it is unique
 
-Notice that the ``uid`` is the unique id of the sample. In this package, we use ``uid`` to identify a sample process. We save the data of the sample in a attribute called ``iter_data`` of the algorithm object, which type is a ``pd.DataFrame``. You can get the data of the sample by using ``iter_data.loc[uid]``:
+Notice that the ``uid`` is the unique id of the sample. In this package, we use ``uid`` to identify a sample process. We save the data of the sample in a attribute called ``data`` of the algorithm object, which type is a ``pd.DataFrame``. You can get the data of the sample by using ``data.loc[uid]``:
 
 .. code:: python
 
-   algo.iter_data.loc[uid]
+   algo.data.loc[uid]
 
 +===+=============+============+============+============+============+
 | i | T           | H          | energy     | mag        | spin       |
@@ -101,7 +101,7 @@ The uid mean that you can continue the sample process by using the same uid. For
    algo2 = Metropolis(model=model)
    algo2.iter_sample(T=1.0, uid=uid1)
    algo2.iter_sample(T=1.0, uid=uid2)
-   algo2.iter_data
+   algo2.data
 
 +===+===+=============+============+============+============+============+
 | u | i | T           | H          | energy     | mag        | spin       |
@@ -186,7 +186,7 @@ Continue the sample process by using the same uid:
 .. code:: python
 
    algo2.iter_sample(T=1.0, uid=uid2)
-   algo2.iter_data
+   algo2.data
 
 +===+===+=============+============+============+============+============+
 | u | i | T           | H          | energy     | mag        | spin       |
@@ -275,9 +275,8 @@ If you want to analyze the data, you can use the ``analyze`` module. For example
 
 .. code:: python
 
-   from mcmc_statphys import analysis
    uid3 = algo.equil_sample(T=1.0, max_iter=1000)
-   energy_mean = analysis.mean(algo,uid=uid3,column='energy') # Attention: put algo not algo.iter_data
+   energy_mean = algo.mean(uid=uid3,column='energy') 
    energy_mean
    # -124.172
    # e.t.c.
