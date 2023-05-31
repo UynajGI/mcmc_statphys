@@ -1,20 +1,65 @@
 # -*- encoding: utf-8 -*-
-"""
-@File    :   IsingObj.py
-@Time    :   2023/05/13 10:49:12
+'''
+@File    :   Ising.py
+@Time    :   2023/05/31 11:47:09
 @Author  :   UynajGI
-@Version :   beta0.0.1
-@Contact :   betterWL@hotmail.com
-@License :   (CC-BY-4.0)Copyright 2023
-"""
-
-from typing import Any, Tuple
+@Contact :   suquan12148@outlook.com
+@License :   (MIT)Copyright 2023
+'''
 
 # here put the import lib
+from typing import Any, Tuple
 import numpy as np
+import copy
+
+__all__ = ["Ising"]
 
 
 class Ising(object):
+    """
+    Ising
+    =====
+
+    The Ising model is a mathematical model for describing ferromagnetism, named by physicists Ernst Ising and Wilhelm Lenz.
+    The model consists of a set of discrete variables representing the magnetic dipole moments of the atomic "spins", which can be in two states (+1 or -1).
+    The spins are arranged in a diagram (usually a lattice) so that each spin can interact with its neighbors.
+    The same neighboring spin has a lower energy than a different neighboring spin;
+    the system tends to have the lowest energy, but heat perturbs this tendency, resulting in a different structural phase. The model can be used as a realistic simplified model to identify phase transitions.
+
+    Definition of Ising Model
+    ---------------
+
+    Consider a set of lattice points, each of which has a set of neighboring lattice points (e.g. a graph) forming a lattice of one dimension.
+    For each lattice point, there is a discrete variable, satisfying, that represents the spin of the point.
+    A spin configuration is one that assigns a spin value to each lattice point.
+    For any two neighboring lattice points, there is an interaction. In addition, a lattice point has an external magnetic field with which it interacts.
+    The energy of a configuration is given by the Hamiltonian function
+
+    H = -J \\sum_{\\langle i,j \\rangle} s_i s_j - h \\sum_i s_i
+
+    The first summation is performed over adjacent spin pairs (each pair is counted only once), and the second summation is performed over all spins.
+
+    Analytical and numerical methods for Ising models
+    -------------------------
+
+    The one-dimensional Ising model can be solved by Ising himself in his 1924 paper, and it has no phase transition.
+    The two-dimensional square lattice Ising model is much more difficult and was not described analytically until 1944 by Lars Onsager.
+    It is usually solved by transfer matrix methods, although some methods related to quantum field theory also exist.
+    In the case of greater than four dimensions, the phase transition of the Ising model can be described by mean-field theory.
+    In addition to analytical methods, the Ising model can also be solved numerically, for example by Monte Carlo simulations.
+    This method can be used to generate spin configurations at different temperatures and to calculate relevant
+    physical quantities such as magnetization strength, specific heat, magnetization rate, etc.
+
+    Ref
+    ---
+
+    -  [1] `Ising model -
+    Wikipedia <https://en.wikipedia.org/wiki/Ising_model>`__
+    -  [2] `Shekaari, A., & Jafari, M. (2021). Theory and Simulation of the
+    Ising Model. <http://arxiv.org/abs/2105.00841>`__
+    -  [3] `Ising Model -
+    Scholarpedia <http://www.scholarpedia.org/article/Ising_model>`__
+    """
 
     def __init__(self,
                  L: int,
@@ -32,6 +77,7 @@ class Ising(object):
         self._init_spin(type="ising")
         self._get_total_energy()
         self._get_total_magnetization()
+        self._max_energy()
 
     def __len__(self):
         return self.L
@@ -44,26 +90,9 @@ class Ising(object):
 
         Args:
             type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
-
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if type == "ising":
-            self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        elif type == "heisenberg":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.L,
-                                           self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "XY":
-            self.spin = 2 * np.random.rand(self.L, self.L, self.dim) - 1
-            self.spin = self.spin.astype(np.float32)
-        elif type == "potts":
-            p = kwargs.pop("p", 2)
-            self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
-            self.spin = self.spin.astype(np.int8)
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
+        self.spin = self.spin.astype(np.int8)
         self.type = type
 
     def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
@@ -112,17 +141,9 @@ class Ising(object):
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
-        if self.type == "ising" or self.type == "heisenberg" or self.type == "XY":
-            for neighbor_spin in neighbors_spin:
-                energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            if self.type == "ising":
-                energy -= self.H * self.spin[index]
-        elif self.type == "potts":
-            for neighbor_spin in neighbors_spin:
-                if self.spin[index] == neighbor_spin:
-                    energy -= self.Jij
-        else:
-            raise ValueError("Invalid type of spin")
+        for neighbor_spin in neighbors_spin:
+            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+        energy -= self.H * self.spin[index]
         return energy
 
     def _get_per_energy(self) -> float:
@@ -184,14 +205,7 @@ class Ising(object):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        if self.type == "ising":
-            self.spin[index] *= -1
-        elif self.type == "heisenberg" or self.type == "XY":
-            self.spin[index] = 2 * np.random.rand(self.dim) - 1
-        elif self.type == "potts":
-            self.spin[index] = np.random.choice(range(self.p))
-        else:
-            raise ValueError("Invalid type of spin")
+        self.spin[index] *= -1
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
         """Get the delta energy of the site"""
@@ -204,6 +218,12 @@ class Ising(object):
         self.energy += detle_energy
         self.magnetization += (new_site - old_site)
         return detle_energy
+
+    def _max_energy(self):
+        raw_spin = copy.deepcopy(self.spin)
+        self.set_spin(np.ones_like(self.spin))
+        self.maxenergy = copy.deepcopy(self.energy)
+        self.set_spin(raw_spin)
 
     def set_spin(self, spin):
         # TODO[0.4.0]: 增加 spin 格式审查
@@ -226,26 +246,3 @@ class Ising(object):
             float: The per magnetization of the system / cn: 系统的单位磁矩
         """
         return self.magntization
-
-
-class Heisenberg(Ising):
-
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dim=3, *args, **kwargs)
-        self._init_spin(type="heisenberg")
-
-
-class XY(Ising):
-
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H, dim=2, *args, **kwargs)
-        self._init_spin(type="XY")
-
-
-class Potts(Ising):
-
-    def __init__(self, L, Jij=1, H=0, dim=2, p=3, *args, **kwargs):
-        # p is the number of states of the system
-        self.p = p
-        super().__init__(L, Jij, H, dim, *args, **kwargs)
-        self._init_spin(type="potts", p=p)
