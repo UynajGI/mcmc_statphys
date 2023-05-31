@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 def is_Flat(sequence: np.ndarray, epsilon: float = 0.1) -> bool:
-    # test
+    
     """Determine whether the sequence is flat / cn: 判断序列是否平坦
 
     Args:
