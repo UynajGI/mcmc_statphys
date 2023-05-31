@@ -400,7 +400,7 @@ class SKmodel():
 
     def _init_Jij(self):
         self.Jij = np.random.normal(self.Jmean / self.N,
-                                    self.Jsigma**2 / self.N, (self.N, self.N))
+                                    self.Jsigma / np.sqrt(self.N), (self.N, self.N))
         self.Jij = (self.Jij + self.Jij.T) / 2
         np.fill_diagonal(self.Jij, 0)
         self.Jij = self.Jij.astype(np.float32)
@@ -419,8 +419,8 @@ class SKmodel():
         Returns:
             float: The total energy of the system / cn: 系统的总能量
         """
-        self.energy = np.dot(self.spin, np.dot(self.Jij, self.spin))
-        self.energy += np.sum(self.H * self.spin)
+        self.energy = -1 / 2 * np.dot(self.spin, np.dot(self.Jij, self.spin))
+        self.energy -= np.sum(self.H * self.spin)
         return self.energy
 
     def _get_per_magnetization(self) -> float:
