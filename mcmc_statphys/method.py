@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import HTMLWriter
-from .algorithm import _rename
+from .algorithm.Metropolis import _rename
 from typing import Dict
 import pickle
 
