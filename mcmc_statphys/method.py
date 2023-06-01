@@ -17,11 +17,12 @@ from matplotlib.animation import HTMLWriter
 from .algorithm.Metropolis import _rename
 from typing import Dict
 import pickle
+import uuid
 
 __all__ = [
     'mean', 'std', 'var', 'norm', 'diff', 'cv', 'u4', 'getcolumn', 'curve',
     'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate', 'to_msdt',
-    'read_msdt'
+    'read_msdt', 'setup_uid'
 ]
 
 
@@ -284,3 +285,15 @@ def read_msdt(path: str = None):
     if not os.path.exists(path):
         raise FileNotFoundError("File not found.")
     return pickle.loads(open(path, 'rb').read())
+
+
+def setup_uid(algo, uid):
+    if uid is None:
+        uid = (uuid.uuid1()).hex
+    else:
+        if uid not in algo.data.index.get_level_values("uid").values:
+            algo._reset_model()
+        else:
+            algo.model.set_spin(
+                algo.data.loc[uid].loc[algo.data.loc[uid].index.max()].spin)
+    return uid
