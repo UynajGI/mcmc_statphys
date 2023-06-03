@@ -4,7 +4,6 @@ import os
 
 # here put the import lib
 import numpy as np
-import pandas as pd
 import uuid
 from tqdm import tqdm
 import matplotlib.pyplot as plt
@@ -96,7 +95,7 @@ class Metropolis:
         self.model = model
         self._rowmodel = copy.deepcopy(model)
         self.name = "Metroplis"
-        self._init_data()
+        self.data = self.model._init_data()
         self.param_list = []
 
     def __str__(self):
@@ -109,74 +108,13 @@ class Metropolis:
         if uid is None:
             uid = (uuid.uuid1()).hex
         else:
-            if uid not in self.data.index.get_level_values("uid").values:
-                self._reset_model()
-            else:
-                self.model.set_spin(self.data.loc[uid].loc[
-                    self.data.loc[uid].index.max()].spin)
+            if not self.data.empty:
+                if uid not in self.data.index.get_level_values("uid").values:
+                    self._reset_model()
+                else:
+                    self.model.set_spin(self.data.loc[uid].loc[
+                        self.data.loc[uid].index.max()].spin)
         return uid
-
-    def _init_data(self):
-        if self.model.type == "nvt":
-            self.data: pd.DataFrame = pd.DataFrame(columns=[
-                "uid",
-                "iter",
-                "T",
-                "energy",
-                "spin",
-            ])
-            self.data.set_index(["uid", "iter"], inplace=True)
-        else:
-            self.data: pd.DataFrame = pd.DataFrame(columns=[
-                "uid",
-                "iter",
-                "T",
-                "H",
-                "energy",
-                "magnetization",
-                "spin",
-            ])
-            self.data.set_index(["uid", "iter"], inplace=True)
-
-    def _save_date(self, T, uid):
-        if self.model.type == 'nvt':
-            if uid not in self.data.index.get_level_values("uid").values:
-                self.data.loc[(uid, 1), :] = [
-                    T,
-                    self.model.energy,
-                    0,
-                ]
-                self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
-            else:
-                iterplus = self.data.loc[uid].index.max() + 1
-                self.data.loc[(uid, iterplus), :] = [
-                    T,
-                    self.model.energy,
-                    0,
-                ]
-                self.data.at[(uid, iterplus),
-                             "spin"] = copy.deepcopy(self.model.spin)
-        else:
-            if uid not in self.data.index.get_level_values("uid").values:
-                self.data.loc[(uid, 1), :] = [
-                    T,
-                    self.model.H,
-                    self.model.energy,
-                    self.model.magnetization,
-                    0,
-                ]
-                self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
-            else:
-                iterplus = self.data.loc[uid].index.max() + 1
-                self.data.loc[(uid, iterplus), :] = [
-                    T,
-                    self.model.H,
-                    self.model.energy,
-                    self.model.magnetization,
-                    0,
-                ]
-                self.data.at[(uid, iterplus),
-                             "spin"] = copy.deepcopy(self.model.spin)
 
     def _init_paramlst(self, param):
         """Initialize parameter list / cn: 初始化参数列表"""
@@ -199,7 +137,7 @@ class Metropolis:
         delta_E = self.model._change_delta_energy(site)
         if not _sample_acceptance(delta_E, T, form=ac_from):
             self.model = temp_model
-        self._save_date(T, uid)
+        self.data = self.model._save_date(T=T, uid=uid, data=self.data)
         return uid
 
     def equil_sample(self,

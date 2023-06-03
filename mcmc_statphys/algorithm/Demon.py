@@ -21,11 +21,12 @@ class Demon(object):
         if uid is None:
             uid = (uuid.uuid1()).hex
         else:
-            if uid not in self.data.index.get_level_values("uid").values:
-                self._reset_model()
-            else:
-                self.model.set_spin(self.data.loc[uid].loc[
-                    self.data.loc[uid].index.max()].spin)
+            if not self.data.empty:
+                if uid not in self.data.index.get_level_values("uid").values:
+                    self._reset_model()
+                else:
+                    self.model.set_spin(self.data.loc[uid].loc[
+                        self.data.loc[uid].index.max()].spin)
         return uid
 
     def _init_data(self):

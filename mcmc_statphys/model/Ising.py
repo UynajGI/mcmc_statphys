@@ -247,3 +247,38 @@ class Ising(object):
             float: The per magnetization of the system / cn: 系统的单位磁矩
         """
         return self.magnetization
+
+    def _init_data(self):
+        data: pd.DataFrame = pd.DataFrame(columns=[
+            "uid",
+            "iter",
+            "T",
+            "H",
+            "energy",
+            "magnetization",
+            "spin",
+        ])
+        data.set_index(["uid", "iter"], inplace=True)
+        return data
+
+    def _save_date(self, T, uid, data: pd.DataFrame):
+        if uid not in data.index.get_level_values("uid").values:
+            data.loc[(uid, 1), :] = [
+                T,
+                self.H,
+                self.energy,
+                self.magnetization,
+                0,
+            ]
+            data.at[(uid, 1), "spin"] = copy.deepcopy(self.spin)
+        else:
+            iterplus = data.loc[uid].index.max() + 1
+            data.loc[(uid, iterplus), :] = [
+                T,
+                self.H,
+                self.energy,
+                self.magnetization,
+                0,
+            ]
+            data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.spin)
+        return data
