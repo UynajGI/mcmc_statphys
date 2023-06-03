@@ -11,11 +11,56 @@
 from typing import Any, Tuple
 import numpy as np
 import copy
+import pandas as pd
 
 __all__ = ["Ising"]
 
 
 class Ising(object):
+    """
+    Ising
+    =====
+
+    The Ising model is a mathematical model for describing ferromagnetism, named by physicists Ernst Ising and Wilhelm Lenz.
+    The model consists of a set of discrete variables representing the magnetic dipole moments of the atomic "spins", which can be in two states (+1 or -1).
+    The spins are arranged in a diagram (usually a lattice) so that each spin can interact with its neighbors.
+    The same neighboring spin has a lower energy than a different neighboring spin;
+    the system tends to have the lowest energy, but heat perturbs this tendency, resulting in a different structural phase. The model can be used as a realistic simplified model to identify phase transitions.
+
+    Definition of Ising Model
+    ---------------
+
+    Consider a set of lattice points, each of which has a set of neighboring lattice points (e.g. a graph) forming a lattice of one dimension.
+    For each lattice point, there is a discrete variable, satisfying, that represents the spin of the point.
+    A spin configuration is one that assigns a spin value to each lattice point.
+    For any two neighboring lattice points, there is an interaction. In addition, a lattice point has an external magnetic field with which it interacts.
+    The energy of a configuration is given by the Hamiltonian function
+
+    H = -J \\sum_{\\langle i,j \\rangle} s_i s_j - h \\sum_i s_i
+
+    The first summation is performed over adjacent spin pairs (each pair is counted only once), and the second summation is performed over all spins.
+
+    Analytical and numerical methods for Ising models
+    -------------------------
+
+    The one-dimensional Ising model can be solved by Ising himself in his 1924 paper, and it has no phase transition.
+    The two-dimensional square lattice Ising model is much more difficult and was not described analytically until 1944 by Lars Onsager.
+    It is usually solved by transfer matrix methods, although some methods related to quantum field theory also exist.
+    In the case of greater than four dimensions, the phase transition of the Ising model can be described by mean-field theory.
+    In addition to analytical methods, the Ising model can also be solved numerically, for example by Monte Carlo simulations.
+    This method can be used to generate spin configurations at different temperatures and to calculate relevant
+    physical quantities such as magnetization strength, specific heat, magnetization rate, etc.
+
+    Ref
+    ---
+
+    -  [1] `Ising model -
+    Wikipedia <https://en.wikipedia.org/wiki/Ising_model>`__
+    -  [2] `Shekaari, A., & Jafari, M. (2021). Theory and Simulation of the
+    Ising Model. <http://arxiv.org/abs/2105.00841>`__
+    -  [3] `Ising Model -
+    Scholarpedia <http://www.scholarpedia.org/article/Ising_model>`__
+    """
 
     def __init__(self,
                  L: int,
@@ -201,4 +246,4 @@ class Ising(object):
         Returns:
             float: The per magnetization of the system / cn: 系统的单位磁矩
         """
-        return self.magntization
+        return self.magnetization
