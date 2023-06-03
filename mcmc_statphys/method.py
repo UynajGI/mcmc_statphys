@@ -18,11 +18,12 @@ from .algorithm.Metropolis import _rename
 from typing import Dict
 import pickle
 import uuid
+import statsmodels.tsa.stattools as stattools
 
 __all__ = [
     'mean', 'std', 'var', 'norm', 'diff', 'cv', 'u4', 'getcolumn', 'curve',
     'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate', 'to_msdt',
-    'read_msdt', 'setup_uid'
+    'read_msdt', 'setup_uid', 'autocorrelation'
 ]
 
 
@@ -64,6 +65,13 @@ def u4(algo, uid: str, t0: int = 0) -> float:
 def getcolumn(algo, uid: str, column: str, t0: int = 0) -> np.array:
     column = _rename(column)
     return algo.data.loc[uid][column][t0:]
+
+
+def autocorrelation(algo, uid: str, column: str):
+    column = _rename(column)
+    result = stattools.acf(algo.getcolumn(uid, column),
+                           nlags=len((algo.getcolumn(uid, column))))
+    return result
 
 
 def curve(algo, uid, column, t0: int = 0) -> None:

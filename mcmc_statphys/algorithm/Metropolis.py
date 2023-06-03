@@ -10,6 +10,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import HTMLWriter
+import statsmodels.tsa.stattools as stattools
 
 __all__ = ['Metropolis']
 
@@ -78,8 +79,6 @@ def _rename(column):
             column = 'T'
         elif column == 'h' or column == 'H' or column == 'field' or column == 'Field':
             column = 'H'
-        else:
-            raise ValueError('Invalid parameter name.')
     return column
 
 
@@ -118,38 +117,66 @@ class Metropolis:
         return uid
 
     def _init_data(self):
-        self.data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "H",
-            "energy",
-            "magnetization",
-            "spin",
-        ])
-        self.data.set_index(["uid", "iter"], inplace=True)
+        if self.model.type == "nvt":
+            self.data: pd.DataFrame = pd.DataFrame(columns=[
+                "uid",
+                "iter",
+                "T",
+                "energy",
+                "spin",
+            ])
+            self.data.set_index(["uid", "iter"], inplace=True)
+        else:
+            self.data: pd.DataFrame = pd.DataFrame(columns=[
+                "uid",
+                "iter",
+                "T",
+                "H",
+                "energy",
+                "magnetization",
+                "spin",
+            ])
+            self.data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, T, uid):
-        if uid not in self.data.index.get_level_values("uid").values:
-            self.data.loc[(uid, 1), :] = [
-                T,
-                self.model.H,
-                self.model.energy,
-                self.model.magnetization,
-                0,
-            ]
-            self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
+        if self.model.type == 'nvt':
+            if uid not in self.data.index.get_level_values("uid").values:
+                self.data.loc[(uid, 1), :] = [
+                    T,
+                    self.model.energy,
+                    0,
+                ]
+                self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
+            else:
+                iterplus = self.data.loc[uid].index.max() + 1
+                self.data.loc[(uid, iterplus), :] = [
+                    T,
+                    self.model.energy,
+                    0,
+                ]
+                self.data.at[(uid, iterplus),
+                             "spin"] = copy.deepcopy(self.model.spin)
         else:
-            iterplus = self.data.loc[uid].index.max() + 1
-            self.data.loc[(uid, iterplus), :] = [
-                T,
-                self.model.H,
-                self.model.energy,
-                self.model.magnetization,
-                0,
-            ]
-            self.data.at[(uid, iterplus),
-                         "spin"] = copy.deepcopy(self.model.spin)
+            if uid not in self.data.index.get_level_values("uid").values:
+                self.data.loc[(uid, 1), :] = [
+                    T,
+                    self.model.H,
+                    self.model.energy,
+                    self.model.magnetization,
+                    0,
+                ]
+                self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
+            else:
+                iterplus = self.data.loc[uid].index.max() + 1
+                self.data.loc[(uid, iterplus), :] = [
+                    T,
+                    self.model.H,
+                    self.model.energy,
+                    self.model.magnetization,
+                    0,
+                ]
+                self.data.at[(uid, iterplus),
+                             "spin"] = copy.deepcopy(self.model.spin)
 
     def _init_paramlst(self, param):
         """Initialize parameter list / cn: 初始化参数列表"""
@@ -299,6 +326,12 @@ class Metropolis:
     def getcolumn(self, uid: str, column: str, t0: int = 0) -> np.array:
         column = _rename(column)
         return self.data.loc[uid][column][t0:]
+
+    def autocorrelation(self, uid: str, column: str):
+        column = _rename(column)
+        result = stattools.acf(self.getcolumn(uid, column),
+                               nlags=len((self.getcolumn(uid, column))))
+        return result
 
     def curve(self, uid, column, t0: int = 0) -> None:
         """
