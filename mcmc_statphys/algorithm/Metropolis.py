@@ -333,7 +333,7 @@ class Metropolis:
                                              nlags=len(
                                                  (self.getcolumn(uid,
                                                                  column))))
-        tau = np.sum(autocorrelation_list) / autocorrelation_list[0]
+        tau = np.argmin(np.abs(autocorrelation_list - np.exp(-1)))
         return (tau, autocorrelation_list)
 
     def curve(self, uid, column, t0: int = 0) -> None:
