@@ -329,9 +329,12 @@ class Metropolis:
 
     def autocorrelation(self, uid: str, column: str):
         column = _rename(column)
-        result = stattools.acf(self.getcolumn(uid, column),
-                               nlags=len((self.getcolumn(uid, column))))
-        return result
+        autocorrelation_list = stattools.acf(self.getcolumn(uid, column),
+                                             nlags=len(
+                                                 (self.getcolumn(uid,
+                                                                 column))))
+        tau = np.sum(autocorrelation_list) / autocorrelation_list[0]
+        return (tau, autocorrelation_list)
 
     def curve(self, uid, column, t0: int = 0) -> None:
         """

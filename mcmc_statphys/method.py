@@ -69,9 +69,11 @@ def getcolumn(algo, uid: str, column: str, t0: int = 0) -> np.array:
 
 def autocorrelation(algo, uid: str, column: str):
     column = _rename(column)
-    result = stattools.acf(algo.getcolumn(uid, column),
-                           nlags=len((algo.getcolumn(uid, column))))
-    return result
+    autocorrelation_list = stattools.acf(algo.getcolumn(uid, column),
+                                         nlags=len(
+                                             (algo.getcolumn(uid, column))))
+    tau = np.sum(autocorrelation_list) / autocorrelation_list[0]
+    return (tau, autocorrelation_list)
 
 
 def curve(algo, uid, column, t0: int = 0) -> None:
