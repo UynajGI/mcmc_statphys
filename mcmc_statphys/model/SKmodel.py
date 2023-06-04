@@ -18,24 +18,39 @@ __all__ = ["SKmodel"]
 
 class SKmodel(Ising):
     # SKModel is the Sherrington-Kirkpatrick model
-    def __init__(self, N, Jmean=0, Jsigma=1, H=0, *args, **kwargs):
-        super().__init__(L=N, Jij=1, H=0, dim=1)
+    def __init__(self,
+                 N,
+                 Jmean=0,
+                 Jsigma=1,
+                 Jform='norm',
+                 H=0,
+                 *args,
+                 **kwargs):
+        super().__init__(L=N, Jij=1, H=H, dim=1)
         self.Jmean = Jmean
         self.Jsigma = Jsigma
         self.N = N
         self._init_spin(type="SK")
-        self._init_Jij()
+        self._init_Jij(Jform)
         self._get_total_energy()
         self._get_total_magnetization()
         self._max_energy()
 
-    def _init_Jij(self):
-        self.Jij = np.random.normal(self.Jmean / self.N,
-                                    self.Jsigma / np.sqrt(self.N),
-                                    (self.N, self.N))
-        self.Jij = (self.Jij + self.Jij.T) / 2
-        np.fill_diagonal(self.Jij, 0)
-        self.Jij = self.Jij.astype(np.float32)
+    def _init_Jij(self, Jform):
+        if Jform == 'norm':
+            self.Jij = np.random.normal(self.Jmean / self.N,
+                                        self.Jsigma / np.sqrt(self.N),
+                                        (self.N, self.N))
+            self.Jij = np.tril(self.Jij)
+            self.Jij = self.Jij + self.Jij.T
+            np.fill_diagonal(self.Jij, 0)
+            self.Jij = self.Jij.astype(np.float32)
+        elif Jform == 'uniform':
+            self.Jij = np.random.choice([-1, 1], size=(self.N, self.N))
+            self.Jij = np.tril(self.Jij)
+            self.Jij = self.Jij + self.Jij.T
+            np.fill_diagonal(self.Jij, 0)
+            self.Jij = self.Jij.astype(np.float32)
 
     def _get_total_energy(self) -> float:
         """Get the total energy of the system / cn: 获取系统的总能量

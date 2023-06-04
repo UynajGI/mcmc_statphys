@@ -22,16 +22,27 @@ class RFIsing(Ising):
     def __init__(self,
                  L: int,
                  Jij: float = 1,
-                 Hsigma=1,
+                 Hmean: float = 0,
+                 Hsigma: float = 1,
+                 Hform: str = "norm",
                  dim: int = 2,
                  *args: Any,
                  **kwargs: Any):
-        H = np.random.normal(0, Hsigma, (L, ) * dim)
+        H = self._init_H(Hmean=Hmean, Hsigma=Hsigma, Hform=Hform)
         super().__init__(L=L, Jij=Jij, H=H, dim=dim, *args, **kwargs)
         self._init_spin(type="rfising")
         self._get_total_energy()
         self._get_total_magnetization()
         self._max_energy()
+
+    def _init_H(self, Hmean, Hsigma, Hform):
+        if Hform == "norm":
+            H = np.random.normal(Hmean, Hsigma, (self.L, ) * self.dim)
+        elif Hform == "uniform":
+            H = np.random.uniform(Hmean, Hsigma, (self.L, ) * self.dim)
+        else:
+            raise ValueError("Invalid Hform")
+        return H
 
     def _get_site_energy(self, index: Tuple[int, ...]) -> float:
         """Get the energy of the site / cn: 获取格点的能量
