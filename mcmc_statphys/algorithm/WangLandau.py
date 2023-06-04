@@ -12,14 +12,14 @@ class WangLandau():
     WangLandau is the Wang-Landau algorithm
     """
 
-    def __init__(self, model, gspace=10):
+    def __init__(self, model, overlap: float = 0.06):
         self.model = model
         self.name = "WangLandau"
         self.elst = []
         self.logG = []
         self.hist = []
         self.logF = 1
-        self.gspace = gspace
+        self.overlap = overlap * self.model.N
 
     def _flat(self, array, epsilon=0.8):
         nparray = np.array(array)
@@ -53,7 +53,8 @@ class WangLandau():
                     else:
                         index = index_new
 
-                    if abs(self.elst[index] - self.model.energy) > self.gspace:
+                    if abs(self.elst[index] -
+                           self.model.energy) > self.overlap:
                         if self.elst[index] - self.model.energy > 0:
                             self.elst = self.elst[:index] + [
                                 self.model.energy
