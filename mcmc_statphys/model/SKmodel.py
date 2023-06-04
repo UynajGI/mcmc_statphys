@@ -46,7 +46,8 @@ class SKmodel(Ising):
             np.fill_diagonal(self.Jij, 0)
             self.Jij = self.Jij.astype(np.float32)
         elif Jform == 'uniform':
-            self.Jij = np.random.choice([-1, 1], size=(self.N, self.N))
+            self.Jij = np.random.choice([-self.Jsigma, self.Jsigma],
+                                        size=(self.N, self.N))
             self.Jij = np.tril(self.Jij)
             self.Jij = self.Jij + self.Jij.T
             np.fill_diagonal(self.Jij, 0)

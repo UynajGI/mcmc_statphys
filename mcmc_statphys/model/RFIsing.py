@@ -39,7 +39,7 @@ class RFIsing(Ising):
         if Hform == "norm":
             H = np.random.normal(Hmean, Hsigma, (self.L, ) * self.dim)
         elif Hform == "uniform":
-            H = np.random.uniform(Hmean, Hsigma, (self.L, ) * self.dim)
+            H = np.random.choice([-Hsigma, Hsigma], size=(self.L, ) * self.dim)
         else:
             raise ValueError("Invalid Hform")
         return H
