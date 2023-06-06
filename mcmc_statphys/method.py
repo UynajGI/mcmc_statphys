@@ -23,7 +23,7 @@ import statsmodels.tsa.stattools as stattools
 __all__ = [
     'mean', 'std', 'var', 'norm', 'diff', 'cv', 'u4', 'getcolumn', 'curve',
     'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate', 'to_msdt',
-    'read_msdt', 'setup_uid', 'autocorrelation'
+    'read_msdt', 'setup_uid', 'autocorrelation', 'V_LJ', 'V_hc', 'V_sc'
 ]
 
 
@@ -308,3 +308,55 @@ def setup_uid(algo, uid):
                 algo.model.set_spin(algo.data.loc[uid].loc[
                     algo.data.loc[uid].index.max()].spin)
     return uid
+
+
+def V_LJ(r0, epsilon, **kwargs):
+    if 'r' not in kwargs.keys():
+
+        def func(r):
+            return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
+
+        return func
+    else:
+        r = kwargs['r']
+        return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
+
+
+def V_hc(r0, **kwargs):
+    if 'r' not in kwargs.keys():
+
+        def func(r):
+            if r < r0:
+                return 1e10
+            else:
+                return 0
+
+        return func
+    else:
+        r = kwargs['r']
+        if r < r0:
+            return 1e10
+        else:
+            return 0
+
+
+def V_sc(r0, r1, epsilon, **kwargs):
+    if 'r' not in kwargs.keys():
+
+        def func(r):
+            if r < r0:
+                return 1e10
+            elif r < r1 and r >= r0:
+                return -epsilon
+            else:
+                return 0
+
+        return func
+    else:
+        r = kwargs['r']
+        if r < r0:
+            return 1e10
+        elif r < r1 and r >= r0:
+            return -epsilon
+        else:
+            return 0
