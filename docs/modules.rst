@@ -81,7 +81,7 @@ The detial of the Metropolis algorithm can be found in `Wikipedia <https://en.wi
 
    -  model: ``mcmc_statphys.model``, the model to simulate
    -  name: ``str``, the name of the algorithm
-   -  iter_data: ``dict``, the data of the iteration(with the unique
+   -  data: ``dict``, the data of the iteration(with the unique
       ``uid`` for each iteration)
    -  parameter: ``str``, the name of the parameter
 
@@ -161,18 +161,15 @@ Attribute and method are the same as ``Metropolis``, except of ``equil_sample``.
       
       - uid: ``str``, the unique id of the iteration
 
-``mcmc_statphys.analysis``
---------------------------
 
-In this subpackage, we have the analysis of the data.
+In ``algorithm`` subpackage, we also have same analysis method
 
--  ``mean(algorithm: object, uid: str, column: str) -> float``:
+-  ``mean(uid: str, column: str) -> float``:
 
    Calculate the mean of the data
    
    Args: 
    
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object 
    - uid: ``str``, the unique id of the iteration
    - column: ``str``, the name of the column 
 
@@ -180,54 +177,73 @@ In this subpackage, we have the analysis of the data.
    
    - mean: ``float``, the mean of the data
 
--  ``std(algorithm: object, uid: str, column: str) -> float``: 
+-  ``std(uid: str, column: str) -> float``: 
    
    Calculate the standard deviation of the data
    
    Args: 
    
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object 
    - uid: ``str``, the unique id of the iteration
-   -  column: ``str``, the name of the column 
+   - column: ``str``, the name of the column 
 
    Returns: 
    
    - std: ``float``, the standard deviation of the data
 
--  ``cv(algorithm: object, uid: str, column: str) -> float``: 
+-  ``var(uid: str, column: str) -> float``: 
+   
+   Calculate the variance of the data
+   
+   Args: 
+   
+   - uid: ``str``, the unique id of the iteration
+   - column: ``str``, the name of the column 
+
+   Returns: 
+   
+   - var: ``float``, the variance of the data
+
+- ``norm(uid: str, column: str) -> float``: 
+   
+   Calculate the norm of the data
+   
+   Args: 
+   - uid: ``str``, the unique id of the iteration
+   - column: ``str``, the name of the column 
+
+   Returns: 
+   
+   - norm: ``float``, the norm of the data
+
+-  ``cv(uid: str, column: str) -> float``: 
 
    Calculate the coefficient of variation of the data 
    
    Args: 
-   
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object
-   -  uid: ``str``, the unique id of the iteration 
-   -  column: ``str``, the name of the column
+   - uid: ``str``, the unique id of the iteration 
+   - column: ``str``, the name of the column
 
    Returns:
    
    - cv: ``float``, the coefficient of variation
 
--  ``diff(algorithm: object, uid: str, column: str) -> float``: 
+-  ``diff(uid: str, column: str) -> float``: 
    
    Calculate the difference of the data
    
    Args:
    
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object 
    - uid: ``str``, the unique id of the iteration column: ``str``, the name of the column 
    
    Returns: 
    
    - diff: ``float``, the difference of the data
 
--  ``getcolumn(algorithm: object, uid: str, column: str) -> numpy.ndarray``:
+-  ``getcolumn(uid: str, column: str) -> numpy.ndarray``:
 
    Get the column of the data
    
    Args:
-   
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object 
    - uid: ``str``, the unique id of the iteration 
    - column: ``str``, the name of the column 
 
@@ -235,31 +251,18 @@ In this subpackage, we have the analysis of the data.
    
    - column: ``numpy.ndarray``, the column of the data
 
--  ``spin2svd(algorithm: object, uid: str) -> float``: 
-
-   Convert the spin configuration to the singular value decomposition
+-  ``svd(self, uid: str or Dict or List[str], norm: bool = True) -> np.array:``: 
    
-   Args:
-   
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object
-   -  uid: ``str``, the unique id of the iteration 
-   -  column: ``str``, the name of the column
-
-   Returns:
-   - max_v: ``float``, the maximum singular value of the spin configuration
-
--  ``uid2svd(algorithm: object, uid_lst: List[int] or Dict) -> List[float]``:
-
-   Convert the spin configuration to the singular value decomposition
+   Calculate the singular value decomposition of the data
    
    Args: 
-
-   - algorithm: ``object``, the ``mcmc_statphys.algorithm`` object 
-   - uid_lst: ``List[int]`` or ``Dict``, the unique id of the iteration
-
-   Returns:
    
-   - max_v_lst: ``List[float]``, the list of the maximum singular value of the spin configuration
+   - uid: ``str`` or ``Dict`` or ``List[str]``, the unique id of the iteration
+   - norm: ``bool``, whether to normalize the data (Default: True)
+
+   Returns: 
+   
+   - svd: ``numpy.ndarray``, the singular value decomposition of the data
 
 ``mcmc_statphys.draw``
 ----------------------

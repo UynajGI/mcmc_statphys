@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """The setup script."""
 
 from setuptools import setup, find_packages
@@ -10,7 +9,16 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = [
+    'Click>=7.0',
+    'matplotlib=>3.7',
+    'networkx=>3',
+    'numpy=>1.24',
+    'pandas>=2.0',
+    'scipy=>1.10',
+    'statsmodels=>0.14',
+    'tqdm=>4.65',
+]
 
 test_requirements = []
 
