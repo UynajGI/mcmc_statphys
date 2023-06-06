@@ -19,7 +19,7 @@ class Wolff(Metropolis):
     """
 
     def __init__(self, model: object):
-        if model.type != "ising":
+        if model.type != "ising" and model.type != "rfising":
             raise ValueError("The model must be Ising")
         super().__init__(model)
         self.name = "Wolff"

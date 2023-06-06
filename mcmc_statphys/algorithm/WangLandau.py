@@ -98,6 +98,33 @@ class WangLandau():
                     self.logG = self.logG.tolist()
         return self.logG
 
+    def logZ(self, T):
+        elst = np.array(self.elst)
+        logG = np.array(self.logG)
+        logz = 0
+        for i in range(len(elst)):
+            logz += logz + np.log1p(np.exp(logG[i] - 1 / T * elst[i] - logz))
+
+    def entropy_diff(self, T, epsilon=1e-8):
+        s = self.energy_diff(T, epsilon=epsilon) / T + self.logZ(T)
+        return s
+
+    def energy_diff(self, T, epsilon=1e-8):
+        beta = 1 / T
+
+        e = -(self.logZ(1 /
+                        (beta + epsilon)) - self.logZ(1 /
+                                                      (beta - epsilon))) / (
+                                                          2 * epsilon)
+        return e
+
+    def heat_diff(self, T, epsilon=1e-8):
+        beta = 1 / T
+        e = self.energy_diff
+        c = -beta**2 * (e(1 / (beta + epsilon)) -
+                        e(1 / (beta - epsilon))) / (2 * epsilon)
+        return c
+
     def energy(self, T):
         elst = np.array(self.elst)
         logG = np.array(self.logG)
