@@ -7,6 +7,8 @@ from tqdm import tqdm
 from .Metropolis import Metropolis
 from .Metropolis import _rename
 
+__all__ = ['Wolff']
+
 
 class Wolff(Metropolis):
     """The Wolff algorithm, named after Ulli Wolff, is an algorithm for Monte Carlo simulation\n
@@ -17,7 +19,7 @@ class Wolff(Metropolis):
     """
 
     def __init__(self, model: object):
-        if model.type != "ising":
+        if model.type != "ising" and model.type != "rfising":
             raise ValueError("The model must be Ising")
         super().__init__(model)
         self.name = "Wolff"

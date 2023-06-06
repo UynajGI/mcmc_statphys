@@ -8,12 +8,14 @@ import uuid
 import pandas as pd
 from .Metropolis import Metropolis
 
+__all__ = ['Tempering']
 
-class Parallel(Metropolis):
+
+class Tempering(Metropolis):
 
     def __init__(self, model: object):
         super().__init__(model)
-        self.name = "Parallel"
+        self.name = "Tempering"
 
     def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
         uid = self._setup_uid(uid)

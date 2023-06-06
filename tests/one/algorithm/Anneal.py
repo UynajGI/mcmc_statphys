@@ -6,6 +6,8 @@ from tqdm import tqdm
 from .Metropolis import Metropolis
 from .Metropolis import _rename
 
+__all__ = ['Anneal']
+
 
 class Anneal(Metropolis):
 

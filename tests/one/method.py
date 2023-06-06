@@ -291,9 +291,10 @@ def setup_uid(algo, uid):
     if uid is None:
         uid = (uuid.uuid1()).hex
     else:
-        if uid not in algo.data.index.get_level_values("uid").values:
-            algo._reset_model()
-        else:
-            algo.model.set_spin(
-                algo.data.loc[uid].loc[algo.data.loc[uid].index.max()].spin)
+        if algo.data.index.get_level_values("uid").values:
+            if uid not in algo.data.index.get_level_values("uid").values:
+                algo._reset_model()
+            else:
+                algo.model.set_spin(algo.data.loc[uid].loc[
+                    algo.data.loc[uid].index.max()].spin)
     return uid
