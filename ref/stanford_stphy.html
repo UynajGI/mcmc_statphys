@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<!-- saved from url=(0078)file:///C:/Users/UyanjGI/AppData/Local/Temp/mume2023513-21428-2vchme.ql8k.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>stanford_stphy</title>
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="./stanford_stphy_files/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p,html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div{display:inline}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  300px/2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      
+<script src="./stanford_stphy_files/katex.min.js.下载" integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc=" crossorigin="anonymous">
+</script> 
+<link rel="stylesheet" href="./stanford_stphy_files/pseudocode.min.css">
+<script src="./stanford_stphy_files/pseudocode.min.js.下载">
+</script>
+<h1 class="mume-header" id="%E6%96%AF%E5%9D%A6%E7%A6%8F%E5%A4%A7%E5%AD%A6%E7%83%AD%E7%BB%9F">斯坦福大学热统</h1>
+
+<p>2023-6-6 23:35:18</p>
+<h2 class="mume-header" id="%E8%AF%84%E8%AE%BA">评论</h2>
+
+<p>Pre - or corequisite: PHYSICS 130/131（即量子力学）</p>
+<p>秋季学期 PHYSICS 170: Thermodynamics, Kinetic Theory, and Statistical Mechanics I</p>
+<p>随机过程的基本概率和统计。从基本定理推导出热力学定律；确定原子子结构和物质宏观行为之间的关系。温度；状态方程，热，内能，等分；熵，吉布斯佯谬；平衡和可逆性；热机；对物质的各种特性的应用；绝对零度和低温现象。配分函数，波动，经典和量子系统的配分函数，以及不可逆过程。</p>
+<p>冬季学期 PHYSICS 171: Thermodynamics, Kinetic Theory, and Statistical Mechanics II</p>
+<p>相变的平均场理论；临界指数。铁磁学，Ising 模型。重正化群。近平衡的热力学：布朗运动，扩散，玻尔兹曼方程。其他主题由教师决定。</p>
+<p>学分：</p>
+<ul>
+<li>Problem Sets: 40%<br>
+作业</li>
+<li>In-class exercises: 10%<br>
+课堂小组讨论</li>
+<li>Midterm: 20%<br>
+期中</li>
+<li>Final: 30%<br>
+期末</li>
+</ul>
+<p><strong>170</strong><br>
+概率论简介 -&gt; 统计力学基本理论<br>
+微观态出发的统计力学，以状态数为基础，推导出熵，温度，玻尔兹曼因子，利用最大熵原理推导微正则系综，配分函数和正则系综，利用配分函数获得热力学量，得到亥姆霍兹自由能，统计力学基本理论部分结束。（内含热力学第零，一，二，三定律的微观解释）<br>
+统计力学基本理论 -&gt; 热力学基本理论<br>
+使用统计力学的语言，通过宏观视角的热力学第一定律（功能关系）推导热力学基本关系，得到麦克斯韦关系，利用量子能级概念推导理想气体定律和麦克斯韦玻尔兹曼速度分布律，以及能量均分定理。<br>
+热力学基本理论 -&gt; 模型和应用<br>
+介绍黑体辐射，推导普朗克分布，介绍爱因斯坦固体和德拜模型，由辐射的扩散和吸收现象引入化学势，定义巨正则系综，进而介绍玻色统计，费米统计和玻尔兹曼统计，分析具有内部自由度的理想气体，插入卡诺热机等气体做功的热机图像，再费米统计出发介绍简并费米气体，费米能级等，从玻色统计介绍玻色爱因斯坦凝聚。</p>
+<p><strong>171</strong><br>
+170 -&gt; 相变<br>
+主要介绍相变性质与临界现象，主要举例模型为伊辛模型，介绍了朗道自由能理论和标度理论，最后介绍了输运和扩散现象的研究。</p>
+<p>Stanford 的本科热统课程的主要特点是逻辑清晰连贯。国内的热统教学路径主要依据热统本身的历史脉络进行教学，即热机与功能关系等唯像的热力学理论出发，再随着历史发展引入玻尔兹曼因子和吉布斯系综的统计力学理论，Stanford 不同于国内的历史脉络的学习路径，而是采用了公理系统的方式（或者说物理的公理化），从一些基本的概率假设出发，如最大熵原理、等概率原理或遍历假设，完备的推导一切的热力学物理量和系综理论体系，这种方式更加具有逻辑性，揭示了热力学与统计力学的本质联系，更深刻的理解热力学定律的物理学图像，学习完基本理论后 Stanford 课程再大量引入现实中或理想中的物理模型，如气体模型，玻色子模型，费米子模型，自旋磁性模型等等，强调物理的公理化绝不是数学中的公理 - 定理体系的衍生，物理的一切理论必须接受现实世界的检验，公理体系只是描述物理现象一种更为简洁的路径。而 Stanford 介绍概率假设的出发点是微观态，准确地定义微观态就必须借助量子力学的语言来描述，所以在 Stanford 170/171 之前必须先修或并修量子力学 130/131 课程，这样才能获得统计力学牢靠的演绎基础。而 170 和 171 是基础与进阶之间的关系，分别在秋季和冬季修学，170 内容基础全面经典，涵盖了统计力学与热力学的最重要知识，是今后一切统计物理学习与研究的起点，171 主要进阶的介绍相变现象，探讨了统计力学中最重要的 insing 模型的性质与解法和解法背后的物理含义，以及朗道自由能理论和标度律的普适性，涵盖了统计力学领域最关心的问题。除开知识点顺序的编排，上课方式也与国内不同，一般国内采用的是"<em>课上传授 -- 课下作业自检</em>"的周期学习，而 Stanford 的特点为课堂环境以练代学，边学边练的形式，每节课都有对应的 exam，学习为<em>课堂传授 -- 讨论 -- 学习 -- 课后自检</em>的周期，学生更有参与感，以问题为导向的方式使学生更深刻的理解物理学的本质，而不是单纯的记忆知识点。</p>
+<p>TODO:授课顺序，授课重点，授课理念</p>
+<h2 class="mume-header" id="%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1">知识图谱</h2>
+
+<h1><center><font color="blue" size="6">Phy 170</font></center></h1>
+<h3 class="mume-header" id="%E6%A6%82%E7%8E%87%E5%92%8C%E7%BB%9F%E8%AE%A1">概率和统计</h3>
+
+<h4 class="mume-header" id="%E9%9A%8F%E6%9C%BA%E6%B8%B8%E8%B5%B0%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83">随机游走：二项分布</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex1A.pdf">Ex.1A</a></p>
+<p>概率论初步：均值，期望，样本数，二项分布-<em>Type A</em></p>
+<h4 class="mume-header" id="%E5%A4%A7-n-%E6%9E%81%E9%99%90%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83">大 N 极限：高斯分布</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex1B.pdf">Ex.1B</a></p>
+<p><strong>微观态</strong>，<strong>热力学极限</strong>-<em>Type A</em></p>
+<ol>
+<li>
+<p>斯特林近似公式<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex1B.pdf">Ex.1B</a><br>
+斯特林近似公式-<em>Type A</em></p>
+</li>
+<li>
+<p>中心极限定理<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Problem_Sets/Phys170_2017_ps01.pdf">PSet 1</a><br>
+中心极限定理-<em>Type A</em></p>
+</li>
+</ol>
+<h4 class="mume-header" id="%E6%B3%8A%E6%9D%BE%E5%88%86%E5%B8%83">泊松分布</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Problem_Sets/Phys170_2017_ps01.pdf">PSet 1</a></p>
+<p>泊松分布-<em>Type B</em></p>
+<h3 class="mume-header" id="%E7%BB%9F%E8%AE%A1%E5%8A%9B%E5%AD%A6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86">统计力学的基本原理</h3>
+
+<h4 class="mume-header" id="%E5%BE%AE%E8%A7%82%E6%80%81%E5%92%8C%E5%BE%AE%E6%AD%A3%E5%88%99%E7%B3%BB%E7%BB%BC">微观态和微正则系综</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex1B.pdf">Ex.1B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex2A.pdf">Ex.2A</a></p>
+<ol>
+<li>Multiplicity and missing information<br>
+定义熵-<em>Type A</em>，数学上对数形式的合理性（系统的可加性对应熵的线性可加）<br>
+简并度（Multiplicity）-<em>Type A</em>，e.g.二能级自旋系统的简并度</li>
+<li>基本假设<br>
+等概率假设-<em>Type A</em></li>
+<li>熵和热力学第二定律<br>
+热力学第一定律-<em>Type A</em>(微观视角)<br>
+微正则系综-<em>Type A</em><br>
+热力学第二定律-<em>Type A</em>(微观视角)</li>
+</ol>
+<h4 class="mume-header" id="%E6%AD%A3%E5%88%99%E7%B3%BB%E7%BB%BC">正则系综</h4>
+
+<ol>
+<li>温度和玻尔兹曼系数<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex2B.pdf">Ex.2B</a><br>
+温度/倒温度-<em>Type A</em>，由平衡的熵最大导出<br>
+玻尔兹曼因子<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="normal">e</mi><mrow><mo>−</mo><mi>β</mi><msub><mi>ε</mi><mi>s</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">\mathrm{e}^{-\beta \varepsilon_s}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathrm">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.05278em;">β</span><span class="mord mtight"><span class="mord mathnormal mtight">ε</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>-<em>Type A</em>，大热源下的多项式展开</li>
+<li>配分函数<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex3A.pdf">Ex.3A</a><br>
+正则系综-<em>Type A</em>，固定温度和粒子数<br>
+配分函数-<em>Type A</em>，配分函数求导得到热力学量，e.g.二能级系统<br>
+热容-<em>Type A</em>，热容和熵的积分关系</li>
+<li>熵和亥姆霍兹自由能<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex3B.pdf">Ex.3B</a><br>
+熵在正则系综下的表达式-<em>Type A</em><br>
+亥姆霍兹自由能-<em>Type A</em>，亥姆霍兹自由能与配分函数的关系</li>
+<li>热力学第三定律<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex3B.pdf">Ex.3B</a><br>
+热力学第三定律-<em>Type A</em>，0 温下的熵为常数，（何时不为零？）</li>
+</ol>
+<h3 class="mume-header" id="%E7%83%AD%E5%8A%9B%E5%AD%A6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86">热力学的基本原理</h3>
+
+<h4 class="mume-header" id="%E7%83%AD%E5%8A%9B%E5%AD%A6%E7%AC%AC%E4%B8%80%E5%AE%9A%E5%BE%8B">热力学第一定律</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4A.pdf">Ex.4A</a></p>
+<ol>
+<li>功和热<br>
+功能关系，热力学第一定律宏观解释-<em>Type A</em>（态函数）</li>
+<li>广义力</li>
+<li>准静态过程；绝热性</li>
+</ol>
+<h4 class="mume-header" id="%E5%9F%BA%E6%9C%AC%E7%83%AD%E5%8A%9B%E5%AD%A6%E5%85%B3%E7%B3%BB">基本热力学关系</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4A.pdf">Ex.4A</a></p>
+<ol>
+<li>微分关系<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4A.pdf">Ex.4A</a><br>
+压强的微分关系-<em>Type A</em>，第一定律得到基本热力学关系</li>
+<li>经典统计力学；能量均分定理<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex5A.pdf">Ex.5A</a><br>
+能量均分定理-<em>Type B</em>，广义均分定理</li>
+<li>麦克斯韦关系<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Problem_Sets/phys170_2017_ps04.pdf">PSet 4</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section4.pdf">Sec 4</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex5B.pdf">Ex.5B</a><br>
+麦克斯韦关系-<em>Type A</em>，麦克斯韦关系的推导<br>
+吉布斯佯谬-<em>Type B</em></li>
+</ol>
+<h3 class="mume-header" id="%E6%A8%A1%E5%9E%8B%E5%92%8C%E5%BA%94%E7%94%A8">模型和应用</h3>
+
+<h4 class="mume-header" id="%E5%87%86%E7%A3%81%E9%93%81">准磁铁</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex2A.pdf">Ex.2A</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex2B.pdf">Ex.2B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex3A.pdf">Ex.3A</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex3B.pdf">Ex.3B</a></p>
+<h4 class="mume-header" id="%E7%90%86%E6%83%B3%E6%B0%94%E4%BD%93">理想气体</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4B.pdf">Ex.4B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex5A.pdf">Ex.5A</a></p>
+<ol>
+<li>理想气体定律的推导<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4B.pdf">Ex.4B</a><br>
+理想气体能级分布-<em>Type A</em>，量子力学下的能级分布<br>
+理想气体定律-<em>Type A</em>，配分函数得到</li>
+<li>熵；经典近似<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex4B.pdf">Ex.4B</a><br>
+自由能下的气体熵-<em>Type A</em><br>
+热德布洛伊波长-<em>Type B</em></li>
+<li>麦克斯韦 - 玻尔兹曼分布<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex5A.pdf">Ex.5A</a><br>
+麦克斯韦 - 玻尔兹曼速度分布-<em>Type A</em></li>
+</ol>
+<h4 class="mume-header" id="%E8%B0%90%E6%8C%AF%E5%AD%90">谐振子</h4>
+
+<ol>
+<li>固体的爱因斯坦模型<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex7A.pdf">Ex.7A</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section3.pdf">Sec 3</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Problem_Sets/phys170_2017_ps03.pdf">PSet 3</a><br>
+爱因斯坦模型-<em>Type B</em></li>
+<li>辐射的普朗克定律<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex6A.pdf">Ex.6A</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex6B.pdf">Ex.6B</a><br>
+普朗克分布-<em>Type A</em><br>
+黑体辐射-<em>Type B</em><br>
+能态密度<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">D</mi><mo stretchy="false">(</mo><mi>ω</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{D}(\omega)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.02778em;">D</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">ω</span><span class="mclose">)</span></span></span></span>-<em>Type A</em><br>
+吸收率 - 发射率关系-<em>Type B</em></li>
+<li>固体的德拜模型<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex7A.pdf">Ex.7A</a><br>
+德拜模型-<em>Type B</em><br>
+声子-<em>Type B</em></li>
+</ol>
+<h4 class="mume-header" id="%E6%89%A9%E6%95%A3%E5%8C%96%E5%AD%A6%E5%B9%B3%E8%A1%A1">扩散/化学平衡</h4>
+
+<ol>
+<li>化学势<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex7B.pdf">Ex.7B</a><br>
+化学势-<em>Type A</em>，扩散<br>
+热学平衡，化学平衡，力学平衡-<em>Type A</em></li>
+<li>巨正则系综<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex7B.pdf">Ex.7B</a><br>
+巨正则系综-<em>Type A</em></li>
+</ol>
+<h4 class="mume-header" id="%E5%85%A8%E5%90%8C%E7%B2%92%E5%AD%90">全同粒子</h4>
+
+<ol>
+<li>玻色 - 爱因斯坦、费米 - 狄拉克和麦克斯韦 - 玻尔兹曼统计<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex8A.pdf">Ex.8A</a><br>
+玻色统计-<em>Type A</em><br>
+费米统计-<em>Type A</em><br>
+玻尔兹曼统计-<em>Type A</em></li>
+<li>箱内大质量粒子的状态密度<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex9A.pdf">Ex.9A</a></li>
+<li>简并 (degeneracy) 费米气体<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex9A.pdf">Ex.9A</a><br>
+能态密度-<em>Type A</em><br>
+费米能级-<em>Type A</em>，以及费米温度和费米动量</li>
+<li>玻色 - 爱因斯坦凝聚<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex9B.pdf">Ex.9B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex10A.pdf">Ex.10A</a><br>
+玻色 - 爱因斯坦凝聚-<em>Type A</em><br>
+凝聚系数-<em>Type B</em><br>
+凝聚相的检测-<em>Type C</em><br>
+如何在室温装置中研究超冷量子气体-<em>Type C</em></li>
+</ol>
+<h3 class="mume-header" id="%E7%83%AD%E5%92%8C%E5%8A%9F">热和功</h3>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex8B.pdf">Ex.8B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section7.pdf">Sec 7</a><br>
+p-V 图与做功-<em>Type A</em><br>
+热机，卡诺热机-<em>Type A</em><br>
+定容热容-<em>Type A</em><br>
+定压热容-<em>Type A</em><br>
+热容与熵的关系-<em>Type A</em></p>
+<h4 class="mume-header" id="%E7%90%86%E6%83%B3%E6%B0%94%E4%BD%93%E7%9A%84%E5%8F%AF%E9%80%86%E4%B8%8D%E5%8F%AF%E9%80%86%E8%86%A8%E8%83%80">理想气体的可逆/不可逆膨胀</h4>
+
+<ol>
+<li>自由膨胀和混合的熵<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex5B.pdf">Ex.5B</a></li>
+<li>等温线<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex8B.pdf">Ex.8B</a></li>
+</ol>
+<h4 class="mume-header" id="%E5%8D%A1%E8%AF%BA%E5%BE%AA%E7%8E%AF">卡诺循环</h4>
+
+<p><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Exams/phys170_2017_ex8B.pdf">Ex.8B</a><br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section7.pdf">Sec 7</a></p>
+<ol>
+<li>热机<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section7.pdf">Sec 7</a></li>
+<li>冰箱<br>
+<a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Section_Notes/phys170_2017_section7.pdf">Sec 7</a></li>
+</ol>
+<h1><center><font color="blue" size="6">Phy 171</font></center></h1>
+<blockquote>
+<p>171 的全部意义在于如何处理相互作用的系统。</p>
+</blockquote>
+<h3 class="mume-header" id="%E5%85%A5%E9%97%A8">入门</h3>
+
+<h4 class="mume-header" id="%E7%9B%B8%E5%8F%98">相变</h4>
+
+<p>相图和相变-<em>Type A</em><br>
+临界点-<em>Type B</em></p>
+<p>两种类型的相变：</p>
+<ul>
+<li>
+<p>不连续的一阶相变-<em>Type A</em></p>
+</li>
+<li>
+<p>连续的高阶相变-<em>Type A</em></p>
+</li>
+</ul>
+<h4 class="mume-header" id="%E5%AF%B9%E7%A7%B0%E6%80%A7">对称性</h4>
+
+<p>高温相，高对称性-<em>Type B</em><br>
+低温相，对称性破缺-<em>Type B</em></p>
+<h4 class="mume-header" id="%E4%BC%8A%E8%BE%9B%E6%A8%A1%E5%9E%8B">伊辛模型</h4>
+
+<p>伊辛模型的定义与哈密顿量-<em>Type B</em></p>
+<h3 class="mume-header" id="%E4%B8%80%E7%BB%B4%E4%BC%8A%E8%BE%9B%E6%A8%A1%E5%9E%8B">一维伊辛模型</h3>
+
+<p>量子统计-<em>Type B</em><br>
+关联长度-<em>Type B</em><br>
+涨落-<em>Type B</em><br>
+一维伊辛模型严格解：转移矩阵法-<em>Type B</em></p>
+<h4 class="mume-header" id="%E5%B9%B3%E5%9D%87%E5%9C%BA%E7%90%86%E8%AE%BA">平均场理论</h4>
+
+<p>变分原理-<em>Type B</em><br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>F</mi><mrow><mi>v</mi><mi>a</mi><mi>r</mi></mrow></msub><mo>=</mo><msub><mi>F</mi><mrow><mi>t</mi><mi>r</mi></mrow></msub><mo>+</mo><msub><mrow><mo fence="true">⟨</mo><mi>H</mi><mo>−</mo><msub><mi>H</mi><mrow><mi>t</mi><mi>r</mi></mrow></msub><mo fence="true">⟩</mo></mrow><mrow><mi>t</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{var}=F_{tr}+\left\langle H-H_{tr}\right\rangle_{tr}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0497em;vertical-align:-0.2997em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;">⟨</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;">⟩</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1309em;"><span style="top:-2.4003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Jensen 不等式-<em>Type C</em></p>
+<p>变分原理的证明-<em>Type C</em></p>
+<p>与量子力学的变分原理的联系-<em>Type C</em></p>
+<h4 class="mume-header" id="%E9%9D%9E%E7%9B%B8%E4%BA%92%E4%BD%9C%E7%94%A8%E7%9A%84%E4%BC%8A%E8%BE%9B%E6%A8%A1%E5%9E%8B">非相互作用的伊辛模型</h4>
+
+<p>作为平凡哈密顿量<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mi>t</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">H_{tr}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></p>
+<h4 class="mume-header" id="%E5%B9%B3%E5%9D%87%E5%9C%BA%E6%B1%82%E8%A7%A3">平均场求解</h4>
+
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>b</mi><mo>=</mo><mi>h</mi><mo>+</mo><mi>z</mi><mi>J</mi><mi>tanh</mi><mo>⁡</mo><mrow><mo stretchy="false">(</mo><mi>β</mi><mi>h</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">b=h+zJ\tanh{(\beta h)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">h</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">tanh</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mord mathnormal">h</span><span class="mclose">)</span></span></span></span></span></span></p>
+<p>顺磁相，铁磁相-<em>Type A</em></p>
+<h3 class="mume-header" id="landau-ginzburg-theory">Landau-Ginzburg Theory</h3>
+
+<p>序参量-<em>Type A</em></p>
+<blockquote>
+<p>尽管变分原理告诉我们如何挑选 "最好的 "试探哈密顿，但我们如何知道 "最好的 "是否 "足够好"？<br>
+更确切地说，即使我们已经使变异自由能最小化了，我们怎么知道我们是否可以相信它的导数能告诉我们关于相关函数的任何事情？<br>
+在我们对试探哈密顿的猜测中，我们假设每一个节点都感受到相同的''平均场''；也就是说，我们假设所有节点都有一个空间上的统一解决方案。<br>
+我们如何知道空间上的均匀解是否真的是可能的最佳解？<br>
+更广泛地说，我们能否想出一个简单而稳健的方法来考虑平均场的纹理和空间不均匀性？<br>
+我们在伊辛模型的细节上花了这么多时间，但关于其二阶相变的结果是否可以推广到其他系统？<br>
+是否有一个概念框架可以解释为什么伊辛模型的相变会有这样的表现？<br>
+我们能否从一个更普遍的角度来论证相变应该如何表现？</p>
+</blockquote>
+<h4 class="mume-header" id="probe-fields">Probe Fields</h4>
+
+<p>勒让德变换-<em>Type B</em>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo stretchy="false">(</mo><mi>h</mi><mo stretchy="false">)</mo><mo>→</mo><mover accent="true"><mi>F</mi><mo>~</mo></mover><mo stretchy="false">(</mo><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">F(h)\to \tilde{F}(m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">h</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1702em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9202em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span><span style="top:-3.6023em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">~</span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">m</span><span class="mclose">)</span></span></span></span></p>
+<h4 class="mume-header" id="landau-theory">Landau Theory</h4>
+
+<p>Landau Free Energy-<em>Type B</em><br>
+标度律-<em>Type B</em><br>
+边界效应-<em>Type C</em><br>
+磁壁-<em>Type C</em></p>
+<h4 class="mume-header" id="gaussian-model">Gaussian Model</h4>
+
+<p>Gaussian Model-<em>Type C</em><br>
+Harmonic Oscillator-<em>Type C</em></p>
+<h3 class="mume-header" id="%E8%BE%93%E8%BF%90">输运</h3>
+
+<h4 class="mume-header" id="%E5%8A%A8%E7%90%86%E5%AD%A6">动理学</h4>
+
+<p>碰撞-<em>Type B</em><br>
+碰撞率-<em>Type B</em><br>
+平均自由程-<em>Type B</em></p>
+<h4 class="mume-header" id="%E6%89%A9%E6%95%A3%E5%92%8C%E7%B2%98%E5%BA%A6">扩散和粘度</h4>
+
+<h4 class="mume-header" id="%E7%8E%BB%E5%B0%94%E5%85%B9%E6%9B%BC%E6%96%B9%E7%A8%8B">玻尔兹曼方程</h4>
+
+<h1><center><font color="blue" size="6">Introduction to Statistical Mechanics</font></center></h1>
+<h3 class="mume-header" id="i-%E7%AE%80%E4%BB%8B">I 简介</h3>
+
+<p>1<br>
+统计力学讲座 1<br>
+Susskind 教授介绍说，就解释和预测自然现象的能力而言，统计力学是现代物理学中最普遍的学科之一。他首先简要介绍了概率论，然后继续引出作为系统状态更新规则的运动定律概念与处于某一特定状态的概率之间的联系。正确的物理定律是可逆的，因此保留了状态之间的区别--即信息。在这个意义上，信息的保存比其他物理量（如温度或能量）更基本。</p>
+<p>Susskind 教授接着谈到连续系统和相空间，以及柳维尔定理。讲座最后介绍了计算熵的公式，以及一些例子。<br>
+2<br>
+统计力学讲座 2<br>
+Susskind 教授介绍了温度的物理学。温度不是一个基本量，而是作为给一个系统增加一个增量的熵所需的能量而得出的。随着一个系统的能量增加，一个系统的可能状态的数量增加，这意味着熵的增加。这是热力学第二定律背后的概念，并意味着温度总是正的。<br>
+3<br>
+统计力学讲座 3<br>
+在回顾了热力学定律之后，Susskind 教授开始推导具有许多能量状态的复杂系统的能量状态是如何分布的。</p>
+<p>随着系统中粒子数量的增加，状态的分布会更紧密地围绕着一个平均值聚集。这就是麦克斯韦 - 波尔茨曼分布。这个推导需要斯特林近似法和拉格朗日乘法。<br>
+4<br>
+统计力学讲座 4<br>
+Susskind 教授完成了系统状态的波尔兹曼分布的推导。这个分布描述了一个处于平衡状态并具有最大熵的系统。他推导出这个分布的能量、熵、温度和分配函数的公式。然后他将这些一般公式应用于理想气体的例子。</p>
+<p>5<br>
+统计力学第 5 讲<br>
+Susskind 教授推导了理想气体的压力公式。他首先介绍了亥姆霍兹自由能，以及绝热过程的概念。这些概念导致了压力的定义，即在固定的熵下能量随体积的变化，然后是著名的理想气体的状态方程：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>V</mi><mo>=</mo><mi>N</mi><mi>k</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">pV = NkT</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>。</p>
+<p>然后，Susskind 教授继续定义波动的概念，并在这个过程中再次证明了统计力学的力量在于分区函数，并且是导数。系统中能量的波动导致了系统的热容量和特定材料的比热的定义。<br>
+6<br>
+统计力学讲座 6<br>
+Susskind 教授推导出弱相互作用粒子气体的能量和压力方程，并发展了热和功的概念，从而得出热力学第一定律。<br>
+7<br>
+统计力学第 7 讲<br>
+Susskind 教授以 2 个例子开始了讲座： (1) 推导理想气体中的声速；(2) 热浴中的单一谐振子。谐振子的例子导致了与经验观察的不一致，这只能通过量子力学来解决。在相对于振荡器的第一激发态的低温下，量子力学会抑制谐振子的能量。通过这种机制，某些振荡模式被 "冻结"，直到系统达到更高的温度。爱因斯坦在 1907 年提出了这种量化效应，这也是导致量子力学发展的理论之一。</p>
+<p>Susskind 教授随后讨论了热力学第二定律与经典力学的可逆性之间的明显矛盾。如果熵总是增加，可逆性就被违反了。这一矛盾的解决在于我们观察的（缺乏）精确性。初始条件中无法察觉的差异导致了结果的巨大变化。这就是混沌理论的基础。<br>
+8<br>
+统计力学讲座 8<br>
+苏斯金教授发展了所有气体分子会聚在一个房间的一半的概率方程，并得出结论，这一事件是可能的，但其发生的时间尺度是难以置信的长。这条推理导致解决了经典力学的可逆性和热力学第二定律明显缺乏时间可逆性之间的悖论，证明了如果对系统的认识足够精确，观察者等待的时间足够长，统计力学过程实际上是可逆的。</p>
+<p>然后，他转到磁学，开始介绍铁磁相变和自发对称性破坏的概念。当晶格中的磁体开始冷却时，就会发生自发对称性破坏。在没有外部磁场的情况下，它们可能最终处于两种对称状态之一--例如，全部向上或全部向下。但是，一个非常小的磁场只影响到其中一个磁体，就会打破这种对称性，并使系统偏向其中一个基态。<br>
+9<br>
+统计力学讲座 9<br>
+在回顾了对热浴中单个磁粒子（或自旋）的讨论之后，Susskind 教授继续介绍了一维伊辛模型的发展。这个模型没有表现出相变。然后，他转向了多维伊辛模型。对于超过一维的任何数量，伊辛模型在特定的温度下表现出相变。这是由于在多维中，晶格中的每个点都受到两个以上相邻晶格元素的影响。<br>
+10<br>
+统计力学讲座 10<br>
+Susskind 教授继续讨论相变问题，首先回顾了伊辛模型和平均场近似，然后介绍了磁性材料相变的温度和磁场参数。然后，他转向液态 - 气态相变的物理学，并发展了这种情况与磁性材料相变之间的数学相似性。</p>
+<p>Susskind 教授在理论最低限度系列课程的最后，回答了全班同学的问题，这导致了对人本主义原则和微调的讨论</p>
+<h3 class="mume-header" id="ii-%E5%86%85%E5%AE%B9">II 内容</h3>
+
+<h4 class="mume-header" id="%E5%BE%AE%E8%A7%82%E6%80%81%E4%B8%8E%E5%AE%8F%E8%A7%82%E6%80%81">微观态与宏观态</h4>
+
+<ul>
+<li>
+<p>态密度<br>
+一个宏观状态所对应的微观状态的数量被称为状态密度。它被写成<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Ω</mi><mo stretchy="false">(</mo><mi>E</mi><mo separator="true">,</mo><mi>V</mi><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\Omega(E,V,...)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">Ω</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mclose">)</span></span></span></span>，其中参数是定义宏观状态的宏观变量。</p>
+</li>
+<li>
+<p>等概率假设<br>
+一个系统处于与其当前宏观状态一致的任何微观状态的概率是相等的。</p>
+</li>
+<li>
+<p>时间平均与系综平均<br>
+时间平均量和系综平均量相等的系统被称为是遍历性的。</p>
+</li>
+<li>
+<p>玻尔兹曼分布与配分函数<br>
+玻尔兹曼分布是一个系统处于某个微观状态的概率与该微观状态的能量成指数关系的分布。<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>E</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><msup><mi mathvariant="normal">e</mi><mrow><mo>−</mo><mi>E</mi><mi mathvariant="normal">/</mi><mi>k</mi><mi>T</mi></mrow></msup><mi>Z</mi></mfrac></mstyle></mrow><annotation encoding="application/x-tex">p(E)=\dfrac{\mathrm{e}^{-E/kT}}{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.251em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.565em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.05764em;">E</span><span class="mord mtight">/</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+</li>
+<li>
+<p>热力学势<br>
+我们现在知道如何计算在许多不同种类的状态下发现一个系统的概率：微观状态或宏观状态，由任意的宏观变量集指定。在每一种情况下，概率都采取完全相同的形式：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>p</mi><mo>=</mo><mfrac><msup><mi mathvariant="normal">e</mi><mrow><mo>−</mo><mi mathvariant="normal">Φ</mi><mi mathvariant="normal">/</mi><mi>k</mi><mi>T</mi></mrow></msup><mi>Z</mi></mfrac></mrow><annotation encoding="application/x-tex">p=\dfrac{\mathrm{e}^{-\Phi/kT}}{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.251em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.565em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">Φ/</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span><br>
+几个最常见的热力学势有特殊的名称：<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mi>H</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>U</mi><mo>+</mo><mi>P</mi><mi>V</mi><mspace width="1em"></mspace><mtext>Enthalpy</mtext></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mi>F</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>U</mi><mo>−</mo><mi>T</mi><mi>S</mi><mspace width="1em"></mspace><mtext>Helmholtz&nbsp;free&nbsp;energy</mtext></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mi>G</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>U</mi><mo>+</mo><mi>p</mi><mi>V</mi><mo>−</mo><mi>T</mi><mi>S</mi><mspace width="1em"></mspace><mtext>Gibbs&nbsp;free&nbsp;energy</mtext></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi mathvariant="normal">Φ</mi><mi>G</mi></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>U</mi><mo>−</mo><mi>μ</mi><mi>N</mi><mo>−</mo><mi>T</mi><mi>S</mi><mspace width="1em"></mspace><mtext>Grand&nbsp;potential</mtext></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+H&amp;=U+PV\quad\text{Enthalpy}\\
+F&amp;=U-TS\quad\text{Helmholtz free energy}\\
+G&amp;=U+pV-TS\quad\text{Gibbs free energy}\\
+\Phi_G&amp;=U-\mu N-TS\quad\text{Grand potential}\\
+\end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6em;vertical-align:-2.75em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">G</span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">Φ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">G</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">Enthalpy</span></span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">TS</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">Helmholtz&nbsp;free&nbsp;energy</span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">TS</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">Gibbs&nbsp;free&nbsp;energy</span></span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal">μ</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">TS</span><span class="mspace" style="margin-right:1em;"></span><span class="mord text"><span class="mord">Grand&nbsp;potential</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<ul>
+<li>
+<p><strong>微正则系综</strong>是指能量恒定的孤立系统。</p>
+</li>
+<li>
+<p><strong>正则系综</strong>是指在特定温度下可以与热浴交换能量的系统。</p>
+</li>
+<li>
+<p><strong>巨正则系综</strong>是指一个可以在特定温度和化学势的热浴中交换能量和粒子的系统。</p>
+</li>
+</ul>
+<blockquote>
+<p>这些名字纯属历史。它们没有任何特定的含义，但它们仍然被广泛使用，所以你需要了解它们。</p>
+</blockquote>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%BB%9F%E8%AE%A1%E4%B8%8E%E9%87%8F%E5%AD%90%E7%BB%9F%E8%AE%A1">统计与量子统计</h4>
+
+<ul>
+<li>
+<p>均值与方差<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mo stretchy="false">⟨</mo><mi>A</mi><mo stretchy="false">⟩</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>p</mi><mi>i</mi></msub><msub><mi>A</mi><mi>i</mi></msub></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mo stretchy="false">⟨</mo><msup><mi>A</mi><mn>2</mn></msup><mo stretchy="false">⟩</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>p</mi><mi>i</mi></msub><msubsup><mi>A</mi><mi>i</mi><mn>2</mn></msubsup></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msubsup><mi>σ</mi><mi>A</mi><mn>2</mn></msubsup></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mo stretchy="false">⟨</mo><msup><mi>A</mi><mn>2</mn></msup><mo stretchy="false">⟩</mo><mo>−</mo><mo stretchy="false">⟨</mo><mi>A</mi><msup><mo stretchy="false">⟩</mo><mn>2</mn></msup></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+\langle A\rangle&amp;=\sum_{i=1}^Np_iA_i\\
+\langle A^2\rangle&amp;=\sum_{i=1}^Np_iA_i^2\\
+\sigma_A^2&amp;=\langle A^2\rangle-\langle A\rangle^2
+\end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:8.3361em;vertical-align:-3.9181em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.4181em;"><span style="top:-6.4181em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mopen">⟨</span><span class="mord mathnormal">A</span><span class="mclose">⟩</span></span></span><span style="top:-3.0121em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mopen">⟨</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">⟩</span></span></span><span style="top:-0.5703em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-2.453em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9181em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.4181em;"><span style="top:-6.4181em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.0121em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-2.453em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span><span style="top:-0.5703em;"><span class="pstrut" style="height:3.8283em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mopen">⟨</span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">⟩</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mopen">⟨</span><span class="mord mathnormal">A</span><span class="mclose"><span class="mclose">⟩</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.9181em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>期望</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mo fence="true">⟨</mo><mi mathvariant="normal">Φ</mi><mo fence="true">⟩</mo></mrow><mo>=</mo><mo>−</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mrow><mi>log</mi><mo>⁡</mo><mi>Z</mi></mrow></mrow><mrow><mi mathvariant="normal">∂</mi><mi>β</mi></mrow></mfrac><mspace linebreak="newline"></mspace><mrow><mo fence="true">⟨</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi mathvariant="normal">Φ</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>x</mi></mrow></mfrac><mo fence="true">⟩</mo></mrow><mo>=</mo><mo>−</mo><mi>k</mi><mi>T</mi><mfrac><mrow><mi mathvariant="normal">∂</mi><mrow><mi>log</mi><mo>⁡</mo><mi>Z</mi></mrow></mrow><mrow><mi mathvariant="normal">∂</mi><mi>x</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\left\langle \Phi\right\rangle=-\dfrac{\partial{\log{Z}}}{\partial{\beta}}\\
+\left\langle \dfrac{\partial{\Phi}}{\partial{x}}\right\rangle=-kT\dfrac{\partial{\log{Z}}}{\partial{x}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">⟨</span><span class="mord">Φ</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2519em;vertical-align:-0.8804em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05278em;">β</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8804em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">⟨</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal">x</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord">Φ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">⟩</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord">−</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal">x</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>量子统计</p>
+<p>在处理量子系统时，我们需要注意区分不同类型的概率。在统计力学中，概率总是指系综平均或时间平均。一个变量具有一个特定值的 "概率 "指的是一个系综微观态的一部分，或者是一个时间的一部分。但是，量子力学也有自己的概率，甚至当系统处于单一的已知状态时也适用。它们描述了在系统处于特定状态下，测量将产生某种结果的概率。</p>
+<p>在任何情况下，当把统计力学应用于量子系统时，一定要把由于统计系综的 "概率 "和由于量子力学本身的 "概率 "区分开来。</p>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%83%AD%E5%8A%9B%E5%AD%A6%E6%9E%81%E9%99%90">热力学极限</h4>
+
+<ul>
+<li>
+<p>“硬币”分布 (二项分布)<br>
+<img src="./stanford_stphy_files/screenshot20230607.png" alt="img3-1"></p>
+<p><strong>涨落</strong>为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle displaystyle="true" scriptlevel="0"><mfrac><mi>σ</mi><mrow><mo fence="true">⟨</mo><mi>m</mi><mo fence="true">⟩</mo></mrow></mfrac></mstyle><mo>=</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mn>1</mn><msqrt><mi>N</mi></msqrt></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\dfrac{\sigma}{\left\langle m\right\rangle}=\dfrac{1}{\sqrt{N}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0436em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="minner"><span class="mopen delimcenter" style="top:0em;">⟨</span><span class="mord mathnormal">m</span><span class="mclose delimcenter" style="top:0em;">⟩</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2514em;vertical-align:-0.93em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.1833em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9267em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-2.8867em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1133em;"><span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.93em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+</li>
+<li>
+<p>中心极限定理</p>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%BB%9F%E8%AE%A1%E9%87%8F">统计量</h4>
+
+<ul>
+<li>
+<p>温度</p>
+<p>能量均分定理：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>=</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mi>k</mi><mi>T</mi></mrow><mn>2</mn></mfrac></mstyle></mrow><annotation encoding="application/x-tex">E=\dfrac{kT}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>. 即每个自由度的平均能量为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle displaystyle="true" scriptlevel="0"><mfrac><mrow><mi>k</mi><mi>T</mi></mrow><mn>2</mn></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\dfrac{kT}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+</li>
+<li>
+<p>热力学势的微观视角和宏观视角</p>
+</li>
+<li>
+<p>热力学势和热力学力<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right" columnspacing=""><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>Q</mi><mo>=</mo><mo>−</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>U</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>x</mi></mrow></mfrac></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi>W</mi><mo>=</mo><mi>Q</mi><mi mathvariant="normal">Δ</mi><mi>x</mi></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+Q = -\dfrac{\partial{U}}{\partial{x}}\\
+W = Q\Delta{x}
+\end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3.8574em;vertical-align:-1.6787em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.1787em;"><span style="top:-4.1787em;"><span class="pstrut" style="height:3.3714em;"></span><span class="mord"><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal">x</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">U</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-2.3527em;"><span class="pstrut" style="height:3.3714em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal">Q</span><span class="mord">Δ</span><span class="mord"><span class="mord mathnormal">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.6787em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>热平衡</p>
+</li>
+<li>
+<p>广延量和强度量</p>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%83%AD%E5%8A%9B%E5%AD%A6">热力学</h4>
+
+<ul>
+<li>
+<p>热力学过程<br>
+改变系统并允许其平衡的整个过程被称为热力学过程。</p>
+<ul>
+<li>
+<p>孤立系统<br>
+其宏观属性，如能量和体积，是固定和不变的。</p>
+</li>
+<li>
+<p>热浴接触的系统<br>
+该系统的属性由热浴的属性决定。它们可以自由变化，但它们是随机变化的，而且大多只在一个狭窄的范围内。另外，如果我们把感兴趣的系统加上热浴看作一个单一的复合系统，那么这个复合系统仍然是孤立的。</p>
+</li>
+<li>
+<p>可控系统<br>
+当我们选择以我们选择的方式改变它们时，它们就会发生变化。我们不再以任何方式处理一个孤立的系统。我们正在明确地进行外部改变，从外部伸手来改变这个系统。另一方面，我们只在一个有限的时间段内这样做。在我们做出改变之前，系统（可能包括一个热浴）是隔离的。在我们做完改变之后，它又被隔离了。但是在我们进行改变的时候，它是不被隔离的。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>热力学定律</p>
+<ul>
+<li>
+<p>热力学第零定律<br>
+如果两个物体都与第三个物体处于热平衡，那么它们也彼此处于热平衡。</p>
+</li>
+<li>
+<p>热力学第一定律<br>
+一个系统在热力学过程中的能量变化等于添加到该系统的热量减去它对其环境所做的功。在微分形式中，这被写成<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">d</mi><mi>U</mi><mo>=</mo><mi>δ</mi><mi>Q</mi><mo>−</mo><mi mathvariant="normal">d</mi><mi>W</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}U=\delta Q-\mathrm{d} W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathrm">d</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mord mathnormal">Q</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathrm">d</span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span></span><br>
+其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">Q</span></span></span></span>表示热量和<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span>代表做功。</p>
+</li>
+<li>
+<p>热力学第二定律<br>
+在任何热力学过程中，总熵要么增加，要么保持不变，但从不减少。</p>
+<p><em>或</em></p>
+<p>热量永远不会自发地从较冷的物体流到较热的物体。</p>
+</li>
+<li>
+<p>热力学第三定律<br>
+当任何系统的温度接近零时，它的熵接近一个最小值。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>热容<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>C</mi><mo>=</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>Q</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>T</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">C=\dfrac{\partial{Q}}{\partial{T}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal">Q</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>等容热容<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">C_V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>C</mi><mi>V</mi></msub><mo>=</mo><mi>T</mi><msub><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>S</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>T</mi></mrow></mfrac><mo fence="true">)</mo></mrow><mi>V</mi></msub></mrow><annotation encoding="application/x-tex">C_V=T\left(\dfrac{\partial{S}}{\partial{T}}\right)_V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4497em;vertical-align:-0.9997em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.5214em;"><span style="top:-1.7003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9997em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>等压热容<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>C</mi><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">C_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>C</mi><mi>P</mi></msub><mo>=</mo><mi>T</mi><msub><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>S</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>T</mi></mrow></mfrac><mo fence="true">)</mo></mrow><mi>P</mi></msub><mo>+</mo><mi>P</mi><msub><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mi>V</mi></mrow><mrow><mi mathvariant="normal">∂</mi><mi>T</mi></mrow></mfrac><mo fence="true">)</mo></mrow><mi>P</mi></msub></mrow><annotation encoding="application/x-tex">C_P=T\left(\dfrac{\partial{S}}{\partial{T}}\right)_P+P\left(\dfrac{\partial{V}}{\partial{T}}\right)_P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4497em;vertical-align:-0.9997em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.5214em;"><span style="top:-1.7003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.4497em;vertical-align:-0.9997em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.5214em;"><span style="top:-1.7003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9997em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>理想气体定律<br>
+单个自由粒子的微观态数目与体积成正比<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Ω</mi><mo>∝</mo><mi>V</mi></mrow><annotation encoding="application/x-tex">\Omega\propto V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Ω</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>，理想气体的粒子相互作用可以忽略不计，因此理想气体的微观态数目与体积成正比<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Ω</mi><mo>∝</mo><msup><mi>V</mi><mi>N</mi></msup></mrow><annotation encoding="application/x-tex">\Omega\propto V^N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Ω</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span></span></span></span></span></span></span>。<br>
+从热力学势导出理想气体定律<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mi>p</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>≡</mo><mi>k</mi><mi>T</mi><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mrow><mi>ln</mi><mo>⁡</mo><mi mathvariant="normal">Ω</mi></mrow></mrow><mrow><mi mathvariant="normal">∂</mi><mi>V</mi></mrow></mfrac><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>N</mi><mi>k</mi><mi>T</mi><mrow><mo fence="true">(</mo><mfrac><mrow><mi mathvariant="normal">∂</mi><mrow><mi>ln</mi><mo>⁡</mo><mi>V</mi></mrow></mrow><mrow><mi mathvariant="normal">∂</mi><mi>V</mi></mrow></mfrac><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mfrac><mrow><mi>N</mi><mi>k</mi><mi>T</mi></mrow><mi>V</mi></mfrac></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+p &amp;\equiv  kT\left(\dfrac{\partial{\ln{\Omega}}}{\partial{V}}\right)\\
+&amp;=NkT\left(\dfrac{\partial{\ln{V}}}{\partial{V}}\right)\\
+&amp;=\dfrac{NkT}{V}
+\end{aligned}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:7.7575em;vertical-align:-3.6287em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.1288em;"><span style="top:-6.1288em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord mathnormal">p</span></span></span><span style="top:-3.4287em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"></span></span><span style="top:-0.8073em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.6287em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:4.1288em;"><span style="top:-6.1288em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≡</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mop">ln</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord">Ω</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span><span style="top:-3.4287em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mop">ln</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span><span style="top:-0.8073em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:3.6287em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>热机</p>
+<ul>
+<li>
+<p>卡诺热机</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mo>≤</mo><mn>1</mn><mo>−</mo><mstyle displaystyle="true" scriptlevel="0"><mfrac><msub><mi>T</mi><mi>C</mi></msub><msub><mi>T</mi><mi>H</mi></msub></mfrac></mstyle></mrow><annotation encoding="application/x-tex">\eta\le 1-\dfrac{T_C}{T_H}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">η</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.08125em;">H</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+</li>
+<li>
+<p>自由能的宏观意义<br>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>=</mo><mi>E</mi><mo>−</mo><mi>T</mi><mo stretchy="false">(</mo><mi>S</mi><mo>−</mo><msub><mi>S</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">W_{max}=E-T(S-S_0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>，其中<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">S_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>是绝对零度熵，假设为零。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%9B%B8%E5%8F%98-1">相变</h4>
+
+<ul>
+<li>
+<p>相图</p>
+<center>
+  <img style="border-radius: 0.3125em;
+  box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" src="./stanford_stphy_files/phasediagram.png">
+  <br>
+  <div style="color:orange;
+  border-bottom: 1px solid #d9d9d9;
+  display: inline-block;
+  color: #999;
+  padding: 2px;"></div>
+</center>
+</li>
+<li>
+<p>克劳修斯 - 克拉佩龙方程<br>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mfrac><mrow><mi mathvariant="normal">d</mi><mi>p</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>T</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>−</mo><msub><mi>S</mi><mn>2</mn></msub></mrow><mrow><msub><mi>V</mi><mn>1</mn></msub><mo>−</mo><msub><mi>V</mi><mn>2</mn></msub></mrow></mfrac><mo>=</mo><mfrac><mrow><msub><mi>E</mi><mn>2</mn></msub><mo>−</mo><msub><mi>E</mi><mn>1</mn></msub></mrow><mrow><mi>T</mi><mo stretchy="false">(</mo><msub><mi>V</mi><mn>1</mn></msub><mo>−</mo><msub><mi>V</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\dfrac{\mathrm{d}p}{\mathrm{d}T}=\dfrac{S_1-S_2}{V_1-V_2}=\dfrac{E_2-E_1}{T(V_1-V_2)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.0574em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathrm">d</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathrm">d</span><span class="mord mathnormal">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2963em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+</li>
+<li>
+<p>临界点<br>
+为什么水汽相变有终点，冰水没有：朗道对称性</p>
+</li>
+<li>
+<p>伊辛模型</p>
+<ul>
+<li>平均场理论</li>
+</ul>
+</li>
+</ul>
+<h4 class="mume-header" id="%E6%91%A9%E6%93%A6%E5%92%8C%E6%B3%A2%E5%8A%A8">摩擦和波动</h4>
+
+<ul>
+<li>
+<p>Langevin 方程</p>
+</li>
+<li>
+<p>布朗运动</p>
+</li>
+<li>
+<p>波动 - 消散定理</p>
+</li>
+</ul>
+<h4 class="mume-header" id="%E7%9B%B8%E7%A9%BA%E9%97%B4%E6%A6%82%E7%8E%87%E7%9A%84%E6%BC%94%E5%8C%96">相空间概率的演化</h4>
+
+<ul>
+<li>
+<p>相空间的概率密度</p>
+</li>
+<li>
+<p>Liouville 定理</p>
+</li>
+</ul>
+<h2 class="mume-header" id="reference">Reference</h2>
+
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1RS4y1x7yB/">【中英】斯坦福大学 统计力学基础课程 2009 by Leonard Susskind 教授</a>
+<ul>
+<li><a href="https://theoreticalminimum.com/courses/statistical-mechanics/2013/spring">课程主页</a></li>
+</ul>
+</li>
+<li><a href="https://web.stanford.edu/~peastman/statmech/">Introduction to Statistical Mechanics</a></li>
+<li><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/Kittel-ThermalPhysics.80.pdf">ThermalPhysics</a></li>
+<li><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/F.pdf">Fundamentals of statistical and thermal physics</a></li>
+<li><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/S.pdf">Statistical physics  statics, dynamics and renormalization</a></li>
+<li><a href="file:///C:/Users/UyanjGI/OneDrive/package/mcmc_statphys/ref/physics_170_2017/C.pdf">Principles of condensed matter physics</a></li>
+</ul>
+
+<script>
+elements = document.getElementsByClassName("pseudocode");
+for (var i = 1; i <= elements.length; i++) {
+    setTimeout(function() {
+        var element = document.getElementsByClassName("pseudocode")[0];
+        pseudocode.renderElement(element, { lineNumber: element.getAttribute("lineNumber") == "true" });
+    }, i * 100);
+}
+</script>
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  </body></html>
