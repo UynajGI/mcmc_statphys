@@ -19,11 +19,15 @@ from typing import Dict
 import pickle
 import uuid
 import statsmodels.tsa.stattools as stattools
+from jinja2 import Template
+import datetime
+import copy
 
 __all__ = [
     'mean', 'std', 'var', 'norm', 'diff', 'cv', 'u4', 'getcolumn', 'curve',
     'scatter', 'param_plot', 'param_scatter', 'imshow', 'animate', 'to_msdt',
-    'read_msdt', 'setup_uid', 'autocorrelation', 'V_LJ', 'V_hc', 'V_sc'
+    'read_msdt', 'setup_uid', 'autocorrelation', 'V_LJ', 'V_hc', 'V_sc',
+    'createModel'
 ]
 
 
@@ -360,3 +364,31 @@ def V_sc(r0, r1, epsilon, **kwargs):
             return -epsilon
         else:
             return 0
+
+
+def createModel(classname: str, author: str = None):
+    # 读取模板文件
+    # 获得该脚本所在路径
+    # 获得运行路径
+    pathnow = os.getcwd()
+    path = os.path.dirname(__file__)
+    # path + ./model/BaseModel.txt
+    path = os.path.join(path, 'model')
+    os.chdir(path)
+    with open('./BaseModel.txt', 'r', encoding='utf-8') as f:
+        template_str = f.read()
+    template = Template(template_str)
+    # 获得当前时间，转换为字符串 yyyy-mm-dd-hh-mm-ss
+    now = datetime.datetime.now()
+    now = now.strftime('%Y-%m-%d-%H-%M-%S')
+    # classname 小写
+    typename = copy.deepcopy(classname.lower())
+    classname = copy.deepcopy(typename.capitalize())
+    code = template.render(now=now,
+                           Classname=classname,
+                           type=typename,
+                           author=author)
+    os.chdir(pathnow)
+    with open(classname + '.py', 'w') as f:
+        f.write(code)
+        f.close()
