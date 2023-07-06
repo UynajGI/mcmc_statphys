@@ -6,7 +6,6 @@ from typing import Tuple
 
 
 class Ice(Ising):
-
     def __init__(self, L):
         super().__init__(L=L, dim=2)
         self.name = "Ice"
@@ -29,26 +28,22 @@ class Ice(Ising):
             if direction == 0:
                 i = (i - 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 1])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 1] *= -1
             elif direction == 1:
                 i = (i + 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 0])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 0] *= -1
             elif direction == 2:
                 j = (j - 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 3])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 3] *= -1
             elif direction == 3:
                 j = (j + 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 2])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 2] *= -1
 
         self.type = type
@@ -63,26 +58,22 @@ class Ice(Ising):
             if direction == 0:
                 i = (i - 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 1])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 1] *= -1
             elif direction == 1:
                 i = (i + 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 0])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 0] *= -1
             elif direction == 2:
                 j = (j - 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 3])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 3] *= -1
             elif direction == 3:
                 j = (j + 1) % self.L
                 val = copy.deepcopy(self.spin[i, j, 2])
-                direction = np.random.choice(
-                    np.argwhere(self.spin[i, j] != val).reshape(-1))
+                direction = np.random.choice(np.argwhere(self.spin[i, j] != val).reshape(-1))
                 self.spin[i, j, 2] *= -1
         indlen = path.index((i, j))
         for k in range(indlen):

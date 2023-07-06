@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   XY.py
 @Time    :   2023/05/31 11:48:37
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Tuple
@@ -17,7 +17,6 @@ __all__ = ["XY"]
 
 
 class XY(Ising):
-
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):
         super().__init__(L, Jij, H, dim=2, *args, **kwargs)
         self._init_spin(type="XY")

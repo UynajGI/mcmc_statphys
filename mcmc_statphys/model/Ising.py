@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   Ising.py
 @Time    :   2023/05/31 11:47:09
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Any, Tuple
@@ -62,13 +62,7 @@ class Ising(object):
     Scholarpedia <http://www.scholarpedia.org/article/Ising_model>`__
     """
 
-    def __init__(self,
-                 L: int,
-                 Jij: float = 1,
-                 H: float = 0,
-                 dim: int = 2,
-                 *args: Any,
-                 **kwargs: Any):
+    def __init__(self, L: int, Jij: float = 1, H: float = 0, dim: int = 2, *args: Any, **kwargs: Any):
         L = int(L)
         self.L = L
         self.dim = dim
@@ -92,7 +86,7 @@ class Ising(object):
         Args:
             type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
         """
-        self.spin = np.random.choice([-1, 1], size=(self.L, ) * self.dim)
+        self.spin = np.random.choice([-1, 1], size=(self.L,) * self.dim)
         self.spin = self.spin.astype(np.int8)
         self.type = type
 
@@ -108,8 +102,7 @@ class Ising(object):
         neighbors = []
         for i in range(self.dim):
             for j in [-1, 1]:
-                neighbors.append(index[:i] + ((index[i] + j) % self.L, ) +
-                                 index[i + 1:])
+                neighbors.append(index[:i] + ((index[i] + j) % self.L,) + index[i + 1 :])
         neighbors = list(set(neighbors))  # 去重
         return neighbors
 
@@ -217,7 +210,7 @@ class Ising(object):
         new_site_energy = self._get_site_energy(index)
         detle_energy = new_site_energy - old_site_energy
         self.energy += detle_energy
-        self.magnetization += (new_site - old_site)
+        self.magnetization += new_site - old_site
         return detle_energy
 
     def _max_energy(self):
@@ -249,15 +242,17 @@ class Ising(object):
         return self.magnetization
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "H",
-            "energy",
-            "magnetization",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "H",
+                "energy",
+                "magnetization",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 

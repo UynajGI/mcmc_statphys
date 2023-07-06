@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   SKmodel.py
 @Time    :   2023/05/31 11:50:34
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Tuple
@@ -18,14 +18,7 @@ __all__ = ["SKmodel"]
 
 class SKmodel(Ising):
     # SKModel is the Sherrington-Kirkpatrick model
-    def __init__(self,
-                 N,
-                 Jmean=0,
-                 Jsigma=1,
-                 Jform='norm',
-                 H=0,
-                 *args,
-                 **kwargs):
+    def __init__(self, N, Jmean=0, Jsigma=1, Jform="norm", H=0, *args, **kwargs):
         super().__init__(L=N, Jij=1, H=H, dim=1)
         self.Jmean = Jmean
         self.Jsigma = Jsigma
@@ -37,17 +30,14 @@ class SKmodel(Ising):
         self._max_energy()
 
     def _init_Jij(self, Jform):
-        if Jform == 'norm':
-            self.Jij = np.random.normal(self.Jmean / self.N,
-                                        self.Jsigma / np.sqrt(self.N),
-                                        (self.N, self.N))
+        if Jform == "norm":
+            self.Jij = np.random.normal(self.Jmean / self.N, self.Jsigma / np.sqrt(self.N), (self.N, self.N))
             self.Jij = np.tril(self.Jij)
             self.Jij = self.Jij + self.Jij.T
             np.fill_diagonal(self.Jij, 0)
             self.Jij = self.Jij.astype(np.float32)
-        elif Jform == 'uniform':
-            self.Jij = np.random.choice([-self.Jsigma, self.Jsigma],
-                                        size=(self.N, self.N))
+        elif Jform == "uniform":
+            self.Jij = np.random.choice([-self.Jsigma, self.Jsigma], size=(self.N, self.N))
             self.Jij = np.tril(self.Jij)
             self.Jij = self.Jij + self.Jij.T
             np.fill_diagonal(self.Jij, 0)

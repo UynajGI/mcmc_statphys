@@ -4,14 +4,13 @@ import pandas as pd
 import uuid
 from tqdm import tqdm
 
-__all__ = ['Demon']
+__all__ = ["Demon"]
 
 
 class Demon(object):
-
     def __init__(self, model):
         self.model = model
-        self.name = 'Demon'
+        self.name = "Demon"
         self.Es = 0
         self.Ed = 0
         self._rowmodel = copy.deepcopy(self.model)
@@ -25,13 +24,11 @@ class Demon(object):
                 if uid not in self.data.index.get_level_values("uid").values:
                     self._reset_model()
                 else:
-                    self.model.set_spin(self.data.loc[uid].loc[
-                        self.data.loc[uid].index.max()].spin)
+                    self.model.set_spin(self.data.loc[uid].loc[self.data.loc[uid].index.max()].spin)
         return uid
 
     def _init_data(self):
-        self.data: pd.DataFrame = pd.DataFrame(
-            columns=["uid", "iter", "H", "Es", "Ed", 'spin'])
+        self.data: pd.DataFrame = pd.DataFrame(columns=["uid", "iter", "H", "Es", "Ed", "spin"])
         self.data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, uid):
@@ -40,10 +37,8 @@ class Demon(object):
             self.data.at[(uid, 1), "spin"] = copy.deepcopy(self.model.spin)
         else:
             iterplus = self.data.loc[uid].index.max() + 1
-            self.data.loc[(uid,
-                           iterplus), :] = [self.model.H, self.Es, self.Ed, 0]
-            self.data.at[(uid, iterplus),
-                         "spin"] = copy.deepcopy(self.model.spin)
+            self.data.loc[(uid, iterplus), :] = [self.model.H, self.Es, self.Ed, 0]
+            self.data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.model.spin)
 
     def _reset_model(self):
         self.model = copy.deepcopy(self._rowmodel)
@@ -80,9 +75,9 @@ class Demon(object):
         J = self.model.Jij
         lst = []
         Tst = []
-        forlst = self.data.loc[uid]['Ed'].tolist()[t0:]
+        forlst = self.data.loc[uid]["Ed"].tolist()[t0:]
         for i in forlst:
             lst.append(i)
-            T = (1 / (J * 4) * np.log(1 + 4 * J / np.mean(lst)))**(-1)
+            T = (1 / (J * 4) * np.log(1 + 4 * J / np.mean(lst))) ** (-1)
             Tst.append(T)
         return Tst

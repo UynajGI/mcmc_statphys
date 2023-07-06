@@ -7,7 +7,7 @@ from tqdm import tqdm
 from .Metropolis import Metropolis
 from .Metropolis import _rename
 
-__all__ = ['Wolff']
+__all__ = ["Wolff"]
 
 
 class Wolff(Metropolis):
@@ -59,8 +59,8 @@ class Wolff(Metropolis):
 
             new_site = self.model.spin[clip]
             new_site_energy = self.model._get_site_energy(clip)
-            self.model.energy += (new_site_energy - old_site_energy)
-            self.model.magnetization += (new_site - old_site)
+            self.model.energy += new_site_energy - old_site_energy
+            self.model.magnetization += new_site - old_site
 
         self._save_date(T, uid)
         return uid
@@ -71,11 +71,7 @@ class Wolff(Metropolis):
             self.iter_sample(T, uid)
         return uid
 
-    def param_sample(self,
-                     param: tuple,
-                     param_name: str or int = 'T',
-                     stable: float = 0.0,
-                     max_iter: int = 1000):
+    def param_sample(self, param: tuple, param_name: str or int = "T", stable: float = 0.0, max_iter: int = 1000):
         """_summary_
 
         Args:

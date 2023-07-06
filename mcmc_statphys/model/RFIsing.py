@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   Ising.py
 @Time    :   2023/05/31 11:47:09
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Any, Tuple
@@ -18,16 +18,17 @@ __all__ = ["RFIsing"]
 
 
 class RFIsing(Ising):
-
-    def __init__(self,
-                 L: int,
-                 Jij: float = 1,
-                 Hmean: float = 0,
-                 Hsigma: float = 1,
-                 Hform: str = "norm",
-                 dim: int = 2,
-                 *args: Any,
-                 **kwargs: Any):
+    def __init__(
+        self,
+        L: int,
+        Jij: float = 1,
+        Hmean: float = 0,
+        Hsigma: float = 1,
+        Hform: str = "norm",
+        dim: int = 2,
+        *args: Any,
+        **kwargs: Any
+    ):
         H = self._init_H(Hmean=Hmean, Hsigma=Hsigma, Hform=Hform)
         super().__init__(L=L, Jij=Jij, H=H, dim=dim, *args, **kwargs)
         self._init_spin(type="rfising")
@@ -37,9 +38,9 @@ class RFIsing(Ising):
 
     def _init_H(self, Hmean, Hsigma, Hform):
         if Hform == "norm":
-            H = np.random.normal(Hmean, Hsigma, (self.L, ) * self.dim)
+            H = np.random.normal(Hmean, Hsigma, (self.L,) * self.dim)
         elif Hform == "uniform":
-            H = np.random.choice([-Hsigma, Hsigma], size=(self.L, ) * self.dim)
+            H = np.random.choice([-Hsigma, Hsigma], size=(self.L,) * self.dim)
         else:
             raise ValueError("Invalid Hform")
         return H
@@ -64,15 +65,17 @@ class RFIsing(Ising):
         return energy
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "H",
-            "energy",
-            "magnetization",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "H",
+                "energy",
+                "magnetization",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 

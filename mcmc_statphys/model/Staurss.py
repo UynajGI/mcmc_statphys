@@ -18,13 +18,7 @@ __all__ = ["Staurss"]
 
 
 class Staurss(object):
-
-    def __init__(self,
-                 L: int,
-                 Jij: float = 1,
-                 H: float = 0,
-                 *args: Any,
-                 **kwargs: Any):
+    def __init__(self, L: int, Jij: float = 1, H: float = 0, *args: Any, **kwargs: Any):
         L = int(L)
         self.L = L
         self.dim = 2
@@ -59,8 +53,7 @@ class Staurss(object):
         return self.energy / self.N
 
     def _get_total_triangle(self) -> int:
-        return np.sum([nx.triangles(self.spin, n)
-                       for n in self.spin.nodes()]) / 3
+        return np.sum([nx.triangles(self.spin, n) for n in self.spin.nodes()]) / 3
 
     def _get_total_energy(self) -> float:
         """Get the total energy of the system / cn: 获取系统的总能量
@@ -68,8 +61,7 @@ class Staurss(object):
         Returns:
             float: The total energy of the system / cn: 系统的总能量
         """
-        energy = self.Jij * self._get_total_triangle(
-        ) / self.N - self.H * self.spin.number_of_edges()
+        energy = self.Jij * self._get_total_triangle() / self.N - self.H * self.spin.number_of_edges()
 
         self.energy = energy
         return energy
@@ -115,8 +107,7 @@ class Staurss(object):
         return self.density
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(
-            columns=["uid", "iter", "T", "H", "energy", "density", "spin"])
+        data: pd.DataFrame = pd.DataFrame(columns=["uid", "iter", "T", "H", "energy", "density", "spin"])
         data.set_index(["uid", "iter"], inplace=True)
         return data
 
@@ -126,8 +117,6 @@ class Staurss(object):
             data.at[(uid, 1), "spin"] = copy.deepcopy(self.spin)
         else:
             iterplus = data.loc[uid].index.max() + 1
-            data.loc[(uid, iterplus), :] = [
-                T, self.H, self.energy, self.density, 0
-            ]
+            data.loc[(uid, iterplus), :] = [T, self.H, self.energy, self.density, 0]
             data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.spin)
         return data
