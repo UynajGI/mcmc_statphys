@@ -7,15 +7,14 @@ import pandas as pd
 __all__ = ["NVT"]
 
 
-def potential(r: float, r0: float, r1: float, epsilon: float,
-              type: str) -> float:
+def potential(r: float, r0: float, r1: float, epsilon: float, type: str) -> float:
     if type == "hard-core":
         if r < r0:
             return np.inf
         else:
             return 0
     elif type == "lennard-jones":
-        return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
+        return 4 * epsilon * ((r0 / r) ** 12 - (r0 / r) ** 6)
     elif type == "soft-core":
         if r < r0:
             return np.inf
@@ -25,15 +24,8 @@ def potential(r: float, r0: float, r1: float, epsilon: float,
             return 0
 
 
-class NVT():
-
-    def __init__(self,
-                 N: int,
-                 V: float,
-                 r0: float,
-                 r1: float,
-                 epsilon: float,
-                 poten="lennard-jones"):
+class NVT:
+    def __init__(self, N: int, V: float, r0: float, r1: float, epsilon: float, poten="lennard-jones"):
         self.N = N
         self.L = N
         self.dim = 1
@@ -48,8 +40,8 @@ class NVT():
     def __len__(self):
         return self.L
 
-    def _init_spin(self, type="nvt", *args, **kwargs):
-        self.spin = np.random.uniform(0, self.V**(1 / 3), size=(self.N, 3))
+    def _init_spin(self, type="nvt"):
+        self.spin = np.random.uniform(0, self.V ** (1 / 3), size=(self.N, 3))
         self.distance = squareform(pdist(self.spin))
         self.type = type
 
@@ -57,11 +49,7 @@ class NVT():
         energy = 0
         for i in range(self.L):
             for j in range(i + 1, self.L):
-                energy += potential(self.distance[i, j],
-                                    r0=self.r0,
-                                    r1=self.r1,
-                                    epsilon=self.epsilon,
-                                    type=self.poten)
+                energy += potential(self.distance[i, j], r0=self.r0, r1=self.r1, epsilon=self.epsilon, type=self.poten)
         self.energy = energy
         return energy
 
@@ -69,7 +57,7 @@ class NVT():
         return self._get_total_energy() / self.N
 
     def _change_site_spin(self, index: Tuple[int, ...]):
-        self.spin[index] = np.random.uniform(0, self.V**(1 / 3), size=(1, 3))
+        self.spin[index] = np.random.uniform(0, self.V ** (1 / 3), size=(1, 3))
         self.distance = squareform(pdist(self.spin))
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
@@ -88,13 +76,15 @@ class NVT():
         return self.energy
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "energy",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "energy",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 

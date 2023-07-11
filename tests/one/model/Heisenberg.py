@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   Heisenberg.py
 @Time    :   2023/05/31 11:47:52
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Tuple
@@ -20,15 +20,14 @@ class Heisenberg(Ising):
     """
     Heisenberg model
     =================
-    
+
     """
 
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H=0, dim=3, *args, **kwargs)
+    def __init__(self, L, Jij=1, H=0):
+        super().__init__(L, Jij, H=0, dim=3)
         self._init_spin(type="heisenberg")
-        self._max_energy()
 
-    def _init_spin(self, type="heisenberg", *args, **kwargs):
+    def _init_spin(self, type="heisenberg"):
         """Initialize the spin of the system
 
         Args:

@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   Potts.py
 @Time    :   2023/05/31 11:49:11
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Tuple
@@ -17,15 +17,14 @@ __all__ = ["Potts"]
 
 
 class Potts(Ising):
-
-    def __init__(self, L, Jij=1, H=0, dim=2, p=3, *args, **kwargs):
+    def __init__(self, L, Jij=1, H=0, dim=2, p=3):
         # p is the number of states of the system
         self.p = p
-        super().__init__(L, Jij, H, dim, *args, **kwargs)
+        super().__init__(L, Jij, H, dim)
         self._init_spin(type="potts", p=p)
         self._max_energy()
 
-    def _init_spin(self, type="potts", p=3, *args, **kwargs):
+    def _init_spin(self, type="potts", p=3):
         """Initialize the spin of the system
 
         Args:
@@ -34,7 +33,7 @@ class Potts(Ising):
         Raises:
             ValueError: Invalid type of spin / cn: 无效的自旋类型
         """
-        self.spin = np.random.choice(range(p), size=(self.L, ) * self.dim)
+        self.spin = np.random.choice(range(p), size=(self.L,) * self.dim)
         self.spin = self.spin.astype(np.int8)
         self.type = type
 

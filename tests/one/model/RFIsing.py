@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
-'''
+"""
 @File    :   Ising.py
 @Time    :   2023/05/31 11:47:09
 @Author  :   UynajGI
 @Contact :   suquan12148@outlook.com
 @License :   (MIT)Copyright 2023
-'''
+"""
 
 # here put the import lib
 from typing import Any, Tuple
@@ -18,16 +18,9 @@ __all__ = ["RFIsing"]
 
 
 class RFIsing(Ising):
-
-    def __init__(self,
-                 L: int,
-                 Jij: float = 1,
-                 Hsigma=1,
-                 dim: int = 2,
-                 *args: Any,
-                 **kwargs: Any):
-        H = np.random.normal(0, Hsigma, (L, ) * dim)
-        super().__init__(L=L, Jij=Jij, H=H, dim=dim, *args, **kwargs)
+    def __init__(self, L: int, Jij: float = 1, Hsigma=1, dim: int = 2, *args: Any, **kwargs: Any):
+        H = np.random.normal(0, Hsigma, (L,) * dim)
+        super().__init__(L=L, Jij=Jij, H=H, dim=dim)
         self._init_spin(type="rfising")
         self._get_total_energy()
         self._get_total_magnetization()
@@ -53,15 +46,17 @@ class RFIsing(Ising):
         return energy
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "H",
-            "energy",
-            "magnetization",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "H",
+                "energy",
+                "magnetization",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 
