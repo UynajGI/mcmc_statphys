@@ -46,7 +46,7 @@ class {{ Classname }}(object):
 
     def _get_site_energy(self, index: Tuple[int, ...]) -> float:
         # if single site energy can be calculated, you need to set this function, otherwise return None
-        
+
     def _get_per_energy(self) -> float:
         # you need to set this function
 
@@ -63,6 +63,9 @@ class {{ Classname }}(object):
         # you need set this function
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
+        # you must set this function, return the delta energy of the system
+
+    def _random_walk(self):
         # you must set this function, return the delta energy of the system
 
     def set_spin(self, spin):

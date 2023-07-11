@@ -18,25 +18,27 @@ __all__ = ["RFIsing"]
 
 
 class RFIsing(Ising):
-    def __init__(
-        self,
-        L: int,
-        Jij: float = 1,
-        Hmean: float = 0,
-        Hsigma: float = 1,
-        Hform: str = "norm",
-        dim: int = 2,
-        *args: Any,
-        **kwargs: Any
-    ):
+    def __init__(self, L: int, Jij: float = 1, Hmean: float = 0, Hsigma: float = 1, Hform: str = "norm", dim: int = 2):
         H = self._init_H(Hmean=Hmean, Hsigma=Hsigma, Hform=Hform)
-        super().__init__(L=L, Jij=Jij, H=H, dim=dim, *args, **kwargs)
+        super().__init__(L=L, Jij=Jij, H=H, dim=dim)
         self._init_spin(type="rfising")
         self._get_total_energy()
         self._get_total_magnetization()
-        self._max_energy()
 
-    def _init_H(self, Hmean, Hsigma, Hform):
+    def _init_H(self, Hmean: float, Hsigma: float, Hform: str) -> np.ndarray:
+        """Initialize the external magnetic field
+
+        Args:
+            Hmean (float): the mean of the external magnetic field
+            Hsigma (float): the standard deviation of the external magnetic field
+            Hform (str): the form of the external magnetic field
+
+        Raises:
+            ValueError: Invalid Hform
+
+        Returns:
+            np.ndarray: the external magnetic field
+        """
         if Hform == "norm":
             H = np.random.normal(Hmean, Hsigma, (self.L,) * self.dim)
         elif Hform == "uniform":

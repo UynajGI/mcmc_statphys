@@ -147,9 +147,9 @@ class Metropolis:
             object: model / cn: 模型
         """
         uid = self._setup_uid(uid)
-        site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
+        # site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         temp_model = copy.deepcopy(self.model)
-        delta_E = self.model._change_delta_energy(site)
+        delta_E = self.model._random_walk()
         if not _sample_acceptance(delta_E, T, form=ac_from):
             self.model = temp_model
         self.data = self.model._save_date(T=T, uid=uid, data=self.data)

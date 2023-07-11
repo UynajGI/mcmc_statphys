@@ -46,9 +46,8 @@ class Demon(object):
     def iter_sample(self, uid: str = None) -> str:
         uid = self._setup_uid(uid)
         self.Es = self.model.energy
-        site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         temp_model = copy.deepcopy(self.model)
-        delta_E = self.model._change_delta_energy(site)
+        delta_E = self.model._random_walk()
         if delta_E <= 0:
             self.Ed += abs(delta_E)
             self.Es -= abs(delta_E)

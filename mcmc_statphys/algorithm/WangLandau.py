@@ -35,9 +35,9 @@ class WangLandau:
                     self.logG.append(1)
                     self.hist.append(1)
                 else:
-                    site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
+                    # site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
                     temp_model = copy.deepcopy(self.model)
-                    self.model._change_delta_energy(site)
+                    self.model._random_walk()
                     index_old = np.argmin(np.abs(self.elst - temp_model.energy))
                     index_new = np.argmin(np.abs(self.elst - self.model.energy))
                     # self.elst[index_new] 是离当前能量太远

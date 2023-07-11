@@ -18,7 +18,7 @@ __all__ = ["Staurss"]
 
 
 class Staurss(object):
-    def __init__(self, L: int, Jij: float = 1, H: float = 0, *args: Any, **kwargs: Any):
+    def __init__(self, L: int, Jij: float = 1, H: float = 0):
         L = int(L)
         self.L = L
         self.dim = 2
@@ -35,7 +35,7 @@ class Staurss(object):
     def __getitem__(self, index: Tuple[int, ...]):
         return self.spin[index]
 
-    def _init_spin(self, type="staurss", *args, **kwargs):
+    def _init_spin(self, type="staurss"):
         """Initialize the spin of the system
 
         Args:

@@ -73,7 +73,7 @@ class NVT:
     def __len__(self):
         return self.L
 
-    def _init_spin(self, type="nvt", *args, **kwargs):
+    def _init_spin(self, type="nvt"):
         self.spin = np.random.uniform(0, self.V ** (1 / 3), size=(self.N, 3))
         self.distance = squareform(pdist(self.spin))
         self.type = type
