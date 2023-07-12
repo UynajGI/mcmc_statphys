@@ -307,69 +307,69 @@ class Metropolis:
         column = _rename(column)
         array = data.loc[uid][column][t0:]
         index = data.loc[uid].index
-        plt.scatter(
-            index,
-            array,
-            s=s,
-            c=c,
-            marker=marker,
-            cmap=cmap,
-            norm=norm,
-            vmin=vmin,
-            vmax=vmax,
-            alpha=alpha,
-            linewidths=linewidths,
-            edgecolors=edgecolors,
-            plotnonfinite=plotnonfinite,
-            data=data,
-            **kwargs
-        )
+        plt.scatter(index, array)
 
-    def param_plot(self, uid_dict: Dict[str, np.array], column: str, per: bool = True) -> None:
-        """
-        Draw a parametric plot.
-        """
-        column = _rename(column)
-        x = []
-        y = []
-        if isinstance(uid_dict, dict):
-            param_name = list(uid_dict.keys())[1]
-            for i in range(len(list(uid_dict.values())[0])):
-                uid = list(uid_dict.values())[0][i]
-                param = list(uid_dict.values())[1][i]
-                if uid not in self.data.index.get_level_values("uid").values:
-                    raise ValueError("Invalid uid.")
-                x.append(param)
-                y.append(self.mean(uid, column))
-        else:
-            raise ValueError("Invalid uid_dict.")
-        if per:
-            plt.plot(x, y / self.model.N, label=param_name)
-        else:
-            plt.plot(x, y, label=param_name)
+    # def param_plot(self, uid_dict: Dict[str, np.array], column: str, per: bool = True):
+    #     """
+    #     Parameter plot
 
-    def param_scatter(self, uid_dict: Dict[str, np.array], column: str, per: bool = True) -> None:
-        """
-        Draw a parametric scatter.
-        """
-        column = _rename(column)
-        x = []
-        y = []
-        if isinstance(uid_dict, dict):
-            param_name = list(uid_dict.keys())[1]
-            for i in range(len(list(uid_dict.values())[0])):
-                uid = list(uid_dict.values())[0][i]
-                param = list(uid_dict.values())[1][i]
-                if uid not in self.data.index.get_level_values("uid").values:
-                    raise ValueError("Invalid uid.")
-                x.append(param)
-                y.append(self.mean(uid, column))
-        else:
-            raise ValueError("Invalid uid_dict.")
-        if per:
-            plt.scatter(x, y / self.model.N, label=param_name)
-        else:
-            plt.scatter(x, y, label=param_name)
+    #     Parameters
+    #     ----------
+    #     uid_dict : Dict[str, np.array]
+    #         uid_dict
+    #     column : str
+    #         column
+    #     per : bool, optional
+    #         per, by default True
+
+    #     Raises
+    #     ------
+    #     ValueError
+    #         _description_
+    #     ValueError
+    #         _description_
+    #     """
+    #     column = _rename(column)
+    #     x = []
+    #     y = []
+    #     if isinstance(uid_dict, dict):
+    #         param_name = list(uid_dict.keys())[1]
+    #         for i in range(len(list(uid_dict.values())[0])):
+    #             uid = list(uid_dict.values())[0][i]
+    #             param = list(uid_dict.values())[1][i]
+    #             if uid not in self.data.index.get_level_values("uid").values:
+    #                 raise ValueError("Invalid uid.")
+    #             x.append(param)
+    #             y.append(self.mean(uid, column))
+    #     else:
+    #         raise ValueError("Invalid uid_dict.")
+    #     if per:
+    #         plt.plot(x, y / self.model.N, label=param_name)
+    #     else:
+    #         plt.plot(x, y, label=param_name)
+
+    # def param_scatter(self, uid_dict: Dict[str, np.array], column: str, per: bool = True) -> None:
+    #     """
+    #     Draw a parametric scatter.
+    #     """
+    #     column = _rename(column)
+    #     x = []
+    #     y = []
+    #     if isinstance(uid_dict, dict):
+    #         param_name = list(uid_dict.keys())[1]
+    #         for i in range(len(list(uid_dict.values())[0])):
+    #             uid = list(uid_dict.values())[0][i]
+    #             param = list(uid_dict.values())[1][i]
+    #             if uid not in self.data.index.get_level_values("uid").values:
+    #                 raise ValueError("Invalid uid.")
+    #             x.append(param)
+    #             y.append(self.mean(uid, column))
+    #     else:
+    #         raise ValueError("Invalid uid_dict.")
+    #     if per:
+    #         plt.scatter(x, y / self.model.N, label=param_name)
+    #     else:
+    #         plt.scatter(x, y, label=param_name)
 
     def imshow(
         self,
