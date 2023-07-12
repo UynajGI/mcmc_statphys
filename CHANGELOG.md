@@ -1,5 +1,65 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.0.0-alpha.0](https://github.com/UynajGI/mcmc_statphys/compare/v0.4.3-20230517...v1.0.0-alpha.0) (2023-07-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* 🧨 createModel!
+* 🧨 Strauss模型！
+* 🧨 Tempering类！
+* 🧨 RFising类！
+* 🧨 Kawasaki算法！
+* 🧨 Demon方法！
+* 🧨 新增数据保存msdt!
+* 🧨 新method模组！
+* 🧨 删除draw!
+* 🧨 SKmodel!
+* 🧨 WangLandau算法
+* 🧨 删除draw模块！
+* 🧨 新增 Parallel
+* 🧨 删除了analysis模块！
+* 🧨 iter_data 变为 data 属性
+
+### Features
+
+* 🎸 接受率增加heat-bath类别 ([f14047b](https://github.com/UynajGI/mcmc_statphys/commit/f14047b5e0da00a129ae9c3612d9e05d76c3ce35))
+* 🎸 添加maxenergy属性 ([3564745](https://github.com/UynajGI/mcmc_statphys/commit/356474502b881e46611c48d489d4383fa0e21cc1))
+* 🎸 添加u4计算，添加起始点分析数据功能 ([7baa8da](https://github.com/UynajGI/mcmc_statphys/commit/7baa8da4799f0916119d9fd36a7381aebdbe4592))
+* 🎸 添加WangLandau算法 ([56c3c05](https://github.com/UynajGI/mcmc_statphys/commit/56c3c05e4723977890c67027b830c0fd19583792))
+* 🎸 新增 Parallel 类 ([cb3ecf8](https://github.com/UynajGI/mcmc_statphys/commit/cb3ecf8d44151d9b659d76b53340a42fb1819717))
+* 🎸 新增几个势能函数 ([d506d68](https://github.com/UynajGI/mcmc_statphys/commit/d506d6823192ba949a4a7df0b9ca819fcef23040))
+* 🎸 新增自回归系数autocorrelation方法 ([a643edd](https://github.com/UynajGI/mcmc_statphys/commit/a643edd02c33fe5ce547f77ce1ad0850cab00e6b))
+* 🎸 新增Demon方法 ([73cc393](https://github.com/UynajGI/mcmc_statphys/commit/73cc3937e24cdc6b46cdff2e0a313a834a2d3d42))
+* 🎸 新增Ice和NVT模型（未完善） ([c4a85da](https://github.com/UynajGI/mcmc_statphys/commit/c4a85da02bda96085d84a09fc8ea8fa74a49d18b))
+* 🎸 新增Kawasaki ([ab94ab1](https://github.com/UynajGI/mcmc_statphys/commit/ab94ab15edbe6c2bd8a82a0d3dfc4e44c5f4a5c6))
+* 🎸 新增RFising类 ([8a34265](https://github.com/UynajGI/mcmc_statphys/commit/8a34265263eddecd9e79eace9f312274c7c3c2d4))
+* 🎸 新增SKmodel类 ([bf713cc](https://github.com/UynajGI/mcmc_statphys/commit/bf713ccb31aee6dc731075173b204e73d6689b1c))
+* 🎸 新增Staurss模型 ([20735b3](https://github.com/UynajGI/mcmc_statphys/commit/20735b3230d330594919c77b50187576e3de5e2b))
+* 🎸 在method增加setup_uid方法 ([42566f9](https://github.com/UynajGI/mcmc_statphys/commit/42566f98efac2ec725d350b9089c317d5a297fa0))
+* 🎸 在method增加setup_uid方法 ([bab1dd7](https://github.com/UynajGI/mcmc_statphys/commit/bab1dd7e3ec0d824a388864e39a65a465ae93a74))
+* 🎸 增加数据保存类型msdt ([275ff64](https://github.com/UynajGI/mcmc_statphys/commit/275ff64078927e8ded057a66454934d6af614d2b))
+* 🎸 增加model模板生成方法createModel ([897d1d3](https://github.com/UynajGI/mcmc_statphys/commit/897d1d37339d6cd0604bf0cf95d06a030e94e786))
+* 🎸 autocorrelation方法中添加integrated correlation time输出 ([cb4a846](https://github.com/UynajGI/mcmc_statphys/commit/cb4a846c0dbbe29077734031bc8d7f8f60d2fb22))
+
+
+### Bug Fixes
+
+* 🐛 修复了进度条bug ([9e547b3](https://github.com/UynajGI/mcmc_statphys/commit/9e547b32f10b2f587d428f78379b39a265e7d8e3))
+* 🐛 修改相关时间计算 ([23c8b68](https://github.com/UynajGI/mcmc_statphys/commit/23c8b680c8a1d0a4fa0458398d8aecdfea329ec7))
+* 🐛 修改skmodel能量计算 ([d3007eb](https://github.com/UynajGI/mcmc_statphys/commit/d3007ebc972d6e125d2a1e2229f0c9e027a84d43))
+* 🐛 修改u4计算错误 ([9a84c1d](https://github.com/UynajGI/mcmc_statphys/commit/9a84c1d9ae3c17d41e6bb537b6b3ad6e25773d57))
+
+
+* 💡 分析绘图方法独立为新模组 ([fb03186](https://github.com/UynajGI/mcmc_statphys/commit/fb03186fde9e7f4bcf61bed53a82f4b00397b834))
+* 💡 删除 draw模块，集成至algorithm模块 ([9021411](https://github.com/UynajGI/mcmc_statphys/commit/9021411fcd6e0c19d57eb31453c9d8fdf01b6756))
+* 💡 删除了analysis模块，将它集成到了algorithm模块里 ([71dc925](https://github.com/UynajGI/mcmc_statphys/commit/71dc9253192d100e2a6dec7371da358d7a5387bf))
+* 💡 删除draw模块，集成进algrithm模块 ([c16b116](https://github.com/UynajGI/mcmc_statphys/commit/c16b116d9ca92b5671b0c053f35dc9c211001b1b))
+* 💡 iter_data 变为 data 属性 ([317b5f2](https://github.com/UynajGI/mcmc_statphys/commit/317b5f24709085564a1b90d1fa26de1fa775702f))
+* 💡 Parallel 类改为Tempering类 ([01d8bce](https://github.com/UynajGI/mcmc_statphys/commit/01d8bceb3398b80649872bf2d65889aad12f3263))
+
 ## [2.0.0-20230517](https://github.com/UynajGI/mcmc_statphys/compare/v1.0.0-20230517...v2.0.0-20230517) (2023-05-21)
 
 
