@@ -14,7 +14,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import HTMLWriter
-from .algorithm.Metropolis import _rename
 from typing import Dict
 import pickle
 import uuid
@@ -252,7 +251,16 @@ def imshow(
     **kwargs
 ) -> None:
     """
-    Draw a inshow.
+    Display an image on the axes.
+
+    Parameters
+    ----------
+    algo :
+        The algorithm.
+    uid : str
+        The uid of the algorithm.
+    iter : int
+        The iteration of the algorithm.
     """
     spin = algo.data.loc[(uid, iter), "spin"]
     plt.imshow(
@@ -336,7 +344,6 @@ def read_msdt(path: str = None):
     """
     Read the data from msdt.
     """
-    # 检查是否存在文件
     if not os.path.exists(path):
         raise FileNotFoundError("File not found.")
     return pickle.loads(open(path, "rb").read())
@@ -407,21 +414,25 @@ def V_sc(r0, r1, epsilon, **kwargs):
 
 
 def createModel(classname: str, author: str = None):
-    # 读取模板文件
-    # 获得该脚本所在路径
-    # 获得运行路径
+    """
+    Create a model.py file.
+
+    Parameters
+    ----------
+    classname : str
+        The name of the model.
+    author : str, optional
+        The author of the model, by default None.
+    """
     pathnow = os.getcwd()
     path = os.path.dirname(__file__)
-    # path + ./model/BaseModel.txt
     path = os.path.join(path, "model")
     os.chdir(path)
     with open("./BaseModel.txt", "r", encoding="utf-8") as f:
-        template_str = f.read()
+        template_str = f.read()  # read the BaseModel.txt
     template = Template(template_str)
-    # 获得当前时间，转换为字符串 yyyy-mm-dd-hh-mm-ss
     now = datetime.datetime.now()
     now = now.strftime("%Y-%m-%d-%H-%M-%S")
-    # classname 小写
     typename = copy.deepcopy(classname.lower())
     classname = copy.deepcopy(typename.capitalize())
     code = template.render(now=now, Classname=classname, type=typename, author=author)

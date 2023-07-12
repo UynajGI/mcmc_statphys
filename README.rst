@@ -32,15 +32,15 @@ A simple Ising model simulation.
 
     >>> import mcmc_statphys as mcsp
     >>> model = mcsp.model.Ising(12) # 12x12 Ising model
-    >>> algorithm = mcsp.method.Metropolis(model) # Metropolis algorithm
+    >>> algorithm = mcsp.algorithm.Metropolis(model) # Metropolis algorithm
     >>> uid = algorithm.equil_sample(T=1, max_iter=1000) # sample until equilibrium
-    >>> fig = mcsp.draw.Plot(algorithm) 
+    >>> fig = mcsp.draw.Plot(algorithm)
     >>> fig.curve(uid=uid, comlumn='energy') # plot the energy curve
 
 Install
 -------
 
-the latest version of mcmc_statphys: 
+the latest version of mcmc_statphys:
 
 .. code-block:: console
 

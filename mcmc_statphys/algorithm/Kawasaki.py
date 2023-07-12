@@ -1,4 +1,11 @@
-# here put the import lib
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+"""
+@文件    :Kawasaki.py
+@时间    :2023/07/12 20:07:54
+@作者    :結凪
+"""
+
 import numpy as np
 from .Metropolis import Metropolis
 from .Metropolis import _sample_acceptance
@@ -8,6 +15,12 @@ __all__ = ["Kawasaki"]
 
 
 class Kawasaki(Metropolis):
+    """
+    Kawasaki algorithm
+    ===================
+    TODO: 未完成简介
+    """
+
     def __init__(self, model: object, M: int):
         if abs(M) > model.N:
             raise ValueError("M must be less than N")

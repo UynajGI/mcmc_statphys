@@ -1,7 +1,4 @@
-__all__ = [
-    'Metropolis', 'Wolff', 'Anneal', 'Tempering', 'WangLandau', 'Demon',
-    'Kawasaki'
-]
+__all__ = ["Metropolis", "Wolff", "Anneal", "Tempering", "WangLandau", "Demon", "Kawasaki"]
 
 from .Metropolis import Metropolis
 from .Wolff import Wolff
@@ -10,3 +7,5 @@ from .Tempering import Tempering
 from .WangLandau import WangLandau
 from .Demon import Demon
 from .Kawasaki import Kawasaki
+
+# TODO: HMC 算法

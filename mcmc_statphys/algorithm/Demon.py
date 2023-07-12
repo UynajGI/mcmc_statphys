@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+"""
+@文件    :Demon.py
+@时间    :2023/07/12 20:10:35
+@作者    :結凪
+"""
+
+
 import copy
 import numpy as np
 import pandas as pd
@@ -8,6 +17,19 @@ __all__ = ["Demon"]
 
 
 class Demon(object):
+    """
+    Demon algorithm
+    ===============
+
+    Example
+    -------
+    >>> import mcmc_statphys as mcsp
+    >>> m = mcsp.model.Ising(L=10, dim=2)
+    >>> from mcsp.algorithm import Demon
+    >>> model = Ising(10)
+
+    """
+
     def __init__(self, model):
         self.model = model
         self.name = "Demon"
@@ -44,6 +66,19 @@ class Demon(object):
         self.model = copy.deepcopy(self._rowmodel)
 
     def iter_sample(self, uid: str = None) -> str:
+        """
+        iter_sample
+
+        Parameters
+        ----------
+        uid : str, optional
+            uid, by default None
+
+        Returns
+        -------
+        str
+            uid
+        """
         uid = self._setup_uid(uid)
         self.Es = self.model.energy
         temp_model = copy.deepcopy(self.model)
@@ -65,12 +100,42 @@ class Demon(object):
         max_iter: int = 1000,
         uid: str = None,
     ) -> str:
+        """
+        equil_sample
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            The maximum number of iterations, by default 1000
+        uid : str, optional
+            uid, by default None
+
+        Returns
+        -------
+        str
+            uid
+        """
         uid = self._setup_uid(uid)
         for iter in tqdm(range(max_iter), leave=False):
             self.iter_sample(uid)
         return uid
 
-    def get_temperature(self, uid, t0: int = 1):
+    def get_temperature(self, uid: str, t0: int = 1) -> list:
+        """
+        get_temperature
+
+        Parameters
+        ----------
+        uid :
+            uid
+        t0 : int, optional
+            The number of iterations to be discarded, by default 1
+
+        Returns
+        -------
+        list
+            Temperature list
+        """
         J = self.model.Jij
         lst = []
         Tst = []

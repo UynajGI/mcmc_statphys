@@ -1,13 +1,11 @@
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """
-@File    :   Ising.py
-@Time    :   2023/05/31 11:47:09
-@Author  :   UynajGI
-@Contact :   suquan12148@outlook.com
-@License :   (MIT)Copyright 2023
+@文件    :RFIsing.py
+@时间    :2023/07/12 11:54:59
+@作者    :結凪
 """
 
-# here put the import lib
 from typing import Any, Tuple
 import numpy as np
 from .Ising import Ising
@@ -18,26 +16,60 @@ __all__ = ["RFIsing"]
 
 
 class RFIsing(Ising):
-    def __init__(self, L: int, Jij: float = 1, Hmean: float = 0, Hsigma: float = 1, Hform: str = "norm", dim: int = 2):
+    """
+    Random field Ising model
+    ========================
+
+    # TODO: add the description of the model
+    """
+
+    def __init__(self, L: int, J: float = 1, Hmean: float = 0, Hsigma: float = 1, Hform: str = "norm", dim: int = 2):
+        """
+        init the RFIsing model
+
+        Parameters
+        ----------
+        L : int
+            The length of the lattice.
+        J : float, optional
+            The interaction strength, by default 1
+        Hmean : float, optional
+            The mean of the H, by default 0
+        Hsigma : float, optional
+            The sigma of the H, by default 1
+        Hform : str, optional
+            The form of the H, "norm" or "uniform", by default "norm"
+        dim : int, optional
+            The dimension of the lattice, by default 2
+        """
         H = self._init_H(Hmean=Hmean, Hsigma=Hsigma, Hform=Hform)
-        super().__init__(L=L, Jij=Jij, H=H, dim=dim)
+        super().__init__(L=L, J=J, H=H, dim=dim)
         self._init_spin(type="rfising")
         self._get_total_energy()
         self._get_total_magnetization()
 
     def _init_H(self, Hmean: float, Hsigma: float, Hform: str) -> np.ndarray:
-        """Initialize the external magnetic field
+        """
+        init the H of the lattice
 
-        Args:
-            Hmean (float): the mean of the external magnetic field
-            Hsigma (float): the standard deviation of the external magnetic field
-            Hform (str): the form of the external magnetic field
+        Parameters
+        ----------
+        Hmean : float
+            The mean of the H.
+        Hsigma : float
+            The sigma of the H.
+        Hform : str
+            The form of the H, "norm" or "uniform".
 
-        Raises:
-            ValueError: Invalid Hform
+        Returns
+        -------
+        np.ndarray
+            The H of the lattice.
 
-        Returns:
-            np.ndarray: the external magnetic field
+        Raises
+        ------
+        ValueError
+            Invalid Hform.
         """
         if Hform == "norm":
             H = np.random.normal(Hmean, Hsigma, (self.L,) * self.dim)
@@ -48,25 +80,35 @@ class RFIsing(Ising):
         return H
 
     def _get_site_energy(self, index: Tuple[int, ...]) -> float:
-        """Get the energy of the site / cn: 获取格点的能量
+        """
+        get the energy of the site
 
-        Args:
-            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+        Parameters
+        ----------
+        index : Tuple[int, ...]
+            The index of the site.
 
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
-
-        Returns:
-            float: The energy of the site / cn: 格点的能量
+        Returns
+        -------
+        float
+            The energy of the site.
         """
         neighbors_spin = self._get_neighbor_spin(index)
         energy = 0
         for neighbor_spin in neighbors_spin:
-            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
+            energy -= self.J * np.dot(self.spin[index], neighbor_spin)
         energy -= self.H[index] * self.spin[index]
         return energy
 
-    def _init_data(self):
+    def _init_data(self) -> pd.DataFrame:
+        """
+        init the data
+
+        Returns
+        -------
+        pd.DataFrame
+            The data.
+        """
         data: pd.DataFrame = pd.DataFrame(
             columns=[
                 "uid",
@@ -81,7 +123,24 @@ class RFIsing(Ising):
         data.set_index(["uid", "iter"], inplace=True)
         return data
 
-    def _save_date(self, T, uid, data):
+    def _save_date(self, T: float, uid: str, data: pd.DataFrame) -> pd.DataFrame:
+        """
+        save the data
+
+        Parameters
+        ----------
+        T : float
+            The temperature.
+        uid : str
+            The uid of the data.
+        data : pd.DataFrame
+            The data.
+
+        Returns
+        -------
+        pd.DataFrame
+            The data.
+        """
         if uid not in data.index.get_level_values("uid").values:
             data.loc[(uid, 1), :] = [
                 T,
