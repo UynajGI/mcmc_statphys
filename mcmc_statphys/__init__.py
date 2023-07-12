@@ -2,7 +2,7 @@
 
 __author__ = """Uynaj GI"""
 __email__ = 'suquan12148@outlook.com'
-__version__ = '0.4.3'
+__version__ = '1.0.0'
 __all__ = ['algorithm', 'model', 'method']
 
 from . import algorithm, model, method
