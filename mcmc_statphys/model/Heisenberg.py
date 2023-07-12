@@ -20,7 +20,7 @@ class Heisenberg(Ising):
     """
     Heisenberg model
     =================
-    
+
     """
 
     def __init__(self, L, Jij=1, H=0, *args, **kwargs):

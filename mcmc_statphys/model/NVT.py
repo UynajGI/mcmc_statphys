@@ -11,12 +11,12 @@ def V_LJ(r0, epsilon, **kwargs):
     if "r" not in kwargs.keys():
 
         def func(r):
-            return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
+            return 4 * epsilon * ((r0 / r) ** 12 - (r0 / r) ** 6)
 
         return func
     else:
         r = kwargs["r"]
-        return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
+        return 4 * epsilon * ((r0 / r) ** 12 - (r0 / r) ** 6)
 
 
 def V_hc(r0, **kwargs):
@@ -60,12 +60,7 @@ def V_sc(r0, r1, epsilon, **kwargs):
 
 
 class NVT:
-
-    def __init__(self,
-                 N: int,
-                 V: float,
-                 delta: float,
-                 potential=V_LJ(r0=0.1, epsilon=0.5)):
+    def __init__(self, N: int, V: float, delta: float, potential=V_LJ(r0=0.1, epsilon=0.5)):
         self.N = N
         self.L = N
         self.dim = 1
@@ -78,8 +73,8 @@ class NVT:
     def __len__(self):
         return self.L
 
-    def _init_spin(self, type="nvt", *args, **kwargs):
-        self.spin = np.random.uniform(0, self.V**(1 / 3), size=(self.N, 3))
+    def _init_spin(self, type="nvt"):
+        self.spin = np.random.uniform(0, self.V ** (1 / 3), size=(self.N, 3))
         self.distance = squareform(pdist(self.spin))
         self.type = type
 
@@ -93,9 +88,7 @@ class NVT:
 
     def _change_site_spin(self, index: Tuple[int, ...]):
         # 在 index 的各个方向增加 delta
-        self.spin[index] += np.random.uniform(-self.delta,
-                                              self.delta,
-                                              size=(1, len(self.spin[index])))
+        self.spin[index] += np.random.uniform(-self.delta, self.delta, size=(1, len(self.spin[index])))
         self.distance = squareform(pdist(self.spin))
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
@@ -114,13 +107,15 @@ class NVT:
         return self.energy
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "energy",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "energy",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 

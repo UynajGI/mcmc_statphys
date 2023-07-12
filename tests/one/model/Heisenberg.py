@@ -1,13 +1,11 @@
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''
-@File    :   Heisenberg.py
-@Time    :   2023/05/31 11:47:52
-@Author  :   UynajGI
-@Contact :   suquan12148@outlook.com
-@License :   (MIT)Copyright 2023
-'''
+"""
+@文件    :Heisenberg.py
+@时间    :2023/07/06 22:11:00
+@作者    :結凪
+"""
 
-# here put the import lib
 from typing import Tuple
 import numpy as np
 import copy
@@ -18,59 +16,92 @@ __all__ = ["Heisenberg"]
 
 class Heisenberg(Ising):
     """
-    Heisenberg model
-    =================
-    
+    Classical Heisenberg model
+    ==========================
+
+    Example
+    -------
+    >>> import mcmc_statphys as mcsp
+    >>> m = mcsp.model.Heisenberg(L=10, J=1)
+
+    Description
+    -----------
+
+    The Classical Heisenberg model, developed by Werner Heisenberg, is the :math:`n = 3` case of the n-vector model, one of the models used in statistical physics to model ferromagnetism, and other phenomena.
+
+    Definition
+    ----------
+
+    It can be formulated as follows: take a d-dimensional lattice, and a set of spins of the unit length
+
+    .. math:: \vec{s}_i \in \mathbb{R}^3, |\vec{s}_i|=1
+
+    each one placed on a lattice node.
+
+    The model is defined through the following Hamiltonian:
+
+    .. math:: H = -J \sum_{\langle i,j \rangle} \vec{s_i}\cdot\vec{s_j}
+
+    References
+    ----------
+
+    -  [1] `Classical Heisenberg model -Wikipedia <https://en.wikipedia.org/wiki/Classical_Heisenberg_model>`__
     """
 
-    def __init__(self, L, Jij=1, H=0, *args, **kwargs):
-        super().__init__(L, Jij, H=0, dim=3, *args, **kwargs)
+    def __init__(self, L: int, J: float = 1):
+        """
+        init the Heisenberg model
+
+        Parameters
+        ----------
+        L : int
+            The length of the lattice.
+        J : float, optional
+            The interaction strength, by default 1
+        """
+        super().__init__(L=L, J=J, H=0, dim=3)
         self._init_spin(type="heisenberg")
-        self._max_energy()
 
-    def _init_spin(self, type="heisenberg", *args, **kwargs):
-        """Initialize the spin of the system
+    def _init_spin(self, type="heisenberg"):
+        """
+        init the spin of the lattice
 
-        Args:
-            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+        Parameters
+        ----------
+        type : str, optional
+            The type of the spin, by default "heisenberg"
         """
         self.spin = 2 * np.random.rand(self.L, self.L, self.L, self.dim) - 1
         self.spin = self.spin.astype(np.float32)
         self.type = type
 
     def _change_site_spin(self, index: Tuple[int, ...]):
-        """Change the spin of the site / cn: 改变格点的自旋
+        """
+        change the spin of the site
 
-        Args:
-            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+        Parameters
+        ----------
+        index : Tuple[int, ...]
+            The index of the site
         """
         self.spin[index] = 2 * np.random.rand(self.dim) - 1
 
     def _get_site_energy(self, index: Tuple[int, ...]) -> float:
-        """Get the energy of the site / cn: 获取格点的能量
+        """
+        get the energy of the site
 
-        Args:
-            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+        Parameters
+        ----------
+        index : Tuple[int, ...]
+            The index of the site
 
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
-
-        Returns:
-            float: The energy of the site / cn: 格点的能量
+        Returns
+        -------
+        float
+            The energy of the site
         """
         neighbors_spin = super()._get_neighbor_spin(index)
         energy = 0
         for neighbor_spin in neighbors_spin:
-            energy -= self.Jij * np.dot(self.spin[index], neighbor_spin)
-            energy -= self.H * np.dot(self.spin[index], self.spin[index])
+            energy -= self.J * np.dot(self.spin[index], neighbor_spin)
         return energy
-
-    def _max_energy(self):
-        raw_spin = copy.deepcopy(self.spin)
-        max_spin = np.zeros_like(self.spin)
-        max_spin[:, :, :, 0] = 1
-        max_spin[:, :, :, 1] = 0
-        max_spin[:, :, :, 2] = 0
-        self.set_spin(max_spin)
-        self.maxenergy = copy.deepcopy(self.energy)
-        self.set_spin(raw_spin)

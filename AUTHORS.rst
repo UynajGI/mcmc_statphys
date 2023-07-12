@@ -10,4 +10,6 @@ Development Lead
 Contributors
 ------------
 
+* Yuanuite <3220525461@qq.com>
+
 None yet. Why not be the first?

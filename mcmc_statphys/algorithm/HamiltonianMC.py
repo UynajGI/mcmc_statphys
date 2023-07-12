@@ -5,11 +5,10 @@ import numpy as np
 from tqdm import tqdm
 from .Metropolis import _sample_acceptance
 
-__all__ = ['HamiltonianMC']
+__all__ = ["HamiltonianMC"]
 
 
-class HamiltonianMC():
-
+class HamiltonianMC:
     def __init__(self, model, positive_C=1.05, learning_rate=0.01):
         if model.type != "SK":
             raise ValueError("The model must be SKmodel")
@@ -36,22 +35,19 @@ class HamiltonianMC():
                 self._init_q()
                 self._init_p()
             else:
-                self.q = copy.deepcopy(self.data.loc[uid].loc[
-                    self.data.loc[uid].index.max()]["q"])
-                self.p = copy.deepcopy(self.data.loc[uid].loc[
-                    self.data.loc[uid].index.max()]["p"])
+                self.q = copy.deepcopy(self.data.loc[uid].loc[self.data.loc[uid].index.max()]["q"])
+                self.p = copy.deepcopy(self.data.loc[uid].loc[self.data.loc[uid].index.max()]["p"])
         return uid
 
     def _init_positive(self):
         if self.model.type == "SK":
             eigval, _ = np.linalg.eig(self.model.Jij)
-            self.Jij_positive = self.model.Jij + (np.abs(np.min(eigval)) +
-                                                  self.positive_C) * np.eye(
-                                                      self.model.Jij.shape[0])
+            self.Jij_positive = self.model.Jij + (np.abs(np.min(eigval)) + self.positive_C) * np.eye(
+                self.model.Jij.shape[0]
+            )
 
     def _init_data(self):
-        self.data: pd.DataFrame = pd.DataFrame(
-            columns=["uid", "iter", "T", "H", "q", "p"])
+        self.data: pd.DataFrame = pd.DataFrame(columns=["uid", "iter", "T", "H", "q", "p"])
         self.data.set_index(["uid", "iter"], inplace=True)
 
     def _save_date(self, T, uid):
@@ -67,25 +63,26 @@ class HamiltonianMC():
 
     def _hamiltonian(self, T, J=1):
         ham = (
-            1 / 2 * np.sum(self.p**2) +
-            1 / 2 * np.dot(self.q, np.dot(self.Jij_positive, self.q)) -
-            1 / np.sqrt(J / T) * self.model.H * np.sum(self.q) - np.sum(
-                np.log(
-                    np.cosh(
-                        np.sqrt(J / T) * np.dot(self.Jij_positive, self.q)))))
+            1 / 2 * np.sum(self.p**2)
+            + 1 / 2 * np.dot(self.q, np.dot(self.Jij_positive, self.q))
+            - 1 / np.sqrt(J / T) * self.model.H * np.sum(self.q)
+            - np.sum(np.log(np.cosh(np.sqrt(J / T) * np.dot(self.Jij_positive, self.q))))
+        )
         return ham
 
     def _grid_p(self, T, J=1):
-        return (-np.dot(self.Jij_positive, self.q) + 1 / np.sqrt(J / T) *
-                self.model.H / T * np.ones(self.q.shape[0]) + np.sqrt(J / T) *
-                np.tanh(np.sqrt(J / T) * np.dot(self.Jij_positive, self.q)))
+        return (
+            -np.dot(self.Jij_positive, self.q)
+            + 1 / np.sqrt(J / T) * self.model.H / T * np.ones(self.q.shape[0])
+            + np.sqrt(J / T) * np.tanh(np.sqrt(J / T) * np.dot(self.Jij_positive, self.q))
+        )
 
     def _leapfrog(self, T):
         self.p -= self.learning_rate / 2 * self._grid_p(T)
         self.q += self.learning_rate * self.p
         self.p -= self.learning_rate / 2 * self._grid_p(T)
 
-    def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
+    def iter_sample(self, T: float, uid: str = None, ac_from="class") -> str:
         uid = self._setup_uid(uid)
         # 保存上一次的状态
         q_old = copy.deepcopy(self.q)
@@ -102,11 +99,7 @@ class HamiltonianMC():
         self._save_date(T, uid)
         return uid
 
-    def equil_sample(self,
-                     T: float,
-                     max_iter: int = 1000,
-                     uid: str = None,
-                     ac_from='class') -> str:
+    def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None, ac_from="class") -> str:
         uid = self._setup_uid(uid)
         for iter in tqdm(range(max_iter), leave=False):
             self.iter_sample(T, uid, ac_from=ac_from)

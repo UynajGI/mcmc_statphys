@@ -7,61 +7,79 @@ import pandas as pd
 __all__ = ["NVT"]
 
 
-def potential(r: float, r0: float, r1: float, epsilon: float,
-              type: str) -> float:
-    if type == "hard-core":
+def V_LJ(r0, epsilon, **kwargs):
+    if "r" not in kwargs.keys():
+
+        def func(r):
+            return 4 * epsilon * ((r0 / r) ** 12 - (r0 / r) ** 6)
+
+        return func
+    else:
+        r = kwargs["r"]
+        return 4 * epsilon * ((r0 / r) ** 12 - (r0 / r) ** 6)
+
+
+def V_hc(r0, **kwargs):
+    if "r" not in kwargs.keys():
+
+        def func(r):
+            if r < r0:
+                return 1e10
+            else:
+                return 0
+
+        return func
+    else:
+        r = kwargs["r"]
         if r < r0:
-            return np.inf
+            return 1e10
         else:
             return 0
-    elif type == "lennard-jones":
-        return 4 * epsilon * ((r0 / r)**12 - (r0 / r)**6)
-    elif type == "soft-core":
+
+
+def V_sc(r0, r1, epsilon, **kwargs):
+    if "r" not in kwargs.keys():
+
+        def func(r):
+            if r < r0:
+                return 1e10
+            elif r < r1 and r >= r0:
+                return -epsilon
+            else:
+                return 0
+
+        return func
+    else:
+        r = kwargs["r"]
         if r < r0:
-            return np.inf
+            return 1e10
         elif r < r1 and r >= r0:
             return -epsilon
         else:
             return 0
 
 
-class NVT():
-
-    def __init__(self,
-                 N: int,
-                 V: float,
-                 r0: float,
-                 r1: float,
-                 epsilon: float,
-                 poten="lennard-jones"):
+class NVT:
+    def __init__(self, N: int, V: float, delta: float, potential=V_LJ(r0=0.1, epsilon=0.5)):
         self.N = N
         self.L = N
         self.dim = 1
         self.V = V
-        self.poten = poten
-        self.r0 = r0
-        self.r1 = r1
-        self.epsilon = epsilon
+        self.delta = delta
+        self.potential = potential
         self._init_spin(type="nvt")
         self._get_total_energy()
 
     def __len__(self):
         return self.L
 
-    def _init_spin(self, type="nvt", *args, **kwargs):
-        self.spin = np.random.uniform(0, self.V**(1 / 3), size=(self.N, 3))
+    def _init_spin(self, type="nvt"):
+        self.spin = np.random.uniform(0, self.V ** (1 / 3), size=(self.N, 3))
         self.distance = squareform(pdist(self.spin))
         self.type = type
 
     def _get_total_energy(self) -> float:
-        energy = 0
-        for i in range(self.L):
-            for j in range(i + 1, self.L):
-                energy += potential(self.distance[i, j],
-                                    r0=self.r0,
-                                    r1=self.r1,
-                                    epsilon=self.epsilon,
-                                    type=self.poten)
+        energy = np.sum(self.potential(self.distance)) / 2
         self.energy = energy
         return energy
 
@@ -69,7 +87,8 @@ class NVT():
         return self._get_total_energy() / self.N
 
     def _change_site_spin(self, index: Tuple[int, ...]):
-        self.spin[index] = np.random.uniform(0, self.V**(1 / 3), size=(1, 3))
+        # 在 index 的各个方向增加 delta
+        self.spin[index] += np.random.uniform(-self.delta, self.delta, size=(1, len(self.spin[index])))
         self.distance = squareform(pdist(self.spin))
 
     def _change_delta_energy(self, index: Tuple[int, ...]):
@@ -88,13 +107,15 @@ class NVT():
         return self.energy
 
     def _init_data(self):
-        data: pd.DataFrame = pd.DataFrame(columns=[
-            "uid",
-            "iter",
-            "T",
-            "energy",
-            "spin",
-        ])
+        data: pd.DataFrame = pd.DataFrame(
+            columns=[
+                "uid",
+                "iter",
+                "T",
+                "energy",
+                "spin",
+            ]
+        )
         data.set_index(["uid", "iter"], inplace=True)
         return data
 
