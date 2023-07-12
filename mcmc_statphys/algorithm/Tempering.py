@@ -16,16 +16,16 @@ class Tempering(Metropolis):
         super().__init__(model)
         self.name = "Tempering"
 
-    def iter_sample(self, T: float, uid: str = None, ac_from="class") -> str:
-        uid = self._setup_uid(uid)
-        super().iter_sample(T, uid, ac_from=ac_from)
-        return uid
+    # def iter_sample(self, T: float, uid: str = None, ac_from="class") -> str:
+    #     uid = self._setup_uid(uid)
+    #     super().iter_sample(T, uid, ac_from=ac_from)
+    #     return uid
 
-    def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None, ac_from="class") -> str:
-        uid = self._setup_uid(uid)
-        for iter in tqdm(range(max_iter), leave=False):
-            self.iter_sample(T, uid, ac_from=ac_from)
-        return uid
+    # def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None, ac_from="class") -> str:
+    #     uid = self._setup_uid(uid)
+    #     for iter in tqdm(range(max_iter), leave=False):
+    #         self.iter_sample(T, uid, ac_from=ac_from)
+    #     return uid
 
     def param_sample(
         self, T: tuple, H0: float = 0.0, max_iter: int = 1000, eq_iter: int = 1000, ac_from: str = "class"
