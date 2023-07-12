@@ -49,6 +49,39 @@ __all__ = [
 ]
 
 
+def _rename(column):
+    if column == "E" or column == "e" or column == "Energy" or column == "energy":
+        column = "energy"
+    elif (
+        column == "M"
+        or column == "m"
+        or column == "Magnetization"
+        or column == "magnetization"
+        or column == "Mag"
+        or column == "mag"
+        or column == "Magnet"
+        or column == "magnet"
+    ):
+        column = "magnetization"
+    elif (
+        column == "S"
+        or column == "s"
+        or column == "Spin"
+        or column == "spin"
+        or column == "SpinMatrix"
+        or column == "spinmatrix"
+        or column == "Spinmatrix"
+        or column == "spinMatrix"
+    ):
+        column = "spin"
+    else:
+        if column == "t" or column == "T" or column == "temperature" or column == "Temperature":
+            column = "T"
+        elif column == "h" or column == "H" or column == "field" or column == "Field":
+            column = "H"
+    return column
+
+
 def mean(algo, uid: str, column: str, t0: int = 0, n: int = 1) -> float:
     column = _rename(column)
     return np.mean(algo.data.loc[uid][column][t0:] ** n)
