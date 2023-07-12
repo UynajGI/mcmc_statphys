@@ -1,6 +1,6 @@
 {
   "name": "changelog-standard",
-  "version": "2.0.0-20230517",
+  "version": "0.4.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "release": "standard-version --release-as patch",
     "major-alpha:dry": "standard-version --release-as major --prerelease alpha --dry-run",
     "major-alpha": "standard-version --release-as major --prerelease alpha",
-    "tag-push": "git push --follow-tags origin master",
+    "tag-push": "git push --follow-tags origin develop",
     "release-publish": "npm run tag-push && npm publish"
   },
   "keywords": [],
