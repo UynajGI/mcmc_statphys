@@ -4,11 +4,10 @@ from .Metropolis import Metropolis
 from .Metropolis import _sample_acceptance
 import copy
 
-__all__ = ['Kawasaki']
+__all__ = ["Kawasaki"]
 
 
 class Kawasaki(Metropolis):
-
     def __init__(self, model: object, M: int):
         if abs(M) > model.N:
             raise ValueError("M must be less than N")
@@ -30,11 +29,10 @@ class Kawasaki(Metropolis):
         model._get_total_energy()
         model._get_total_magnetization()
         if model.magnetization != self.M:
-            print("we change the magnetization to {}".format(
-                model.magnetization))
+            print("we change the magnetization to {}".format(model.magnetization))
         return model
 
-    def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
+    def iter_sample(self, T: float, uid: str = None, ac_from="class") -> str:
         uid = self._setup_uid(uid)
         _plus = np.argwhere(self.model.spin == 1)
         _minus = np.argwhere(self.model.spin == -1)

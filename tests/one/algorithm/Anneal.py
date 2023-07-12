@@ -6,19 +6,15 @@ from tqdm import tqdm
 from .Metropolis import Metropolis
 from .Metropolis import _rename
 
-__all__ = ['Anneal']
+__all__ = ["Anneal"]
 
 
 class Anneal(Metropolis):
-
     def __init__(self, model: object):
         super().__init__(model)
         self.name = "Anneal"
 
-    def iter_sample(self,
-                    T: float,
-                    uid: str = None,
-                    ac_from='class') -> object:
+    def iter_sample(self, T: float, uid: str = None, ac_from="class") -> object:
         """_summary_
 
         Args:
@@ -36,7 +32,7 @@ class Anneal(Metropolis):
         highT=None,
         dencyT=0.9,
         uid: str = None,
-        ac_from='class',
+        ac_from="class",
     ):
         """_summary_
 
@@ -55,23 +51,24 @@ class Anneal(Metropolis):
             highT *= 2
             if highT > targetT:
                 print(
-                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time."
-                    .format(old=tempT, target=targetT, new=highT))
+                    "Your highT {old} < targetT {target}, we change highT = {new} now, please check your input next time.".format(
+                        old=tempT, target=targetT, new=highT
+                    )
+                )
         T = copy.deepcopy(highT)
         while T > targetT:
-            super().equil_sample(T,
-                                 max_iter=max_iter,
-                                 uid=uid,
-                                 ac_from=ac_from)
+            super().equil_sample(T, max_iter=max_iter, uid=uid, ac_from=ac_from)
             T = max(T * dencyT, targetT)
         return uid
 
-    def param_sample(self,
-                     param: tuple,
-                     param_name: str or int = 'T',
-                     stable: float = 0.0,
-                     max_iter: int = 1000,
-                     ac_from: str = 'class'):
+    def param_sample(
+        self,
+        param: tuple,
+        param_name: str or int = "T",
+        stable: float = 0.0,
+        max_iter: int = 1000,
+        ac_from: str = "class",
+    ):
         """_summary_
 
         Args:
@@ -89,16 +86,10 @@ class Anneal(Metropolis):
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = stable
-                self.equil_sample(param,
-                                  max_iter=max_iter,
-                                  uid=uid,
-                                  ac_from=ac_from)
+                self.equil_sample(param, max_iter=max_iter, uid=uid, ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(stable,
-                                  max_iter=max_iter,
-                                  uid=uid,
-                                  ac_from=ac_from)
+                self.equil_sample(stable, max_iter=max_iter, uid=uid, ac_from=ac_from)
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,

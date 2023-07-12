@@ -1,105 +1,129 @@
-import copy
-import os
-import uuid
-from typing import Dict, List
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+"""
+@文件    :Metropolis.py
+@时间    :2023/07/12 11:55:19
+@作者    :結凪
+"""
 
-import matplotlib.pyplot as plt
-# here put the import lib
+import copy
+from typing import List, Tuple, Dict, Union
+import os
 import numpy as np
-import statsmodels.tsa.stattools as stattools
+import uuid
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 from matplotlib import animation
 from matplotlib.animation import HTMLWriter
-from tqdm import tqdm
+import statsmodels.tsa.stattools as stattools
 
-__all__ = ['Metropolis']
+__all__ = ["Metropolis"]
 
 
-def _is_Flat(sequence: np.ndarray, epsilon: float = 0.1) -> bool:
-    """Determine whether the sequence is flat / cn: 判断序列是否平坦
-
-    Args:
-        sequence (np.ndarray): sampling sequence / cn: 采样序列
-        epsilon (float, optional): fluctuation. / cn: 涨落 (Defaults 0.1)
-
-    Returns:
-        bool: is flat / cn: 是否平坦
+def _sample_acceptance(delta_E: float, sample_Temperture: float, form: str = "class") -> bool:
     """
-    return np.std(sequence) / np.mean(sequence) < epsilon
+    Determine whether to accept the sample
 
+    Parameters
+    ----------
+    delta_E: float
+        Energy difference between the current state and the next state
+    sample_Temperture: float
+        Sample temperature
+    form: str
+        Acceptance form, "class" or "bath"
 
-def _sample_acceptance(delta_E: float,
-                       sample_Temperture: float,
-                       form: str = 'class') -> bool:
-    """Determine whether to accept a new state / cn: 判断是否接受新的状态
-
-    Args:
-        delta_E (float): Energy change / cn: 能量变化
-        sample_Temperture (float): Sample temperature / cn: 采样温度
-
-    Returns:
-        bool: accept or reject / cn: 接受或拒绝
+    Returns
+    -------
+    bool
+        Whether to accept the sample
     """
-    if form == 'class':
+    if form == "class":
         return np.random.rand() < np.exp(-delta_E / sample_Temperture)
-    elif form == 'bath':
+    elif form == "bath":
         return np.random.rand() < 1 / (1 + np.exp(delta_E / sample_Temperture))
 
 
-def _rasie_parameter(minparam: float, maxparam: float, num: int):
-    """Raise parameter / cn: 抛出参数
-
-    Args:
-        minparam (float): minparam / cn: 最小参数
-        maxparam (float): maxparam / cn: 最大参数
-        num (int): num / cn: 采样数量
-
-    Raises:
-        ValueError: min should be less than max
-        ValueError: num should be greater than 0
-        ValueError: min should be greater than 0
+def _rename(column: str) -> str:
     """
-    if minparam > maxparam:
-        raise ValueError("min should be less than max")
-    if num < 1:
-        raise ValueError("num should be greater than 0")
-    if minparam < 0:
-        raise ValueError("min should be greater than 0")
+    Rename the column name
 
+    Parameters
+    ----------
+    column : str
+        Column name
 
-def _rename(column):
+    Returns
+    -------
+    str
+        New column name
+    """
     if column == "E" or column == "e" or column == "Energy" or column == "energy":
         column = "energy"
-    elif column == "M" or column == "m" or column == "Magnetization" or column == "magnetization" or column == "Mag" or column == "mag" or column == "Magnet" or column == "magnet":
+    elif (
+        column == "M"
+        or column == "m"
+        or column == "Magnetization"
+        or column == "magnetization"
+        or column == "Mag"
+        or column == "mag"
+        or column == "Magnet"
+        or column == "magnet"
+    ):
         column = "magnetization"
-    elif column == "S" or column == "s" or column == "Spin" or column == "spin" or column == "SpinMatrix" or column == "spinmatrix" or column == "Spinmatrix" or column == "spinMatrix":
+    elif (
+        column == "S"
+        or column == "s"
+        or column == "Spin"
+        or column == "spin"
+        or column == "SpinMatrix"
+        or column == "spinmatrix"
+        or column == "Spinmatrix"
+        or column == "spinMatrix"
+    ):
         column = "spin"
     else:
-        if column == 't' or column == 'T' or column == 'temperature' or column == 'Temperature':
-            column = 'T'
-        elif column == 'h' or column == 'H' or column == 'field' or column == 'Field':
-            column = 'H'
+        if column == "t" or column == "T" or column == "temperature" or column == "Temperature":
+            column = "T"
+        elif column == "h" or column == "H" or column == "field" or column == "Field":
+            column = "H"
     return column
 
 
 class Metropolis:
     """
-    \tIn statistics and statistical physics, the Metropolis–Hastings algorithm\n
-    is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of\n
-    random samples from a probability distribution from which direct sampling is difficult.\n
-    Details please see: https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm \n
-    \tcn: 在统计学和统计物理学中，Metropolis-Hastings 算法是一种马尔可夫链蒙特卡洛 (MCMC) 方法，\n
-    用于从难以直接采样的概率分布中获得一系列随机样本。\n
+    Metropolis algorithm
+    ====================
+
+    Example
+    -------
+
+    >>> import mcmc_statphys as mcsp
+    >>> m = mcsp.model.Ising(L=10, dim=2)
+    >>> f = mcsp.algorithm.Metropolis(m)
+    >>> f.equil_sample(T=1.0,max_step=1000,uid="test")
+    >>> f.data
+
+
+    Description
+    -----------
+
+    In statistics and statistical physics, the Metropolis–Hastings algorithm is a Markov chain Monte Carlo (MCMC) method for obtaining a sequence of random samples from a probability distribution from which direct sampling is difficult. This sequence can be used to approximate the distribution (e.g. to generate a histogram) or to compute an integral (e.g. an expected value). Metropolis–Hastings and other MCMC algorithms are generally used for sampling from multi-dimensional distributions, especially when the number of dimensions is high. For single-dimensional distributions, there are usually other methods (e.g. adaptive rejection sampling) that can directly return independent samples from the distribution, and these are free from the problem of autocorrelated samples that is inherent in MCMC methods.
+
+    References
+    ----------
+
+    -  [1] `Metropolis–Hastings algorithm -Wikipedia <https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm>`__
+
+
     """
 
     def __init__(self, model: object):
         self.model = model
-        self._rowmodel = copy.deepcopy(model)
+        self._rowmodel = copy.deepcopy(model)  # row model
         self.name = "Metroplis"
         self.data = self.model._init_data()
         self.param_list = []
-
-    def __str__(self):
-        return self.name
 
     def _reset_model(self):
         self.model = copy.deepcopy(self._rowmodel)
@@ -112,67 +136,106 @@ class Metropolis:
                 if uid not in self.data.index.get_level_values("uid").values:
                     self._reset_model()
                 else:
-                    self.model.set_spin(self.data.loc[uid].loc[
-                        self.data.loc[uid].index.max()].spin)
+                    self.model.set_spin(self.data.loc[uid].loc[self.data.loc[uid].index.max()].spin)
         return uid
 
-    def _init_paramlst(self, param):
-        """Initialize parameter list / cn: 初始化参数列表"""
+    def _init_paramlst(self, param: Tuple[float, float, int]) -> np.array:
+        """
+        init param list
+
+        Parameters
+        ----------
+        param : Tuple[float, float, int]
+            param_max, param_min, param_num
+
+        Returns
+        -------
+        np.array
+            param list
+        """
         param_max, param_min, param_num = param
         return np.linspace(param_max, param_min, param_num)
 
-    def iter_sample(self, T: float, uid: str = None, ac_from='class') -> str:
-        """Single sample / cn: 单次采样
+    def iter_sample(self, T: float, uid: str = None, ac_from="class") -> str:
+        """
+        Iterative sampling
 
-        Args:
-            T (float): Sample temperature / cn: 采样温度
-            uid (str, optional): uid / cn: 唯一标识符 (Defaults None)
+        Parameters
+        ----------
+        T : float
+            Sample temperature
+        uid : str, optional
+            uid, by default None
+        ac_from : str, optional
+            Acceptance form, "class" or "bath", by default "class"
 
-        Returns:
-            object: model / cn: 模型
+        Returns
+        -------
+        str
+            uid
         """
         uid = self._setup_uid(uid)
-        site = tuple(np.random.randint(0, self.model.L, size=self.model.dim))
         temp_model = copy.deepcopy(self.model)
-        delta_E = self.model._change_delta_energy(site)
+        delta_E = self.model._random_walk()
         if not _sample_acceptance(delta_E, T, form=ac_from):
             self.model = temp_model
         self.data = self.model._save_date(T=T, uid=uid, data=self.data)
         return uid
 
-    def equil_sample(self,
-                     T: float,
-                     max_iter: int = 1000,
-                     uid: str = None,
-                     ac_from='class') -> str:
-        """Equilibrium sampling / cn: 平衡采样
-
-        Args:
-            T (float): Sample temperature / cn: 采样温度
-            max_iter (int): Maximum iteration / cn: 最大迭代次数
-            uid (str, optional): uid / cn: 唯一标识符 (Defaults None)
+    def equil_sample(self, T: float, max_iter: int = 1000, uid: str = None, ac_from="class") -> str:
         """
+        Equilibrium sampling
 
+        Parameters
+        ----------
+        T : float
+            Sample temperature
+        max_iter : int, optional
+            Max iteration, by default 1000
+        uid : str, optional
+            uid, by default None
+        ac_from : str, optional
+            Acceptance form, "class" or "bath", by default "class"
+
+        Returns
+        -------
+        str
+            uid
+        """
         uid = self._setup_uid(uid)
         for iter in tqdm(range(max_iter), leave=False):
             self.iter_sample(T, uid, ac_from=ac_from)
         return uid
 
-    def param_sample(self,
-                     param: tuple,
-                     param_name: str or int = 'T',
-                     stable: float = 0.0,
-                     max_iter: int = 1000,
-                     ac_from: str = 'class') -> Dict:
-        """_summary_
-
-        Args:
-            max_iter (int, optional): _description_. Defaults to 1000.
-
-        Returns:
-            _type_: _description_
+    def param_sample(
+        self,
+        param: tuple,
+        param_name: str or int = "T",
+        stable: float = 0.0,
+        max_iter: int = 1000,
+        ac_from: str = "class",
+    ) -> Dict:
         """
+        Parameter sampling
 
+        Parameters
+        ----------
+        param : tuple
+            param_max, param_min, param_num
+        param_name : str or int, optional
+            param name, by default "T"
+        stable : float, optional
+            stable parameter, by default 0.0
+        max_iter : int, optional
+            Max iteration, by default 1000
+        ac_from : str, optional
+            Acceptance form, "class" or "bath", by default "class"
+
+        Returns
+        -------
+        Dict
+            uid_param_dict
+        """
         self.parameter = _rename(param_name)
         param_lst = self._init_paramlst(param)
         uid_lst = []
@@ -182,16 +245,10 @@ class Metropolis:
             if self.parameter == "T":
                 if self.model.type == "ising" or self.model.type == "potts":
                     self.model.H = stable
-                self.equil_sample(param,
-                                  max_iter=max_iter,
-                                  uid=uid,
-                                  ac_from=ac_from)
+                self.equil_sample(param, max_iter=max_iter, uid=uid, ac_from=ac_from)
             elif self.parameter == "H":
                 self.model.H = param
-                self.equil_sample(stable,
-                                  max_iter=max_iter,
-                                  uid=uid,
-                                  ac_from=ac_from)
+                self.equil_sample(stable, max_iter=max_iter, uid=uid, ac_from=ac_from)
         uid_param_dict: Dict = {
             "uid": uid_lst,
             "{param}".format(param=self.parameter): param_lst,
@@ -199,14 +256,32 @@ class Metropolis:
         self.param_list.append(uid_param_dict)
         return uid_param_dict
 
-    def svd(self,
-            uid: str or Dict or List[str],
-            norm: bool = True,
-            t0: int = 0) -> np.array:
+    def svd(self, uid: Union[str, dict, List[str]], norm: bool = True, t0: int = 0) -> np.array:
+        """
+        SVD
 
+        Parameters
+        ----------
+        uid : Union[str, dict, List[str]]
+            uid or uid list
+        norm : bool, optional
+            norm, by default True
+        t0 : int, optional
+            start time, by default 0
+
+        Returns
+        -------
+        np.array
+            svd
+
+        Raises
+        ------
+        ValueError
+            The key of the dict is not 'uid'.
+        """
         if isinstance(uid, str):
             data = self.data
-            column: str = 'spin'
+            column: str = "spin"
             spin_lst = data.loc[uid][column][t0:]
             spin_matrix = []
             for spin in spin_lst:
@@ -219,8 +294,8 @@ class Metropolis:
             else:
                 return s
         elif isinstance(uid, dict):
-            if 'uid' in uid.keys():
-                uid_lst = uid['uid']
+            if "uid" in uid.keys():
+                uid_lst = uid["uid"]
             else:
                 raise ValueError("The key of the dict is not 'uid'.")
             svd_lst = []
@@ -235,7 +310,7 @@ class Metropolis:
 
     def mean(self, uid: str, column: str, t0: int = 0, n: int = 1) -> float:
         column = _rename(column)
-        return np.mean(self.data.loc[uid][column][t0:]**n)
+        return np.mean(self.data.loc[uid][column][t0:] ** n)
 
     def std(self, uid: str, column: str, t0: int = 0) -> float:
         column = _rename(column)
@@ -258,8 +333,7 @@ class Metropolis:
         return self.std(uid, column, t0) / self.mean(uid, column, t0)
 
     def u4(self, uid: str, t0: int = 0) -> float:
-        return 1 - self.mean(uid, "magnetization", t0, n=4) / (
-            3 * self.mean(uid, "magnetization", t0, n=2)**2)
+        return 1 - self.mean(uid, "magnetization", t0, n=4) / (3 * self.mean(uid, "magnetization", t0, n=2) ** 2)
 
     def getcolumn(self, uid: str, column: str, t0: int = 0) -> np.array:
         column = _rename(column)
@@ -267,26 +341,9 @@ class Metropolis:
 
     def autocorrelation(self, uid: str, column: str):
         column = _rename(column)
-        autocorrelation_list = stattools.acf(self.getcolumn(uid, column),
-                                             nlags=len(
-                                                 (self.getcolumn(uid,
-                                                                 column))))
+        autocorrelation_list = stattools.acf(self.getcolumn(uid, column), nlags=len((self.getcolumn(uid, column))))
         tau = np.argmin(np.abs(autocorrelation_list - np.exp(-1)))
         return (tau, autocorrelation_list)
-
-    def g2c_k(self, uid: str, iter: int) -> float:
-        spin = self.data.loc[(uid, iter)]['spin']
-        # fft
-        fft_spin = np.fft.fft(
-            spin.reshape(-1) -
-            self.data.loc[(uid, iter)]['magnetization'] / self.model.N)
-        g2c_k = 1 / self.model.N * np.abs(fft_spin)**2
-        return g2c_k
-
-    def g2c_r(self, uid: str, iter: int) -> float:
-        g2c_k = self.g2c_k(uid, iter)
-        g2c_r = np.fft.ifft(g2c_k)
-        return g2c_r
 
     def curve(self, uid, column, t0: int = 0) -> None:
         """
@@ -298,49 +355,49 @@ class Metropolis:
         index = data.loc[uid].index
         plt.plot(index, array)
 
-    def scatter(self,
-                uid,
-                column,
-                t0: int = 0,
-                s=None,
-                c=None,
-                marker=None,
-                cmap=None,
-                norm=None,
-                vmin=None,
-                vmax=None,
-                alpha=None,
-                linewidths=None,
-                *,
-                edgecolors=None,
-                plotnonfinite=False,
-                data=None,
-                **kwargs) -> None:
-
+    def scatter(
+        self,
+        uid,
+        column,
+        t0: int = 0,
+        s=None,
+        c=None,
+        marker=None,
+        cmap=None,
+        norm=None,
+        vmin=None,
+        vmax=None,
+        alpha=None,
+        linewidths=None,
+        *,
+        edgecolors=None,
+        plotnonfinite=False,
+        data=None,
+        **kwargs
+    ) -> None:
         data = self.data
         column = _rename(column)
         array = data.loc[uid][column][t0:]
         index = data.loc[uid].index
-        plt.scatter(index,
-                    array,
-                    s=s,
-                    c=c,
-                    marker=marker,
-                    cmap=cmap,
-                    norm=norm,
-                    vmin=vmin,
-                    vmax=vmax,
-                    alpha=alpha,
-                    linewidths=linewidths,
-                    edgecolors=edgecolors,
-                    plotnonfinite=plotnonfinite,
-                    data=data,
-                    **kwargs)
+        plt.scatter(
+            index,
+            array,
+            s=s,
+            c=c,
+            marker=marker,
+            cmap=cmap,
+            norm=norm,
+            vmin=vmin,
+            vmax=vmax,
+            alpha=alpha,
+            linewidths=linewidths,
+            edgecolors=edgecolors,
+            plotnonfinite=plotnonfinite,
+            data=data,
+            **kwargs
+        )
 
-    def param_plot(self,
-                   uid_dict: Dict[str, np.array],
-                   column: str,
-                   per: bool = True) -> None:
+    def param_plot(self, uid_dict: Dict[str, np.array], column: str, per: bool = True) -> None:
         """
         Draw a parametric plot.
         """
@@ -363,10 +420,7 @@ class Metropolis:
         else:
             plt.plot(x, y, label=param_name)
 
-    def param_scatter(self,
-                      uid_dict: Dict[str, np.array],
-                      column: str,
-                      per: bool = True) -> None:
+    def param_scatter(self, uid_dict: Dict[str, np.array], column: str, per: bool = True) -> None:
         """
         Draw a parametric scatter.
         """
@@ -389,75 +443,73 @@ class Metropolis:
         else:
             plt.scatter(x, y, label=param_name)
 
-    def imshow(self,
-               uid: str,
-               iter: int,
-               cmap: str = 'gray',
-               norm=None,
-               aspect=None,
-               interpolation=None,
-               alpha=None,
-               vmin=None,
-               vmax=None,
-               origin=None,
-               extent=None,
-               interpolation_stage=None,
-               filternorm=True,
-               filterrad=4.0,
-               resample=None,
-               url=None,
-               data=None,
-               **kwargs) -> None:
+    def imshow(
+        self,
+        uid: str,
+        iter: int,
+        cmap: str = "gray",
+        norm=None,
+        aspect=None,
+        interpolation=None,
+        alpha=None,
+        vmin=None,
+        vmax=None,
+        origin=None,
+        extent=None,
+        interpolation_stage=None,
+        filternorm=True,
+        filterrad=4.0,
+        resample=None,
+        url=None,
+        data=None,
+        **kwargs
+    ) -> None:
         """
         Draw a inshow.
         """
         spin = self.data.loc[(uid, iter), "spin"]
-        plt.imshow(spin,
-                   cmap=cmap,
-                   norm=norm,
-                   aspect=aspect,
-                   interpolation=interpolation,
-                   alpha=alpha,
-                   vmin=vmin,
-                   vmax=vmax,
-                   origin=origin,
-                   extent=extent,
-                   interpolation_stage=interpolation_stage,
-                   filternorm=filternorm,
-                   filterrad=filterrad,
-                   resample=resample,
-                   url=url,
-                   data=data,
-                   **kwargs)
-        plt.axis('off')
-        plt.axis('equal')
+        plt.imshow(
+            spin,
+            cmap=cmap,
+            norm=norm,
+            aspect=aspect,
+            interpolation=interpolation,
+            alpha=alpha,
+            vmin=vmin,
+            vmax=vmax,
+            origin=origin,
+            extent=extent,
+            interpolation_stage=interpolation_stage,
+            filternorm=filternorm,
+            filterrad=filterrad,
+            resample=resample,
+            url=url,
+            data=data,
+            **kwargs
+        )
+        plt.axis("off")
+        plt.axis("equal")
 
-    def animate(self,
-                uid: str,
-                save: bool = False,
-                savePath: str = None) -> None:
+    def animate(self, uid: str, save: bool = False, savePath: str = None) -> None:
         """
         Animate the spin.
         """
         fig, ax = plt.subplots(figsize=(5, 5))
-        spin_lst = self.data.loc[uid, 'spin'].tolist()
+        spin_lst = self.data.loc[uid, "spin"].tolist()
 
         def init():
-            ax.imshow(spin_lst[0], cmap='gray')
-            ax.axis('off')
+            ax.imshow(spin_lst[0], cmap="gray")
+            ax.axis("off")
             return ax
 
         def update(iter):
             ax.clear()
-            ax.imshow(spin_lst[iter], cmap='gray')
-            ax.set_title('iter: {}'.format(iter))
-            ax.axis('off')
+            ax.imshow(spin_lst[iter], cmap="gray")
+            ax.set_title("iter: {}".format(iter))
+            ax.axis("off")
             return ax
 
-        ani = animation.FuncAnimation(fig=fig,
-                                      func=update,
-                                      init_func=init,
-                                      frames=range(len(spin_lst)))
+        ani = animation.FuncAnimation(fig=fig, func=update, init_func=init, frames=range(len(spin_lst)))
         if save:
             mywriter = HTMLWriter(fps=60)
             if savePath is None:
@@ -468,5 +520,5 @@ class Metropolis:
                 if not os.path.exists(savePath):
                     os.mkdir(savePath)
                 os.chdir(savePath)
-            ani.save('myAnimation.html', writer=mywriter)
+            ani.save("myAnimation.html", writer=mywriter)
             plt.close()

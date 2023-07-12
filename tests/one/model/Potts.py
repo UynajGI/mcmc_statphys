@@ -1,76 +1,106 @@
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """
-@File    :   Potts.py
-@Time    :   2023/05/31 11:49:11
-@Author  :   UynajGI
-@Contact :   suquan12148@outlook.com
-@License :   (MIT)Copyright 2023
+@文件    :Potts.py
+@时间    :2023/07/12 11:37:59
+@作者    :結凪
 """
-
-# here put the import lib
 from typing import Tuple
 import numpy as np
-import copy
 from .Ising import Ising
 
 __all__ = ["Potts"]
 
 
 class Potts(Ising):
-    def __init__(self, L, Jij=1, H=0, dim=2, p=3):
-        # p is the number of states of the system
-        self.p = p
-        super().__init__(L, Jij, H, dim)
-        self._init_spin(type="potts", p=p)
-        self._max_energy()
+    """
+    Potts
+    =====
 
-    def _init_spin(self, type="potts", p=3):
-        """Initialize the spin of the system
+    Example
+    -------
+    >>> import mcmc_statphys as mcsp
+    >>> m = mcsp.model.Potts(L=10, J=1, H=0, dim=2, p=3)
 
-        Args:
-            type (str, optional): The type of the spin / cn: 自旋的类型 (Defaults \'ising\')
+    In statistical mechanics, the Potts model, a generalization of the Ising model, is a model of interacting spins on a crystalline lattice.[1] By studying the Potts model, one may gain insight into the behaviour of ferromagnets and certain other phenomena of solid-state physics. The strength of the Potts model is not so much that it models these physical systems well; it is rather that the one-dimensional case is exactly solvable, and that it has a rich mathematical formulation that has been studied extensively.
 
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
+    Definition
+    ----------
+
+    The Potts model consists of spins that are placed on a lattice; the lattice is usually taken to be a two-dimensional rectangular Euclidean lattice, but is often generalized to other dimensions and lattice structures. Each spin can take on one of q different states, and the spins interact with their nearest neighbors. The Hamiltonian of the Potts model is given by
+
+    .. math::H = -J_p \sum_{\langle i,j \rangle} \delta (s_i, s_j)
+
+    where :math:`\delta (s_{i},s_{j})` is the Kronecker delta, which equals one whenever :math:`s_{i}=s_{j}` and zero otherwise.
+
+    References
+    ----------
+
+    -  [1] `Potts model -
+    Wikipedia <https://en.wikipedia.org/wiki/Potts_model>`__
+    """
+
+    def __init__(self, L: int, J: float = 1, H: float = 0, dim: int = 2, p: int = 3):
         """
-        self.spin = np.random.choice(range(p), size=(self.L,) * self.dim)
-        self.spin = self.spin.astype(np.int8)
+        init the Potts model
+
+        Parameters
+        ----------
+        L : int
+            The length of the lattice.
+        J : float, optional
+            The interaction strength, by default 1
+        H : float, optional
+            The external field strength, by default 0
+        dim : int, optional
+            The dimension of the lattice, by default 2
+        p : int, optional
+            The types of the spin, by default 3
+        """
+        self.p = p
+        super().__init__(L=L, J=J, H=H, dim=dim)
+        self._init_spin(type="potts", p=p)
+
+    def _init_spin(self, type="potts"):
+        """
+        init the spin of the lattice
+
+        Parameters
+        ----------
+        type : str, optional
+            The type of the spin, by default "potts"
+        """
+        self.spin = np.random.choice(range(self.p), size=(self.L,) * self.dim)
         self.type = type
 
     def _change_site_spin(self, index: Tuple[int, ...]):
-        """Change the spin of the site / cn: 改变格点的自旋
+        """
+        change the spin of the site
 
-        Args:
-            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
-
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
+        Parameters
+        ----------
+        index : Tuple[int, ...]
+            The index of the site.
         """
         self.spin[index] = np.random.choice(range(self.p))
 
     def _get_site_energy(self, index: Tuple[int, ...]) -> float:
-        """Get the energy of the site / cn: 获取格点的能量
+        """
+        get the energy of the site
 
-        Args:
-            index (Tuple[int, ...]): The index of the site / cn: 格点的坐标
+        Parameters
+        ----------
+        index : Tuple[int, ...]
+            The index of the site.
 
-        Raises:
-            ValueError: Invalid type of spin / cn: 无效的自旋类型
-
-        Returns:
-            float: The energy of the site / cn: 格点的能量
+        Returns
+        -------
+        float
+            The energy of the site.
         """
         neighbors_spin = super()._get_neighbor_spin(index)
         energy = 0
         for neighbor_spin in neighbors_spin:
             if self.spin[index] == neighbor_spin:
-                energy -= self.Jij
+                energy -= self.J
         return energy
-
-    def _max_energy(self):
-        raw_spin = copy.deepcopy(self.spin)
-        max_spin = np.zeros_like(self.spin)
-        max_spin[:, :] = self.p - 1
-        self.set_spin(max_spin)
-        self.maxenergy = copy.deepcopy(self.energy)
-        self.set_spin(raw_spin)
