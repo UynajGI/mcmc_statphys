@@ -2,7 +2,10 @@
 
 __author__ = """Uynaj GI"""
 __email__ = 'suquan12148@outlook.com'
-__version__ = '0.4.3'
-__all__ = ['algorithm', 'model', 'analysis', 'draw']
+__version__ = '1.0.0'
+__all__ = ['algorithm', 'model', 'method']
 
-from . import algorithm, model, analysis, draw
+from . import algorithm, model, method
+from .algorithm import *  # NOQA
+from .model import *  # NOQA
+from .method import *  # NOQA

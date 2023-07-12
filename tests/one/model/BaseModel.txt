@@ -1,0 +1,123 @@
+"""
+    create in {{ now }}
+    @author {{ author }}
+"""
+
+# here put the import lib
+from typing import Tuple
+import numpy as np
+import copy
+import pandas as pd
+
+__all__ = ["{{ Classname }}"]
+
+
+class {{ Classname }}(object):
+
+    def __init__(self,
+                 L: int,
+                 Jij: float = 1,
+                 H: float = 0,
+                 dim: int = 2):
+        L = int(L)
+        self.L = L
+        self.dim = dim
+        self.N = L**dim
+        self.Jij = Jij
+        self.H = H
+        self._init_spin(type="{{ type }}")
+        self._get_total_energy()
+        # self._get_total_magnetization()# if you need
+
+    def __len__(self):
+        return self.L
+
+    def __getitem__(self, index: Tuple[int, ...]):
+        return self.spin[index]
+
+    def _init_spin(self, type="{{ type }}"):
+        # you must set this function
+
+    def _get_neighbor(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
+        # if the model have neighbor, you need to set this function, return the index of neighbor, otherwise return None
+
+    def _get_neighbor_spin(self, index: Tuple[int, ...]) -> Tuple[int, ...]:
+        # if the model have neighbor, you need to set this function, return the spin of neighbor, otherwise return None
+
+    def _get_site_energy(self, index: Tuple[int, ...]) -> float:
+        # if single site energy can be calculated, you need to set this function, otherwise return None
+
+    def _get_per_energy(self) -> float:
+        # you need to set this function
+
+    def _get_total_energy(self) -> float:
+        # you must set this function
+
+    def _get_per_magnetization(self) -> float:
+        # if the model have magnetization, you need to set this function, or the model have other property, you can set this function, otherwise return None
+
+    def _get_total_magnetization(self) -> float:
+        # like upper function
+
+    def _change_site_spin(self, index: Tuple[int, ...]):
+        # you need set this function
+
+    def _change_delta_energy(self, index: Tuple[int, ...]):
+        # you must set this function, return the delta energy of the system
+
+    def _random_walk(self):
+        # you must set this function, return the delta energy of the system
+
+    def set_spin(self, spin):
+        self.spin = spin
+        self._get_total_energy()
+        # self._get_total_magnetization() # if you need
+
+    def get_energy(self) -> float:
+        """Get the total energy of the system / cn: 获取系统的总能量
+
+        Returns:
+            float: The total energy of the system / cn: 系统的总能量
+        """
+        return self.energy
+
+    def get_magnetization(self) -> float:
+        # if you need
+        return self.magnetization
+
+    def _init_data(self):
+        # you must set this function, just change the 'magnetization' to the property you want to save
+        data: pd.DataFrame = pd.DataFrame(columns=[
+            "uid",
+            "iter",
+            "T",
+            "H",
+            "energy",
+            "magnetization",
+            "spin",
+        ])
+        data.set_index(["uid", "iter"], inplace=True)
+        return data
+
+    def _save_date(self, T, uid, data: pd.DataFrame):
+        # like upper function
+        if uid not in data.index.get_level_values("uid").values:
+            data.loc[(uid, 1), :] = [
+                T,
+                self.H,
+                self.energy,
+                self.magnetization,
+                0,
+            ]
+            data.at[(uid, 1), "spin"] = copy.deepcopy(self.spin)
+        else:
+            iterplus = data.loc[uid].index.max() + 1
+            data.loc[(uid, iterplus), :] = [
+                T,
+                self.H,
+                self.energy,
+                self.magnetization,
+                0,
+            ]
+            data.at[(uid, iterplus), "spin"] = copy.deepcopy(self.spin)
+        return data
